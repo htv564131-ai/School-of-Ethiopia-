@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -382,6 +383,9 @@
 </head>
 <body>
 
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
     <div id="landing-view" class="app-container fade-in">
         <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
             <div class="flex items-center gap-3">
@@ -655,6 +659,8 @@
     </div>
 
 
+    <!-- MODALS -->
+    
     <div id="post-modal" class="overlay">
         <div class="modal slide-up">
             <div class="modal-drag-handle"></div>
@@ -802,7 +808,7 @@
                 <div class="text-3xl font-bold text-[#d4af37]" id="sub-price-display">1500 ETB<span class="text-sm text-gray-400">/mo</span></div>
             </div>
 
-            <button onclick="alert('Subscription gateway opening...')" class="btn-primary py-4 text-lg shadow-[0_0_15px_rgba(212,175,55,0.4)]">Upgrade Now</button>
+            <button onclick="app.showToast('Subscription gateway opening...', 'success')" class="btn-primary py-4 text-lg shadow-[0_0_15px_rgba(212,175,55,0.4)]">Upgrade Now</button>
         </div>
     </div>
 
@@ -899,6 +905,17 @@
         </div>
     </div>
 
+    <!-- CUSTOM PROMPT MODAL -->
+    <div id="prompt-modal" class="overlay center">
+        <div class="modal center fade-in bg-zinc-900 border border-zinc-700 pb-6">
+            <h3 id="prompt-title" class="font-bold text-lg mb-3">Input Required</h3>
+            <input type="text" id="prompt-input" class="input-field mb-4" placeholder="Enter here...">
+            <div class="flex gap-2">
+                <button id="prompt-cancel" class="btn-secondary flex-1">Cancel</button>
+                <button id="prompt-confirm" class="btn-primary flex-1">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const app = {
@@ -928,6 +945,37 @@
                     'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
                     'https://images.unsplash.com/photo-1427504494785-319ce83723cf?w=800&q=80'
                 ]
+            },
+
+            // --- UI UTILS (Toast & Prompts) ---
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const bg = type === 'error' ? 'bg-red-600' : (type === 'success' ? 'bg-green-600' : 'bg-zinc-800');
+                toast.className = `${bg} text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg fade-in pointer-events-auto transition-opacity duration-300`;
+                toast.innerText = message;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            },
+
+            customPrompt(title, callback) {
+                document.getElementById('prompt-title').innerText = title;
+                const input = document.getElementById('prompt-input');
+                input.value = '';
+                document.getElementById('prompt-modal').style.display = 'flex';
+                
+                document.getElementById('prompt-cancel').onclick = () => {
+                    document.getElementById('prompt-modal').style.display = 'none';
+                };
+                document.getElementById('prompt-confirm').onclick = () => {
+                    document.getElementById('prompt-modal').style.display = 'none';
+                    if (input.value.trim() !== '') {
+                        callback(input.value.trim());
+                    }
+                };
             },
 
             // --- INITIALIZATION ---
@@ -1024,12 +1072,13 @@
                 const user = this.state.db.users.find(x => (x.username === u || x.id === u) && x.pass === p);
                 
                 if (user) {
-                    if (user.status === 'banned') return alert('This account has been banned by an administrator.');
+                    if (user.status === 'banned') return this.showToast('This account has been banned by an administrator.', 'error');
                     this.state.currentUser = user;
                     sessionStorage.setItem('edustream_session', user.id);
+                    this.showToast('Logged in successfully', 'success');
                     this.routeUser();
                 } else {
-                    alert('Invalid credentials');
+                    this.showToast('Invalid credentials', 'error');
                 }
             },
 
@@ -1038,8 +1087,8 @@
                 const u = document.getElementById('reg-user').value.trim();
                 const p = document.getElementById('reg-pass').value.trim();
                 
-                if(!name || !u || !p) return alert("All fields required");
-                if(this.state.db.users.find(x => x.username === u)) return alert("Username taken");
+                if(!name || !u || !p) return this.showToast("All fields required", "error");
+                if(this.state.db.users.find(x => x.username === u)) return this.showToast("Username taken", "error");
 
                 const newUser = {
                     id: 'u_' + Date.now(),
@@ -1060,6 +1109,7 @@
                 this.saveDB();
                 this.state.currentUser = newUser;
                 sessionStorage.setItem('edustream_session', newUser.id);
+                this.showToast('Account created successfully', 'success');
                 this.routeUser();
             },
 
@@ -1068,6 +1118,7 @@
                 sessionStorage.removeItem('edustream_session');
                 this.closeModal('settings-modal');
                 this.navigateLanding();
+                this.showToast('Logged out');
             },
 
             routeUser() {
@@ -1158,7 +1209,7 @@
                                 <h3 class="font-bold text-sm leading-tight mb-1 line-clamp-2">${post.text}</h3>
                                 <p class="text-xs text-gray-400">${author.name} <i class="fas fa-check-circle text-[#d4af37] text-[10px]"></i> • ${post.views || 'New'} views • ${this.formatTime(post.timestamp)} ago</p>
                             </div>
-                            <div class="pt-1 text-gray-400" onclick="event.stopPropagation(); alert('Post options menu opening...')"><i class="fas fa-ellipsis-v"></i></div>
+                            <div class="pt-1 text-gray-400" onclick="event.stopPropagation(); app.showToast('Post options menu opening...')"><i class="fas fa-ellipsis-v"></i></div>
                         </div>
                     `;
                     feedScroll.appendChild(el);
@@ -1177,7 +1228,7 @@
                 const mediaContainer = document.getElementById('player-media-container');
                 if(post.type === 'video') mediaContainer.innerHTML = `<video src="${post.media}" controls autoplay class="w-full h-full object-contain"></video>`;
                 else if(post.type === 'image') mediaContainer.innerHTML = `<img src="${post.media}" class="w-full h-full object-contain">`;
-                else mediaContainer.innerHTML = `<div class="pdf-frame"><i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i><button class="btn-primary w-auto px-8">Open PDF</button></div>`;
+                else mediaContainer.innerHTML = `<div class="pdf-frame"><i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i><button class="btn-primary w-auto px-8" onclick="app.showToast('Downloading PDF...', 'success')">Open PDF</button></div>`;
 
                 // Set Metadata
                 document.getElementById('player-title').innerText = post.text;
@@ -1356,7 +1407,7 @@
                 content.innerHTML = `
                     <div class="flex items-center justify-between p-4 border-b border-zinc-900">
                         <h2 class="font-bold text-xl">Inbox</h2>
-                        <i class="fas fa-edit text-xl text-gray-400 cursor-pointer"></i>
+                        <i class="fas fa-edit text-xl text-gray-400 cursor-pointer" onclick="app.showToast('New message feature coming soon')"></i>
                     </div>
 
                     <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-zinc-900">
@@ -1419,7 +1470,7 @@
                                 <p class="text-sm"><strong>Abebe Tech</strong> started following you.</p>
                                 <p class="text-xs text-gray-500">2h ago</p>
                             </div>
-                            <button class="bg-[#d4af37] text-black text-xs px-3 py-1.5 rounded font-bold">Follow Back</button>
+                            <button class="bg-[#d4af37] text-black text-xs px-3 py-1.5 rounded font-bold" onclick="app.showToast('Followed back!', 'success'); this.innerText='Following'; this.classList.remove('bg-[#d4af37]', 'text-black'); this.classList.add('bg-zinc-800', 'text-white');">Follow Back</button>
                         </div>
                         <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition">
                             <div class="w-12 h-12 rounded-full bg-red-900/50 flex items-center justify-center text-red-500"><i class="fas fa-heart"></i></div>
@@ -1499,7 +1550,7 @@
                         <button class="font-bold text-lg flex items-center gap-2" onclick="${isMe ? "app.openModal('account-switcher-modal')" : ""}">
                             ${user.name} ${isMe ? '<i class="fas fa-chevron-down text-xs"></i>' : ''}
                         </button>
-                        <button onclick="${isMe ? "app.openModal('settings-modal')" : "alert('Report/Block menu opening...') "}" class="text-xl text-white">
+                        <button onclick="${isMe ? "app.openModal('settings-modal')" : "app.showToast('Report/Block menu opening...') "}" class="text-xl text-white">
                             <i class="${isMe ? 'fas fa-bars' : 'fas fa-ellipsis-h'}"></i>
                         </button>
                     </div>
@@ -1641,7 +1692,7 @@
                 if (file.type.startsWith('image/')) typeStr = 'image';
                 else if (file.type.startsWith('video/')) typeStr = 'video';
                 else if (file.type === 'application/pdf') typeStr = 'pdf';
-                else return alert('Unsupported file format. Use Video, Image, or PDF.');
+                else return this.showToast('Unsupported file format. Use Video, Image, or PDF.', 'error');
 
                 // Simulate progress for large files
                 const progressContainer = document.getElementById('upload-progress');
@@ -1694,7 +1745,7 @@
                 const text = document.getElementById('post-text').value.trim();
                 const d = this.state.uploadData;
                 
-                if (!text && !d.url) return alert('Please write something or attach a file.');
+                if (!text && !d.url) return this.showToast('Please write something or attach a file.', 'error');
 
                 const newPost = {
                     id: 'p_' + Date.now(),
@@ -1712,6 +1763,7 @@
                 this.saveDB();
                 this.closeModal('post-modal');
                 this.navigate('feed');
+                this.showToast('Lesson published!', 'success');
             },
 
             // --- PROFILE EDITING ---
@@ -1727,7 +1779,7 @@
             updateAvatarPreview(e) {
                 const file = e.target.files[0];
                 if(file) {
-                    if(file.size > 2 * 1024 * 1024) return alert("Avatar must be under 2MB.");
+                    if(file.size > 2 * 1024 * 1024) return this.showToast("Avatar must be under 2MB.", 'error');
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         document.getElementById('edit-avatar-preview').innerHTML = `<img src="${ev.target.result}" data-b64="${ev.target.result}" class="w-full h-full object-cover">`;
@@ -1746,6 +1798,7 @@
                 this.saveDB();
                 this.closeModal('edit-profile-modal');
                 this.renderProfile(u.id);
+                this.showToast('Profile updated!', 'success');
             },
 
             // --- QR & MODALS ---
@@ -1789,7 +1842,7 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                alert("QR Code downloaded!");
+                this.showToast("QR Code downloaded!", 'success');
             },
 
             shareProfile() {
@@ -1799,7 +1852,7 @@
                     .catch(console.error);
                 } else {
                     navigator.clipboard.writeText(url);
-                    alert('Profile link copied to clipboard!');
+                    this.showToast('Profile link copied to clipboard!', 'success');
                 }
             },
 
@@ -1811,7 +1864,7 @@
                 setTimeout(() => {
                     line.classList.add('hidden');
                     line.style.animation = 'none';
-                    alert(isUpload ? 'Image scanned successfully! (Demo User Found)' : 'QR Code detected! (Demo User Found)');
+                    this.showToast(isUpload ? 'Image scanned successfully! (Demo User Found)' : 'QR Code detected! (Demo User Found)', 'success');
                     this.closeModal('qr-scanner-modal');
                 }, 2500);
             },
@@ -1858,7 +1911,7 @@
                 this.renderLanguageList();
                 setTimeout(() => {
                     this.closeModal('language-modal');
-                    alert(`Language preferences updated to: ${langName}`);
+                    this.showToast(`Language preferences updated to: ${langName}`, 'success');
                 }, 300);
             },
 
@@ -1935,7 +1988,7 @@
                             <td class="p-4 font-bold text-sm">${u.username}</td>
                             <td class="p-4"><span class="badge ${u.role === 'super' ? 'badge-super' : 'badge-standard'}">${u.role}</span></td>
                             <td class="p-4 text-right">
-                                ${u.id !== me.id ? `<button onclick="alert('Demote logic here')" class="text-danger hover:text-white"><i class="fas fa-arrow-down"></i></button>` : '<span class="text-xs text-gray-500">You</span>'}
+                                ${u.id !== me.id ? `<button onclick="app.showToast('Demote logic here')" class="text-danger hover:text-white"><i class="fas fa-arrow-down"></i></button>` : '<span class="text-xs text-gray-500">You</span>'}
                             </td>
                         </tr>
                     `).join('');
@@ -1986,19 +2039,19 @@
                     u.status = u.status === 'active' ? 'banned' : 'active';
                     this.saveDB();
                     this.switchAdminTab('users');
+                    this.showToast(`User ${u.username} has been ${u.status}`, 'success');
                 }
             },
 
             warnUser(id) {
                 const u = this.getUser(id);
                 if(u) {
-                    const reason = prompt("Enter warning reason:");
-                    if(reason) {
+                    this.customPrompt(`Send Warning to ${u.username}`, (reason) => {
                         u.warnings = (u.warnings || 0) + 1;
                         this.saveDB();
                         this.switchAdminTab('users');
-                        alert(`Warning sent to ${u.username}. Total warnings: ${u.warnings}`);
-                    }
+                        this.showToast(`Warning sent to ${u.username}. Total warnings: ${u.warnings}`, 'warning');
+                    });
                 }
             },
 
@@ -2011,7 +2064,7 @@
                     subPrice: document.getElementById('ai-sub').value
                 };
                 this.saveDB();
-                alert('Platform Information Updated!');
+                this.showToast('Platform Information Updated!', 'success');
             }
         };
 
@@ -2022,3 +2075,5 @@
     </script>
 </body>
 </html>
+
+```
