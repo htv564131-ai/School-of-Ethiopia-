@@ -1,460 +1,749 @@
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>School of Ethiopian</title>
+    <title>School of Ethiopian - Learning Platform</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         :root {
-            --bg-dark: #0f0f0f;
-            --bg-panel: #1a1a1a;
-            --text-main: #f1f1f1;
-            --text-muted: #aaaaaa;
+            /* Theme Variables */
+            --bg-base: #000000;
+            --bg-panel: #121212;
+            --bg-hover: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #888888;
             --accent: #d4af37; /* Ethiopian Gold */
             --accent-hover: #b5952f;
-            --danger: #ff4b4b;
-            --success: #25d366;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --border-color: #262626;
+            
+            /* UI Dimensions */
+            --bottom-nav-height: 60px;
+            --header-height: 55px;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-base);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
         }
 
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
+        /* Mobile App Container Constraint */
         .app-container {
-            max-width: 600px; /* Mobile first styling wrapper */
+            max-width: 600px;
             margin: 0 auto;
             min-height: 100vh;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-base);
             position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
         }
 
-        /* --- VISITOR PAGE (WANDER INSPIRATION) --- */
-        .visitor-hero {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=1000&auto=format&fit=crop') center/cover;
-            border-radius: 0 0 30px 30px;
-        }
-        .feature-card { background: #1a1a1a; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; border: 1px solid #333; }
-        .destination-card { min-width: 140px; height: 200px; border-radius: 12px; position: relative; overflow: hidden; margin-right: 10px; background: #222; }
-        .destination-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-        .destination-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
+        /* ------------------------------------
+           UTILITIES & ANIMATIONS
+        ------------------------------------ */
+        .hidden { display: none !important; }
+        .glass { background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .slide-up { animation: slideUp 0.3s ease-out forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* --- UI COMPONENTS --- */
+        /* ------------------------------------
+           NAVIGATION (BOTTOM NAV)
+        ------------------------------------ */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 600px; background-color: var(--bg-dark);
-            border-top: 1px solid #333; display: flex; justify-content: space-around;
-            padding: 10px 0; padding-bottom: env(safe-area-inset-bottom, 10px); z-index: 50;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 600px;
+            height: var(--bottom-nav-height);
+            background-color: var(--bg-base);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 50;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
-        .nav-item { color: var(--text-muted); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; width: 20%; transition: 0.2s;}
-        .nav-item.active { color: var(--text-main); font-weight: 600; }
-        .nav-item i { font-size: 22px; margin-bottom: 4px; }
+
+        .nav-item {
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        
+        .nav-item.active { color: var(--text-main); font-weight: 700; }
+        .nav-item i { font-size: 22px; margin-bottom: 3px; }
         
         .nav-fab {
-            background: linear-gradient(45deg, #222, var(--accent)); color: white;
-            width: 45px; height: 30px; border-radius: 10px; display: flex;
-            justify-content: center; align-items: center; font-size: 16px; margin-top: -5px;
+            background: linear-gradient(45deg, #111, var(--accent));
+            color: white;
+            width: 48px;
+            height: 32px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
         }
 
-        /* --- SIDEBAR MENU (HAMBURGER) --- */
-        #sidebar-menu {
-            position: fixed; top: 0; left: -100%; width: 75%; max-width: 350px; height: 100vh;
-            background: #111; z-index: 100; transition: left 0.3s ease;
-            border-right: 1px solid #333; display: flex; flex-direction: column;
+        /* ------------------------------------
+           FEED & POSTS
+        ------------------------------------ */
+        .feed-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: calc(100vh - var(--bottom-nav-height));
         }
-        #sidebar-menu.open { left: 0; }
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 99; display: none; backdrop-filter: blur(2px);
+
+        .post-card {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            scroll-snap-align: start;
         }
-        .sidebar-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; font-size: 15px; color: #eee; cursor: pointer; transition: 0.2s; }
-        .sidebar-item:hover { background: #222; }
-        .sidebar-item i { width: 20px; text-align: center; font-size: 18px; color: #ccc; }
 
-        /* --- INBOX --- */
-        .story-bubble { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #333; padding: 2px; position: relative; flex-shrink: 0; }
-        .story-bubble.active { border-color: var(--danger); }
-        .story-bubble img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .inbox-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; cursor: pointer; transition: 0.2s; }
-        .inbox-item:active { background: #222; }
-        .inbox-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #333; flex-shrink: 0; }
-        .inbox-badge { background: var(--danger); color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+        .media-container {
+            width: 100%;
+            max-height: 75vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .media-container img, .media-container video {
+            width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+        }
 
-        /* --- PROFILE --- */
-        .profile-avatar-lg { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 15px; background: #333; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 32px;}
-        .social-link-tag { display: inline-flex; align-items: center; gap: 5px; background: #222; padding: 6px 12px; border-radius: 4px; font-size: 13px; margin: 4px; border: 1px solid #333;}
-        .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-        .grid-item { aspect-ratio: 1; background: #222; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        /* PDF Preview Styling */
+        .pdf-frame {
+            width: 90%;
+            margin: 10px auto;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-panel);
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .pdf-frame::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--danger);
+        }
+        .pdf-frame i { font-size: 48px; color: var(--danger); margin-bottom: 15px; }
+
+        .action-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-main); background: none; border: none; cursor: pointer; transition: 0.2s; }
+        .action-btn:hover { color: var(--text-muted); }
+        .action-btn.liked { color: var(--danger); }
+        .action-btn.saved { color: var(--accent); }
+        .action-btn.reposted { color: var(--success); }
+
+        /* ------------------------------------
+           PROFILE TIKTOK STYLE
+        ------------------------------------ */
+        .profile-header-actions {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;
+            position: sticky; top: 0; background: var(--bg-base); z-index: 10;
+        }
+        .profile-avatar-lg {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px;
+            background: var(--bg-panel); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 36px;
+            border: 2px solid var(--border-color);
+        }
+        .stat-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .stat-val { font-weight: 700; font-size: 18px; }
+        .stat-label { font-size: 13px; color: var(--text-muted); }
+        
+        .profile-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
+        .profile-tab { flex: 1; text-align: center; padding: 12px 0; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; }
+        .profile-tab.active { color: var(--text-main); border-bottom-color: var(--text-main); font-weight: 600; }
+
+        .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-color); }
+        .grid-item { aspect-ratio: 1; background: var(--bg-base); position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
+        .grid-item-overlay { position: absolute; bottom: 4px; left: 4px; font-size: 12px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px; }
 
-        /* --- MODALS & FORMS --- */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal { background: var(--bg-panel); width: 95%; max-width: 400px; border-radius: 12px; padding: 20px; max-height: 85vh; overflow-y: auto; position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; }
-        .input-field { width: 100%; background: #222; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; }
-        .input-field:focus { border-color: var(--accent); }
-        .btn-primary { width: 100%; background: var(--accent); color: #000; font-weight: bold; padding: 12px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; }
-        .btn-primary:hover { background: var(--accent-hover); }
+        /* ------------------------------------
+           INBOX & DISCOVER
+        ------------------------------------ */
+        .story-ring {
+            width: 65px; height: 65px; border-radius: 50%; padding: 3px;
+            background: linear-gradient(45deg, var(--warning), var(--danger));
+            display: flex; justify-content: center; align-items: center;
+        }
+        .story-ring.live { background: linear-gradient(45deg, #ff0050, #00f2fe); }
+        .story-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-base); border: 2px solid var(--bg-base); overflow: hidden; }
+        .story-inner img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- QR SCANNER ANIMATION --- */
-        .qr-scanner-box { width: 250px; height: 250px; border: 2px solid var(--accent); margin: 0 auto; position: relative; overflow: hidden; border-radius: 20px; background: #000; }
-        .qr-scan-line { width: 100%; height: 3px; background: var(--danger); position: absolute; top: 0; left: 0; animation: scan 2s infinite linear; box-shadow: 0 0 10px var(--danger); }
-        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+        .inbox-tab { padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
+        .inbox-tab.active { background: var(--bg-panel); color: var(--text-main); }
 
-        .hidden { display: none !important; }
+        .search-bar-container { background: var(--bg-panel); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+        .search-input { background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 14px; }
+
+        /* ------------------------------------
+           MODALS & OVERLAYS
+        ------------------------------------ */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100;
+            display: none; align-items: flex-end; /* Bottom sheet style */
+            justify-content: center;
+        }
+        .overlay.center { align-items: center; }
+        .modal {
+            background: var(--bg-panel); width: 100%; max-width: 600px;
+            border-radius: 20px 20px 0 0; padding: 25px 20px;
+            max-height: 90vh; overflow-y: auto; position: relative;
+        }
+        .modal.center { border-radius: 15px; width: 90%; max-width: 400px; }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 10px; }
+        .modal-drag-handle { width: 40px; height: 5px; background: #333; border-radius: 5px; margin: 0 auto 20px; }
+
+        /* ------------------------------------
+           FORMS & BUTTONS
+        ------------------------------------ */
+        .input-field {
+            width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: white;
+            padding: 14px; border-radius: 10px; margin-bottom: 15px; outline: none; transition: 0.3s;
+        }
+        .input-field:focus { border-color: var(--accent); background: #222; }
+        
+        .btn-primary {
+            width: 100%; background: var(--accent); color: #000; font-weight: 700;
+            padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(1px); }
+        
+        .btn-secondary {
+            width: 100%; background: transparent; color: var(--text-main); font-weight: 600;
+            padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;
+        }
+        .btn-secondary:hover { background: var(--bg-hover); }
+        
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;
+        }
+
+        /* ------------------------------------
+           ADMIN PANEL
+        ------------------------------------ */
+        .admin-sidebar { background: #0a0a0a; border-right: 1px solid var(--border-color); width: 250px; display: flex; flex-direction: column; }
+        .admin-nav-item { padding: 15px 20px; cursor: pointer; border-left: 3px solid transparent; color: var(--text-muted); display: flex; gap: 10px; align-items: center; }
+        .admin-nav-item:hover { background: #111; color: white; }
+        .admin-nav-item.active { border-left-color: var(--accent); color: white; background: #1a1a1a; font-weight: bold; }
+        
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge-super { background: rgba(212, 175, 55, 0.2); color: var(--accent); }
+        .badge-standard { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .badge-banned { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
     </style>
 </head>
 <body>
 
-    <!-- ================= 1. VISITOR PAGE (LANDING) ================= -->
-    <div id="visitor-view" class="app-container">
-        <!-- Hero Section -->
-        <div class="visitor-hero h-[50vh] flex flex-col justify-between p-6 relative">
-            <div class="flex justify-between items-center text-white relative z-10">
-                <div class="font-bold text-xl tracking-wider">SOE<span class="text-[#d4af37]">.</span></div>
-                <div class="flex gap-4 text-sm font-semibold">
-                    <span class="cursor-pointer" onclick="app.openModal('language-modal')"><i class="fas fa-globe"></i> <span data-i18n="lang">Lang</span></span>
+    <!-- ==========================================
+         VISITOR / LANDING VIEW
+    ========================================== -->
+    <div id="landing-view" class="app-container fade-in">
+        <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <!-- Custom SVG Logo -->
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black">
+                    <i class="fas fa-book-open"></i>
                 </div>
+                <span class="font-bold text-xl tracking-tight">EduStream Ethiopia</span>
             </div>
-            <div class="relative z-10 mb-8">
-                <h1 class="text-4xl font-extrabold text-white leading-tight mb-2 uppercase" data-i18n="school_title">SCHOOL OF ETHIOPIAN</h1>
-                <p class="text-sm text-gray-200 mb-6 w-4/5" data-i18n="school_desc">Discover breathtaking knowledge across Ethiopia with curated learning, local insights, and hassle-free networking in one platform.</p>
-                <div class="flex gap-3">
-                    <button onclick="app.showAuth()" class="bg-white text-black px-6 py-2 rounded-full font-bold text-sm shadow-lg hover:bg-gray-200 transition" data-i18n="join">Plan Your Journey</button>
-                </div>
-            </div>
-        </div>
+            <button onclick="app.navigateAuth()" class="bg-white text-black px-4 py-1.5 rounded-full font-bold text-sm hover:bg-gray-200 transition">Log In</button>
+        </header>
 
-        <!-- Features -->
-        <div class="p-6 bg-[#0f0f0f]">
-            <h2 class="text-lg font-bold mb-4" data-i18n="why_choose">Why Thousands Choose SOE</h2>
-            <div class="feature-card">
-                <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-2xl text-[#d4af37]"><i class="fas fa-map-signs"></i></div>
-                <div>
-                    <h3 class="font-bold text-sm" data-i18n="feat1_title">Local Expertise</h3>
-                    <p class="text-xs text-gray-400" data-i18n="feat1_desc">Unique experiences with insider knowledge.</p>
+        <main class="flex-1 overflow-y-auto pb-10">
+            <!-- Hero Section -->
+            <div class="relative w-full h-[500px] bg-zinc-900 flex flex-col justify-end p-6 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Students">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                
+                <div class="relative z-10 text-center mb-10">
+                    <h1 class="text-4xl font-extrabold mb-3 leading-tight">Learn from the <span style="color: var(--accent)">Best.</span><br>Anywhere.</h1>
+                    <p class="text-gray-300 text-sm mb-6">Join Ethiopia's premier video learning platform. Connect with educators, students, and creators.</p>
+                    <button onclick="app.navigateAuth('signup')" class="btn-primary w-3/4 mx-auto !rounded-full !py-4 text-lg shadow-[0_0_20px_rgba(212,175,55,0.4)]">Start Learning Free</button>
                 </div>
             </div>
-            <div class="feature-card">
-                <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-2xl text-[#d4af37]"><i class="fas fa-calendar-check"></i></div>
-                <div>
-                    <h3 class="font-bold text-sm" data-i18n="feat2_title">All-in-One Platform</h3>
-                    <p class="text-xs text-gray-400" data-i18n="feat2_desc">Learn, connect, and share in one place.</p>
-                </div>
-            </div>
-            
-            <!-- Destinations/Top Content -->
-            <div class="mt-8">
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-lg font-bold" data-i18n="top_content">Top Destinations</h2>
-                </div>
-                <div class="flex overflow-x-auto hide-scrollbar pb-4">
-                    <div class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1600100397608-f010f419c8de?q=80&w=400&auto=format&fit=crop">
-                        <div class="destination-info">
-                            <h4 class="font-bold text-sm text-white">Lalibela</h4>
-                            <p class="text-[10px] text-[#d4af37]"><i class="fas fa-star"></i> 4.9 (12k)</p>
-                        </div>
+
+            <!-- Trending Categories -->
+            <div class="p-4">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-fire text-orange-500"></i> Explore Topics</h2>
+                <div class="flex gap-3 overflow-x-auto pb-4 hide-scrollbar snap-x">
+                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-blue-900 to-blue-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <i class="fas fa-laptop-code absolute top-3 right-3 text-2xl opacity-50"></i>
+                        <span class="font-bold text-sm relative z-10">Technology & IT</span>
                     </div>
-                    <div class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1549491129-d56de5420d5a?q=80&w=400&auto=format&fit=crop">
-                        <div class="destination-info">
-                            <h4 class="font-bold text-sm text-white">Addis Ababa</h4>
-                            <p class="text-[10px] text-[#d4af37]"><i class="fas fa-star"></i> 4.8 (8k)</p>
-                        </div>
+                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-green-900 to-green-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <i class="fas fa-flask absolute top-3 right-3 text-2xl opacity-50"></i>
+                        <span class="font-bold text-sm relative z-10">Sciences</span>
+                    </div>
+                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-purple-900 to-purple-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <i class="fas fa-language absolute top-3 right-3 text-2xl opacity-50"></i>
+                        <span class="font-bold text-sm relative z-10">Languages</span>
+                    </div>
+                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-red-900 to-red-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <i class="fas fa-calculator absolute top-3 right-3 text-2xl opacity-50"></i>
+                        <span class="font-bold text-sm relative z-10">Mathematics</span>
                     </div>
                 </div>
             </div>
-            
-            <button onclick="app.showAuth()" class="btn-primary mt-4" data-i18n="login_join">Login / Register to Continue</button>
-        </div>
+
+            <!-- Fake Trending Video Previews -->
+            <div class="p-4">
+                <h2 class="text-lg font-bold mb-4">Trending Previews</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="aspect-[9/16] bg-zinc-800 rounded-lg relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" class="w-full h-full object-cover opacity-70">
+                        <div class="absolute bottom-2 left-2 right-2 text-xs font-bold line-clamp-2">Introduction to Python Programming (Amharic)</div>
+                        <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px]"><i class="fas fa-play text-white"></i></div>
+                    </div>
+                    <div class="aspect-[9/16] bg-zinc-800 rounded-lg relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80" class="w-full h-full object-cover opacity-70">
+                        <div class="absolute bottom-2 left-2 right-2 text-xs font-bold line-clamp-2">Ethiopian History: Grade 10 Review</div>
+                        <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px]"><i class="fas fa-play text-white"></i></div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- ================= 2. AUTHENTICATION ================= -->
-    <div id="auth-view" class="app-container hidden flex-col justify-center items-center p-6">
-        <button onclick="app.showVisitor()" class="absolute top-6 left-6 text-gray-400"><i class="fas fa-arrow-left"></i></button>
-        <h1 class="text-3xl font-bold mb-2 text-center" style="color: var(--accent);">SOE App</h1>
-        <p class="text-gray-400 mb-8 text-center text-sm" data-i18n="auth_sub">Enter the community.</p>
+    <!-- ==========================================
+         AUTHENTICATION VIEW
+    ========================================== -->
+    <div id="auth-view" class="app-container hidden fade-in flex flex-col justify-center items-center p-6 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800')] bg-cover bg-center">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         
-        <div class="w-full bg-[#1a1a1a] p-6 rounded-xl border border-gray-800 shadow-2xl">
-            <div id="login-form">
-                <h2 class="text-xl font-semibold mb-4" data-i18n="login">Log In</h2>
-                <input type="text" id="login-user" class="input-field" placeholder="Username">
-                <input type="password" id="login-pass" class="input-field" placeholder="Password">
-                <button onclick="app.login()" class="btn-primary mb-4" data-i18n="login">Log In</button>
-                <p class="text-sm text-center text-gray-400">New here? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Sign Up</span></p>
+        <div class="relative z-10 w-full max-w-md">
+            <div class="flex justify-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black shadow-lg shadow-yellow-900/50">
+                    <i class="fas fa-book-open text-3xl"></i>
+                </div>
             </div>
+            <h1 class="text-3xl font-extrabold mb-2 text-center text-white">EduStream</h1>
+            <p class="text-gray-400 mb-8 text-center text-sm">Sign in to continue learning</p>
+            
+            <div class="w-full bg-[#121212]/90 border border-zinc-800 p-6 rounded-2xl shadow-2xl">
+                <!-- Login Form -->
+                <div id="login-form">
+                    <input type="text" id="login-user" class="input-field bg-black/50" placeholder="Username or Email">
+                    <input type="password" id="login-pass" class="input-field bg-black/50" placeholder="Password">
+                    <button onclick="app.login()" class="btn-primary mb-4">Log In</button>
+                    <p class="text-sm text-center text-gray-400">Don't have an account? <span class="text-[#d4af37] cursor-pointer font-bold hover:underline" onclick="app.toggleAuth()">Sign Up</span></p>
+                    <p class="text-xs text-center text-gray-500 mt-4 cursor-pointer" onclick="app.navigateLanding()">← Back to Home</p>
+                </div>
 
-            <div id="signup-form" class="hidden">
-                <h2 class="text-xl font-semibold mb-4" data-i18n="signup">Sign Up</h2>
-                <input type="text" id="reg-user" class="input-field" placeholder="Choose a Username">
-                <input type="password" id="reg-pass" class="input-field" placeholder="Choose a Password">
-                <button onclick="app.signup()" class="btn-primary mb-4" data-i18n="signup">Create Account</button>
-                <p class="text-sm text-center text-gray-400">Already registered? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Log In</span></p>
+                <!-- Signup Form -->
+                <div id="signup-form" class="hidden">
+                    <input type="text" id="reg-name" class="input-field bg-black/50" placeholder="Full Name">
+                    <input type="text" id="reg-user" class="input-field bg-black/50" placeholder="Username">
+                    <input type="password" id="reg-pass" class="input-field bg-black/50" placeholder="Password">
+                    <button onclick="app.signup()" class="btn-primary mb-4">Create Account</button>
+                    <p class="text-sm text-center text-gray-400">Already registered? <span class="text-[#d4af37] cursor-pointer font-bold hover:underline" onclick="app.toggleAuth()">Log In</span></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ================= 3. MAIN APP ================= -->
-    <div id="main-view" class="app-container hidden">
-        <!-- Header -->
-        <header class="sticky top-0 bg-[#0f0f0f] z-40 border-b border-gray-800 p-4 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <i class="fas fa-bars text-xl cursor-pointer" onclick="app.toggleSidebar()"></i>
-                <h1 class="text-lg font-bold" style="color: var(--accent);">SOE</h1>
+    <!-- ==========================================
+         MAIN APP VIEW (User Logged In)
+    ========================================== -->
+    <div id="main-view" class="app-container hidden fade-in">
+        
+        <!-- App Header (Hidden on Profile, dynamically managed) -->
+        <header id="main-header" class="h-[var(--header-height)] glass sticky top-0 z-40 border-b border-[var(--border-color)] px-4 flex justify-between items-center transition-all">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black text-xs">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h1 class="text-lg font-bold">EduStream</h1>
             </div>
             <div class="flex gap-4 items-center">
-                <i class="fas fa-globe text-lg cursor-pointer text-gray-400" onclick="app.openModal('language-modal')"></i>
-                <i class="fas fa-search text-lg cursor-pointer text-gray-400"></i>
+                <button onclick="app.openModal('language-modal')" class="text-gray-300 hover:text-white" title="Change Language"><i class="fas fa-globe"></i></button>
+                <button onclick="app.navigate('discover')" class="text-gray-300 hover:text-white"><i class="fas fa-search"></i></button>
             </div>
         </header>
 
-        <!-- Content Area -->
-        <div id="content-area" class="pb-20"></div>
+        <!-- Dynamic Content Area -->
+        <div id="content-area" class="flex-1 overflow-y-auto bg-black pb-[var(--bottom-nav-height)] relative">
+            <!-- Content Injected Here via JS -->
+        </div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="app.navigate('feed')">
-                <i class="fas fa-home"></i><span data-i18n="home">Home</span>
+            <div class="nav-item active" onclick="app.navigate('feed')" id="nav-feed">
+                <i class="fas fa-home"></i><span>Home</span>
             </div>
-            <div class="nav-item" onclick="app.navigate('discover')">
-                <i class="fas fa-compass"></i><span data-i18n="discover">Discover</span>
+            <div class="nav-item" onclick="app.navigate('discover')" id="nav-discover">
+                <i class="fas fa-compass"></i><span>Discover</span>
             </div>
-            <div class="nav-item" onclick="alert('Post modal open...')">
+            <div class="nav-item" onclick="app.openPostModal()" id="nav-create">
                 <div class="nav-fab"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="nav-item" onclick="app.navigate('inbox')">
-                <div class="relative">
-                    <i class="fas fa-comment-dots"></i>
-                    <div class="absolute -top-1 -right-2 bg-red-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">5</div>
+            <div class="nav-item" onclick="app.navigate('inbox')" id="nav-inbox">
+                <i class="fas fa-comment-dots"></i><span id="inbox-badge-text">Inbox</span>
+            </div>
+            <div class="nav-item" onclick="app.navigate('profile')" id="nav-profile">
+                <i class="fas fa-user"></i><span>Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ADMIN PANEL VIEW
+    ========================================== -->
+    <div id="admin-view" class="hidden w-full min-h-screen bg-black text-white flex fade-in">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar fixed h-full z-20 md:relative transition-transform transform -translate-x-full md:translate-x-0" id="admin-sidebar">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-[#111]">
+                <div>
+                    <h2 class="font-bold text-xl text-[#d4af37]">EduAdmin</h2>
+                    <span id="admin-role-badge" class="badge badge-super mt-1 inline-block">Super Admin</span>
                 </div>
-                <span data-i18n="inbox">Inbox</span>
+                <button class="md:hidden text-white" onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"><i class="fas fa-times"></i></button>
             </div>
-            <div class="nav-item" onclick="app.navigate('profile')">
-                <i class="fas fa-user"></i><span data-i18n="profile">Profile</span>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <div class="admin-nav-item active" onclick="app.switchAdminTab('dashboard', this)"><i class="fas fa-chart-line w-6"></i> Dashboard</div>
+                <div class="admin-nav-item" onclick="app.switchAdminTab('users', this)"><i class="fas fa-users w-6"></i> User Management</div>
+                <div class="admin-nav-item" id="nav-admin-mgt" onclick="app.switchAdminTab('admins', this)"><i class="fas fa-shield-alt w-6"></i> Admin Management</div>
+                <div class="admin-nav-item" onclick="app.switchAdminTab('info', this)"><i class="fas fa-info-circle w-6"></i> Platform Info</div>
+                <div class="admin-nav-item" onclick="app.openModal('qr-scanner-modal')"><i class="fas fa-qrcode w-6"></i> Scan QR Code</div>
+            </nav>
+            <div class="p-4 border-t border-zinc-800">
+                <button onclick="app.logout()" class="btn-secondary w-full flex items-center justify-center gap-2 text-red-400 hover:text-red-300 border-red-900/50"><i class="fas fa-sign-out-alt"></i> Exit Admin</button>
             </div>
-        </div>
-    </div>
+        </aside>
 
-    <!-- ================= 4. SIDEBAR MENU ================= -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="app.toggleSidebar()"></div>
-    <div id="sidebar-menu">
-        <div class="p-5 border-b border-gray-800">
-            <div class="font-bold text-lg text-white" id="sidebar-username">User</div>
-            <div class="text-xs text-gray-500" data-i18n="menu_title">Menu Options</div>
-        </div>
-        
-        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Assets</div>
-        <div class="sidebar-item"><i class="fas fa-wallet"></i> Balance</div>
-        
-        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Personal Tools</div>
-        <div class="sidebar-item"><i class="fas fa-history"></i> Activity center</div>
-        <div class="sidebar-item"><i class="fas fa-download"></i> Offline videos</div>
-        <div class="sidebar-item" onclick="app.openModal('qr-modal'); app.toggleSidebar()"><i class="fas fa-qrcode"></i> Your QR code</div>
-        
-        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Creation & Business</div>
-        <div class="sidebar-item"><i class="fas fa-star text-[#d4af37]"></i> SOE Studio</div>
-        
-        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">General</div>
-        <div class="sidebar-item"><i class="fas fa-cog"></i> Settings and privacy</div>
-        
-        <div class="sidebar-item text-red-500 mt-auto border-t border-gray-800" onclick="app.logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
-    </div>
-
-    <!-- ================= 5. ADMIN PANEL ================= -->
-    <div id="admin-view" class="app-container hidden bg-[#111]">
-        <header class="sticky top-0 bg-gray-900 z-40 border-b border-gray-700 p-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-[#d4af37]"><i class="fas fa-shield-alt"></i> Admin Panel</h1>
-            <button onclick="app.logout()" class="text-gray-400 text-sm"><i class="fas fa-sign-out-alt"></i> Exit</button>
-        </header>
-
-        <!-- Admin Tabs -->
-        <div class="flex border-b border-gray-800 overflow-x-auto hide-scrollbar text-sm font-semibold">
-            <div class="px-4 py-3 cursor-pointer text-[#d4af37] border-b-2 border-[#d4af37] whitespace-nowrap" onclick="app.switchAdminTab('users', this)">Users</div>
-            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" id="admin-tab-managers" onclick="app.switchAdminTab('admins', this)">Admins</div>
-            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" onclick="app.switchAdminTab('info', this)">Platform Info</div>
-            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" onclick="app.switchAdminTab('qr', this)">QR Scanner</div>
-        </div>
-
-        <div class="p-4 pb-20" id="admin-content">
-            <!-- Dynamic Admin Content Injected Here -->
-        </div>
-    </div>
-
-    <!-- ================= MODALS ================= -->
-
-    <!-- Workable Language Selector Modal -->
-    <div id="language-modal" class="overlay">
-        <div class="modal" style="padding: 0; background: #111;">
-            <div class="p-4 border-b border-gray-800 flex items-center gap-4 sticky top-0 bg-[#1a1a1a] z-10">
-                <i class="fas fa-arrow-left cursor-pointer text-white" onclick="app.closeModal('language-modal')"></i>
-                <h2 class="text-lg font-bold text-white">Search language</h2>
-            </div>
-            <div class="flex flex-col max-h-[60vh] overflow-y-auto hide-scrollbar" id="language-list">
-                <!-- Rendered by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- QR Code Scanner Modal -->
-    <div id="qr-modal" class="overlay">
-        <div class="modal text-center">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('qr-modal')"></i>
-            <h2 class="text-xl font-bold mb-2 text-white"><i class="fas fa-qrcode"></i> Scan QR</h2>
-            <p class="text-xs text-gray-400 mb-6">Position QR code inside the frame to view profile or admin details.</p>
+        <!-- Admin Content -->
+        <main class="flex-1 h-screen overflow-y-auto relative">
+            <header class="h-[60px] border-b border-zinc-800 flex items-center px-4 bg-[#111] sticky top-0 z-10 md:hidden">
+                <button onclick="document.getElementById('admin-sidebar').classList.remove('-translate-x-full')" class="mr-4 text-xl"><i class="fas fa-bars"></i></button>
+                <h1 class="font-bold">EduAdmin Portal</h1>
+            </header>
             
-            <div class="qr-scanner-box mb-6">
-                <div class="qr-scan-line"></div>
-                <!-- Fake camera feed bg -->
-                <div class="w-full h-full bg-gray-900 opacity-50 flex items-center justify-center">
-                    <i class="fas fa-camera text-4xl text-gray-700"></i>
+            <div class="p-6 max-w-5xl mx-auto" id="admin-content-area">
+                <!-- Injected via JS -->
+            </div>
+        </main>
+    </div>
+
+
+    <!-- ==========================================
+         MODALS & OVERLAYS
+    ========================================== -->
+
+    <!-- Create Post Modal -->
+    <div id="post-modal" class="overlay">
+        <div class="modal slide-up">
+            <div class="modal-drag-handle"></div>
+            <h2 class="text-xl font-bold mb-4">Create Lesson or Post</h2>
+            
+            <textarea id="post-text" class="input-field h-24 resize-none text-lg" placeholder="Share knowledge, notes, or thoughts..."></textarea>
+            
+            <div class="bg-[#1a1a1a] border border-zinc-800 rounded-xl p-4 mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-300">Attach Media</label>
+                <p class="text-xs text-gray-500 mb-3">Upload Video, Image, or PDF. (Max 600MB simulated)</p>
+                
+                <div class="flex gap-2">
+                    <label class="flex-1 bg-[#222] hover:bg-[#333] border border-zinc-700 border-dashed rounded-lg p-4 flex flex-col items-center cursor-pointer transition">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-[#d4af37] mb-2"></i>
+                        <span class="text-xs font-bold">Select File</span>
+                        <input type="file" id="post-media" accept="image/*,video/*,application/pdf" class="hidden" onchange="app.handleFileSelect(event)">
+                    </label>
+                </div>
+
+                <div id="media-preview" class="w-full mt-4 bg-black rounded overflow-hidden hidden relative">
+                    <!-- Preview injected here -->
+                    <button onclick="app.clearMedia()" class="absolute top-2 right-2 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="app.simulateQRScan()">Simulate Scan</button>
+            <button onclick="app.submitPost()" class="btn-primary py-4 text-lg">Publish Post</button>
         </div>
     </div>
 
-    <!-- Javascript Application Logic -->
+    <!-- Account Switcher Modal -->
+    <div id="account-switcher-modal" class="overlay center">
+        <div class="modal center fade-in pb-4">
+            <i class="fas fa-times modal-close" onclick="app.closeModal('account-switcher-modal')"></i>
+            <h2 class="text-lg font-bold mb-4 text-center">Switch Account</h2>
+            
+            <div id="account-list" class="flex flex-col gap-2 mb-4">
+                <!-- Current account injected here -->
+            </div>
+            
+            <button onclick="app.logout(); app.closeModal('account-switcher-modal'); app.toggleAuth();" class="w-full p-3 rounded-lg border border-dashed border-zinc-600 text-gray-300 hover:bg-zinc-800 flex items-center justify-center gap-2 transition">
+                <i class="fas fa-plus"></i> Add or Create Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile Settings (Hamburger) Modal -->
+    <div id="settings-modal" class="overlay">
+        <div class="modal slide-up">
+            <div class="modal-drag-handle"></div>
+            <h2 class="text-xl font-bold mb-4">Settings & Privacy</h2>
+            
+            <div class="flex flex-col gap-1">
+                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]" onclick="app.openEditProfile()">
+                    <div class="flex items-center gap-3"><i class="fas fa-user-edit w-5 text-gray-400"></i> Edit Profile</div>
+                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
+                </button>
+                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]" onclick="app.openModal('qr-scanner-modal'); app.closeModal('settings-modal');">
+                    <div class="flex items-center gap-3"><i class="fas fa-qrcode w-5 text-gray-400"></i> My QR Code / Scanner</div>
+                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
+                </button>
+                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]">
+                    <div class="flex items-center gap-3"><i class="fas fa-chart-bar w-5 text-gray-400"></i> Creator Tools</div>
+                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
+                </button>
+                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-6 hover:bg-[#222]">
+                    <div class="flex items-center gap-3"><i class="fas fa-shield-alt w-5 text-gray-400"></i> Privacy & Safety</div>
+                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
+                </button>
+                
+                <button onclick="app.logout()" class="btn-danger py-3 text-lg"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="overlay">
+        <div class="modal slide-up">
+            <div class="modal-drag-handle"></div>
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="app.closeModal('edit-profile-modal')" class="text-gray-400">Cancel</button>
+                <h2 class="text-lg font-bold">Edit Profile</h2>
+                <button onclick="app.saveProfile()" class="text-[#d4af37] font-bold">Save</button>
+            </div>
+            
+            <div class="flex flex-col items-center mb-6">
+                <label class="relative cursor-pointer group">
+                    <div id="edit-avatar-preview" class="w-24 h-24 rounded-full bg-zinc-800 border-2 border-zinc-600 overflow-hidden flex items-center justify-center text-3xl"></div>
+                    <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                    <input type="file" accept="image/*" class="hidden" onchange="app.updateAvatarPreview(event)">
+                </label>
+                <span class="text-xs text-gray-400 mt-2">Change Photo</span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 ml-1">Name</label>
+                    <input type="text" id="edit-name" class="input-field !mb-0 mt-1" placeholder="Your Display Name">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-1">Bio</label>
+                    <textarea id="edit-bio" class="input-field h-20 resize-none !mb-0 mt-1" placeholder="Tell students about yourself..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Selector Modal -->
+    <div id="language-modal" class="overlay">
+        <div class="modal slide-up !p-0 overflow-hidden flex flex-col h-[80vh]">
+            <div class="p-4 border-b border-zinc-800 flex items-center gap-4 bg-[#121212] shrink-0">
+                <i class="fas fa-times cursor-pointer text-lg" onclick="app.closeModal('language-modal')"></i>
+                <h2 class="text-lg font-bold">Choose Language</h2>
+            </div>
+            <div class="p-3 bg-[#1a1a1a] border-b border-zinc-800 shrink-0">
+                <div class="search-bar-container">
+                    <i class="fas fa-search text-gray-500"></i>
+                    <input type="text" class="search-input" placeholder="Search languages..." onkeyup="app.filterLanguages(this.value)">
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto" id="language-list">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scanner / Generator Modal -->
+    <div id="qr-scanner-modal" class="overlay center">
+        <div class="modal center fade-in text-center pb-6">
+            <i class="fas fa-times modal-close" onclick="app.closeModal('qr-scanner-modal')"></i>
+            <h2 class="text-xl font-bold mb-2">QR Code</h2>
+            
+            <!-- Tabs -->
+            <div class="flex border-b border-zinc-800 mb-6">
+                <button class="flex-1 py-3 text-sm font-bold border-b-2 border-[#d4af37] text-white" id="qr-tab-my" onclick="app.switchQRTab('my')">My Code</button>
+                <button class="flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500" id="qr-tab-scan" onclick="app.switchQRTab('scan')">Scan</button>
+            </div>
+
+            <!-- My Code -->
+            <div id="qr-my-view">
+                <div class="bg-white p-4 rounded-xl inline-block mb-4 shadow-lg shadow-[#d4af37]/20">
+                    <!-- Fake QR Code Image -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EduStreamUser" alt="QR Code" class="w-40 h-40">
+                </div>
+                <h3 class="font-bold text-lg" id="qr-username-display">@username</h3>
+                <p class="text-sm text-gray-400 mb-4">Show this to a friend to connect</p>
+                <button class="btn-secondary text-sm"><i class="fas fa-download"></i> Save Image</button>
+            </div>
+
+            <!-- Scan Code -->
+            <div id="qr-scan-view" class="hidden">
+                <div class="w-full aspect-square bg-black border-2 border-dashed border-[#d4af37] rounded-xl flex flex-col items-center justify-center mb-4 relative overflow-hidden">
+                    <i class="fas fa-camera text-4xl text-gray-600 mb-2"></i>
+                    <span class="text-sm text-gray-500">Camera Active (Simulated)</span>
+                    <div class="absolute w-full h-1 bg-[#d4af37] opacity-50 shadow-[0_0_10px_#d4af37] top-1/2 animate-pulse"></div>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn-primary flex-1 text-sm"><i class="fas fa-camera"></i> Open Camera</button>
+                    <label class="btn-secondary flex-1 text-sm flex items-center justify-center cursor-pointer">
+                        <i class="fas fa-image mr-2"></i> Upload Image
+                        <input type="file" accept="image/*" class="hidden" onchange="alert('Image scanned successfully! (Demo)')">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+    ========================================== -->
     <script>
         const app = {
+            // --- STATE MANAGEMENT ---
             state: {
-                users: [],
-                posts: [],
-                inbox: [],
-                platform: {},
+                db: {
+                    users: [],
+                    posts: [],
+                    messages: [],
+                    appInfo: {
+                        email: 'support@edustream.et',
+                        phone: '+251 911 234 567',
+                        hq: 'Addis Ababa, Bole',
+                        mapLink: 'https://maps.google.com/?q=Addis+Ababa',
+                        subPrice: '1500 ETB / Month'
+                    }
+                },
                 currentUser: null,
-                currentView: 'visitor', // visitor, main, admin
-                currentNav: 'feed',
-                lang: 'en'
+                currentView: '',
+                uploadData: { file: null, url: null, type: null, isTemp: false },
+                activeLang: 'English (US)'
             },
-
-            // --- I18N DICTIONARY ---
-            dict: {
-                'en': {
-                    lang: 'English', home: 'Home', discover: 'Discover', inbox: 'Inbox', profile: 'Profile', 
-                    login: 'Log In', signup: 'Sign Up', join: 'Plan Your Journey',
-                    school_title: 'SCHOOL OF ETHIOPIAN', school_desc: 'Discover breathtaking knowledge across Ethiopia with curated learning, local insights, and hassle-free networking.',
-                    why_choose: 'Why Thousands Choose SOE', feat1_title: 'Local Expertise', feat1_desc: 'Unique experiences with insider knowledge.',
-                    feat2_title: 'All-in-One Platform', feat2_desc: 'Learn, connect, and share in one place.', top_content: 'Top Destinations',
-                    login_join: 'Login / Register to Continue', auth_sub: 'Enter the community.',
-                    menu_title: 'Menu Options', following: 'Following', followers: 'Followers', likes: 'Likes'
-                },
-                'am': {
-                    lang: 'አማርኛ', home: 'ዋና', discover: 'ፈልግ', inbox: 'መልእክት', profile: 'ማህደር',
-                    login: 'ግባ', signup: 'ተመዝገብ', join: 'ጉዞዎን ያቅዱ',
-                    school_title: 'የኢትዮጵያ ትምህርት ቤት', school_desc: 'በኢትዮጵያ ውስጥ አስደናቂ እውቀቶችን ያግኙ። የተመረጡ ትምህርቶች እና የአካባቢ ግንዛቤዎች።',
-                    why_choose: 'ለምን SOE እንመርጣለን', feat1_title: 'የአካባቢ እውቀት', feat1_desc: 'ልዩ ልምዶች ከውስጥ አዋቂነት ጋር።',
-                    feat2_title: 'ሁሉንም በአንድ', feat2_desc: 'በአንድ ቦታ ይማሩ፣ ይገናኙ እና ያጋሩ።', top_content: 'ከፍተኛ መዳረሻዎች',
-                    login_join: 'ለመቀጠል ይግቡ / ይመዝገቡ', auth_sub: 'ማህበረሰቡን ይቀላቀሉ።',
-                    menu_title: 'ምናሌ ምርጫዎች', following: 'የሚከተሏቸው', followers: 'ተከታዮች', likes: 'መውደዶች'
-                },
-                'ar': {
-                    lang: 'العربية', home: 'الرئيسية', discover: 'اكتشف', inbox: 'صندوق', profile: 'ملف',
-                    login: 'دخول', signup: 'تسجيل', join: 'خطط لرحلتك',
-                    school_title: 'مدرسة الإثيوبية', school_desc: 'اكتشف المعرفة المذهلة في جميع أنحاء إثيوبيا من خلال التعلم المنسق والرؤى المحلية.',
-                    why_choose: 'لماذا تختار SOE', feat1_title: 'خبرة محلية', feat1_desc: 'تجارب فريدة بمعرفة داخلية.',
-                    feat2_title: 'منصة شاملة', feat2_desc: 'تعلم وتواصل وشارك في مكان واحد.', top_content: 'أفضل الوجهات',
-                    login_join: 'تسجيل الدخول / التسجيل للمتابعة', auth_sub: 'ادخل المجتمع.',
-                    menu_title: 'خيارات القائمة', following: 'متابع', followers: 'متابعون', likes: 'إعجابات'
-                }
-            },
-
-            availableLangs: [
-                { code: 'en', name: 'English (US)' },
-                { code: 'am', name: 'አማርኛ', sub: 'Amharic (Ethiopia)' },
-                { code: 'ar', name: 'العربية (مصر)', sub: 'Arabic (Egypt)' },
-                { code: 'es', name: 'Español', sub: 'Spanish' } // Fallback to EN if missing in dict
-            ],
 
             // --- INITIALIZATION ---
             init() {
-                this.loadDB();
-                this.renderLanguages();
-                this.applyLanguage();
-                this.showVisitor();
-            },
-
-            loadDB() {
-                const saved = localStorage.getItem('soe_db_v2');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    this.state.users = parsed.users || [];
-                    this.state.posts = parsed.posts || [];
-                    this.state.inbox = parsed.inbox || [];
-                    this.state.platform = parsed.platform || this.getDefaultPlatform();
+                const savedDB = localStorage.getItem('edustream_db');
+                if (savedDB) {
+                    try {
+                        this.state.db = JSON.parse(savedDB);
+                    } catch(e) { console.error("DB Parse error", e); this.seedDatabase(); }
                 } else {
                     this.seedDatabase();
                 }
-                
-                // Add default users if missing for testing
-                if(!this.state.users.find(u => u.username === 'super')) {
-                    this.state.users.push({ id: 'u1', username: 'super', pass: 'admin123', role: 'super', name: 'Super Admin', bio: '', pic: '', links: [], followers: [], following: [], banned: false });
-                }
-                if(!this.state.users.find(u => u.username === 'admin')) {
-                    this.state.users.push({ id: 'u2', username: 'admin', pass: 'admin123', role: 'standard', name: 'Standard Admin', bio: '', pic: '', links: [], followers: [], following: [], banned: false });
-                }
-            },
 
-            getDefaultPlatform() {
-                return {
-                    email: 'hello@schoolofethiopian.com',
-                    phone: '+251 911 234 567',
-                    address: 'Bole Road, Addis Ababa, Ethiopia',
-                    mapLink: 'https://maps.google.com/...',
-                    subPrice: '$9.99/mo',
-                    supportEmail: 'support@schoolofethiopian.com'
-                };
+                // Check active session
+                const sessionUser = sessionStorage.getItem('edustream_session');
+                if (sessionUser) {
+                    this.state.currentUser = this.state.db.users.find(u => u.id === sessionUser);
+                }
+
+                if (this.state.currentUser) {
+                    this.routeUser();
+                } else {
+                    document.getElementById('landing-view').classList.remove('hidden');
+                }
             },
 
             seedDatabase() {
-                this.state.users = [
-                    { id: 'u3', username: 'abebe', pass: '123', role: 'user', name: 'Abebe K.', bio: 'Content Creator\n@ethiopiaortodox', pic: 'https://i.pravatar.cc/150?img=11', links: ['https://t.me/ethiopia'], followers: ['u4','u5','u6'], following: ['u4'], banned: false },
-                    { id: 'u4', username: 'sara', pass: '123', role: 'user', name: 'Sara', bio: 'Traveler', pic: 'https://i.pravatar.cc/150?img=5', links: [], followers: [], following: [], banned: false }
+                this.state.db.users = [
+                    { id: 'u_super', username: 'superadmin', pass: 'admin123', role: 'super', name: 'System Chief', bio: 'Platform Overseer', pic: '', followers: [], following: [], links: [], isPremium: true, status: 'active', warnings: 0 },
+                    { id: 'u_std', username: 'admin', pass: 'admin123', role: 'standard', name: 'Moderator Alpha', bio: 'Keeping the community safe.', pic: '', followers: [], following: [], links: [], isPremium: true, status: 'active', warnings: 0 },
+                    { id: 'u1', username: 'abebe_tech', pass: '123', role: 'user', name: 'Abebe Kebede', bio: 'Software Engineering Instructor. Learn Python and JS with me! 🇪🇹💻', pic: 'https://i.pravatar.cc/150?img=11', followers: ['u2', 'u3'], following: ['u2'], links: ['https://youtube.com/abebe'], isPremium: false, status: 'active', warnings: 0 },
+                    { id: 'u2', username: 'sara_math', pass: '123', role: 'user', name: 'Sara T.', bio: 'Making Math easy for everyone. Highschool & Freshmen.', pic: 'https://i.pravatar.cc/150?img=5', followers: ['u1'], following: ['u1', 'u3'], links: [], isPremium: true, status: 'active', warnings: 0 },
+                    { id: 'u3', username: 'chala_history', pass: '123', role: 'user', name: 'Chala D.', bio: 'History enthusiast.', pic: 'https://i.pravatar.cc/150?img=12', followers: ['u2'], following: [], links: [], isPremium: false, status: 'active', warnings: 0 }
                 ];
-                this.state.inbox = [
-                    { id: 1, type: 'follower', user: 'kkkkk8', msg: 'started following you', time: '1h', avatar: '' },
-                    { id: 2, type: 'activity', user: 'Activity', msg: 'Anide, adebaby and 6 others...', time: '2h', badge: 22, avatar: 'https://i.pravatar.cc/150?img=2' },
-                    { id: 3, type: 'share', user: 'Ayenalem Beleta', msg: 'shared a video', time: '15h', badge: 7, avatar: 'https://i.pravatar.cc/150?img=3' },
-                    { id: 4, type: 'system', user: 'System notifications', msg: 'Screen time: You spent 0h 2...', time: '1d', badge: 1, isSystem: true }
+                
+                const now = Date.now();
+                this.state.db.posts = [
+                    { id: 'p1', authorId: 'u1', type: 'video', text: 'JavaScript Basics: Let vs Const. Short tutorial for beginners! #programming #tech', media: 'https://www.w3schools.com/html/mov_bbb.mp4', likes: ['u2'], saves: ['u3'], reposts: [], timestamp: now - 100000 },
+                    { id: 'p2', authorId: 'u2', type: 'image', text: 'Calculus cheat sheet! Make sure to save this for your finals. 📚✍️', media: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80', likes: ['u1', 'u3'], saves: ['u1'], reposts: ['u1'], timestamp: now - 50000 },
+                    { id: 'p3', authorId: 'u3', type: 'pdf', text: 'The History of Axumite Empire - Full Chapter Summary PDF', media: 'mock_axum.pdf', likes: [], saves: [], reposts: [], timestamp: now - 10000 }
                 ];
+
+                this.state.db.messages = [
+                    { id: 'm1', from: 'u1', to: 'u2', text: 'Hey Sara, loved the math video!', timestamp: now - 8000 },
+                    { id: 'm2', from: 'u2', to: 'u1', text: 'Thanks Abebe! Yours was great too.', timestamp: now - 4000 }
+                ];
+
                 this.saveDB();
             },
 
             saveDB() {
-                localStorage.setItem('soe_db_v2', JSON.stringify({
-                    users: this.state.users,
-                    posts: this.state.posts,
-                    inbox: this.state.inbox,
-                    platform: this.state.platform
-                }));
+                // Warning: We don't save massive Base64 strings to avoid crashing.
+                // Any post with isTemp: true (meaning it was a huge file mocked via URL.createObjectURL)
+                // is saved, but the URL will break on reload. This is a known limitation handled for the prompt.
+                localStorage.setItem('edustream_db', JSON.stringify(this.state.db));
             },
 
-            // --- VIEW ROUTING ---
-            showVisitor() {
-                this.hideAll();
-                document.getElementById('visitor-view').classList.remove('hidden');
-                this.state.currentView = 'visitor';
+            // --- ROUTING & AUTH ---
+            navigateLanding() {
+                document.getElementById('auth-view').classList.add('hidden');
+                document.getElementById('main-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+                document.getElementById('landing-view').classList.remove('hidden');
             },
 
-            showAuth() {
-                this.hideAll();
+            navigateAuth(mode = 'login') {
+                document.getElementById('landing-view').classList.add('hidden');
                 document.getElementById('auth-view').classList.remove('hidden');
-                document.getElementById('auth-view').classList.add('flex');
+                
+                if(mode === 'signup') {
+                    document.getElementById('login-form').classList.add('hidden');
+                    document.getElementById('signup-form').classList.remove('hidden');
+                } else {
+                    document.getElementById('login-form').classList.remove('hidden');
+                    document.getElementById('signup-form').classList.add('hidden');
+                }
             },
 
             toggleAuth() {
@@ -462,397 +751,880 @@
                 document.getElementById('signup-form').classList.toggle('hidden');
             },
 
-            hideAll() {
-                document.getElementById('visitor-view').classList.add('hidden');
-                document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('auth-view').classList.remove('flex');
-                document.getElementById('main-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.add('hidden');
-            },
-
-            // --- AUTH ---
             login() {
                 const u = document.getElementById('login-user').value.trim();
                 const p = document.getElementById('login-pass').value.trim();
-                const user = this.state.users.find(x => x.username === u && x.pass === p);
+                const user = this.state.db.users.find(x => (x.username === u || x.id === u) && x.pass === p);
                 
                 if (user) {
-                    if(user.banned) return alert('Your account has been banned.');
+                    if (user.status === 'banned') return alert('This account has been banned by an administrator.');
                     this.state.currentUser = user;
-                    this.routeAuthenticated();
+                    sessionStorage.setItem('edustream_session', user.id);
+                    this.routeUser();
                 } else {
                     alert('Invalid credentials');
                 }
             },
 
             signup() {
+                const name = document.getElementById('reg-name').value.trim();
                 const u = document.getElementById('reg-user').value.trim();
                 const p = document.getElementById('reg-pass').value.trim();
-                if(!u || !p) return alert("Required fields");
-                if(this.state.users.find(x => x.username === u)) return alert("Username taken");
+                
+                if(!name || !u || !p) return alert("All fields required");
+                if(this.state.db.users.find(x => x.username === u)) return alert("Username taken");
 
                 const newUser = {
-                    id: 'u' + Date.now(), username: u, pass: p, role: 'user', name: u, bio: '', pic: '', links: [], followers: [], following: [], banned: false
+                    id: 'u_' + Date.now(),
+                    username: u,
+                    pass: p,
+                    role: 'user',
+                    name: name,
+                    bio: '',
+                    pic: '',
+                    followers: [],
+                    following: [],
+                    links: [],
+                    isPremium: false,
+                    status: 'active',
+                    warnings: 0
                 };
-                this.state.users.push(newUser);
+                this.state.db.users.push(newUser);
                 this.saveDB();
                 this.state.currentUser = newUser;
-                this.routeAuthenticated();
+                sessionStorage.setItem('edustream_session', newUser.id);
+                this.routeUser();
             },
 
             logout() {
                 this.state.currentUser = null;
-                document.getElementById('login-user').value = '';
-                document.getElementById('login-pass').value = '';
-                this.showVisitor();
+                sessionStorage.removeItem('edustream_session');
+                this.closeModal('settings-modal');
+                this.navigateLanding();
             },
 
-            routeAuthenticated() {
-                this.hideAll();
-                const role = this.state.currentUser.role;
-                if (role === 'super' || role === 'standard') {
+            routeUser() {
+                document.getElementById('landing-view').classList.add('hidden');
+                document.getElementById('auth-view').classList.add('hidden');
+                
+                if (this.state.currentUser.role === 'super' || this.state.currentUser.role === 'standard') {
                     document.getElementById('admin-view').classList.remove('hidden');
-                    
-                    // Hide Managers tab for standard admins
-                    if(role === 'standard') {
-                        document.getElementById('admin-tab-managers').classList.add('hidden');
-                    } else {
-                        document.getElementById('admin-tab-managers').classList.remove('hidden');
-                    }
-                    
-                    // Trigger first tab
-                    document.querySelector('#admin-view .px-4.cursor-pointer').click();
+                    this.renderAdminPanel('dashboard');
                 } else {
                     document.getElementById('main-view').classList.remove('hidden');
-                    document.getElementById('sidebar-username').innerText = '@' + this.state.currentUser.username;
                     this.navigate('feed');
                 }
             },
 
-            // --- NAVIGATION ---
             navigate(view) {
-                this.state.currentNav = view;
+                this.state.currentView = view;
                 const content = document.getElementById('content-area');
+                const header = document.getElementById('main-header');
                 
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                if(view === 'feed') document.querySelectorAll('.nav-item')[0].classList.add('active');
-                if(view === 'inbox') document.querySelectorAll('.nav-item')[3].classList.add('active');
-                if(view === 'profile') document.querySelectorAll('.nav-item')[4].classList.add('active');
-
-                if (view === 'feed') {
-                    content.innerHTML = `<div class="h-[60vh] flex items-center justify-center text-gray-500 flex-col"><i class="fas fa-video text-4xl mb-4"></i><p>Video Feed Placeholder</p></div>`;
-                } else if (view === 'inbox') {
-                    this.renderInbox();
-                } else if (view === 'profile') {
-                    this.renderProfile(this.state.currentUser.id);
-                } else {
-                    content.innerHTML = `<div class="flex h-64 items-center justify-center text-gray-500">Coming soon...</div>`;
-                }
-                
-                this.applyLanguage(); // Re-translate after DOM update
-            },
-
-            toggleSidebar() {
-                const sidebar = document.getElementById('sidebar-menu');
-                const overlay = document.getElementById('sidebar-overlay');
-                if(sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    overlay.style.display = 'none';
-                } else {
-                    sidebar.classList.add('open');
-                    overlay.style.display = 'block';
-                }
-            },
-
-            // --- INBOX (Image 7) ---
-            renderInbox() {
-                const content = document.getElementById('content-area');
-                
-                let bubblesHTML = `
-                    <div class="flex flex-col items-center mr-4">
-                        <div class="story-bubble bg-[#222] flex items-center justify-center text-2xl"><i class="fas fa-plus"></i></div>
-                        <span class="text-[10px] mt-1 text-gray-400">Create</span>
-                    </div>
-                    <div class="flex flex-col items-center mr-4 relative">
-                        <div class="story-bubble active"><img src="https://i.pravatar.cc/150?img=12"></div>
-                        <span class="text-[10px] mt-1 text-gray-400">ልዑል ሰማያዊ...</span>
-                        <div class="absolute bottom-4 right-0 bg-pink-500 w-4 h-4 rounded-full flex items-center justify-center border border-black"><i class="fas fa-chart-bar text-[8px] text-white"></i></div>
-                    </div>
-                    <div class="flex flex-col items-center mr-4 relative">
-                        <div class="story-bubble active"><img src="https://i.pravatar.cc/150?img=13"></div>
-                        <span class="text-[10px] mt-1 text-gray-400">ዘማሪ የአብ...</span>
-                    </div>
-                `;
-
-                let listHTML = this.state.inbox.map(item => {
-                    let icon = '';
-                    if(item.type === 'follower') icon = `<div class="inbox-avatar bg-blue-500 text-white flex items-center justify-center text-xl"><i class="fas fa-user-friends"></i></div>`;
-                    else if(item.isSystem) icon = `<div class="inbox-avatar bg-gray-700 text-white flex items-center justify-center text-xl"><i class="fas fa-inbox"></i></div>`;
-                    else if(item.type === 'activity') icon = `<div class="inbox-avatar bg-pink-500 text-white flex items-center justify-center text-xl"><i class="fas fa-heart"></i></div>`;
-                    else icon = `<img src="${item.avatar}" class="inbox-avatar">`;
-
-                    return `
-                        <div class="inbox-item border-b border-gray-900">
-                            ${icon}
-                            <div class="flex-1">
-                                <div class="font-bold text-sm text-white">${item.user}</div>
-                                <div class="text-xs text-gray-400">${item.msg} <span class="text-gray-600">· ${item.time}</span></div>
-                            </div>
-                            ${item.badge ? `<div class="inbox-badge">${item.badge}</div>` : ''}
-                        </div>
-                    `;
-                }).join('');
-
-                content.innerHTML = `
-                    <div class="bg-gray-900 text-white text-xs p-3 m-3 rounded flex justify-between items-center">
-                        <div><i class="fas fa-envelope text-red-500 mr-2"></i> Get emails when people interact...</div>
-                        <button class="bg-red-500 px-3 py-1 rounded-full font-bold">Learn more</button>
-                    </div>
-
-                    <!-- Story Bubbles -->
-                    <div class="flex overflow-x-auto hide-scrollbar px-4 py-2 border-b border-gray-800">
-                        ${bubblesHTML}
-                    </div>
-
-                    <!-- List -->
-                    <div class="flex flex-col">
-                        ${listHTML}
-                    </div>
-                `;
-            },
-
-            // --- TIKTOK STYLE PROFILE (Image 1) ---
-            renderProfile(userId) {
-                const user = this.state.users.find(u => u.id === userId);
-                if(!user) return;
-                
-                const content = document.getElementById('content-area');
-                const avatarStr = user.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-gray-700 flex items-center justify-center font-bold">${user.name.charAt(0)}</div>`;
-                
-                let linksHTML = user.links.map(l => `<div class="text-xs mt-2 text-center text-gray-300 w-full truncate px-8"><a href="${l}" target="_blank"><i class="fas fa-link"></i> ${l}</a></div>`).join('');
-
-                content.innerHTML = `
-                    <div class="flex justify-between items-center p-4">
-                        <i class="fas fa-user-plus text-xl text-white"></i>
-                        <div class="font-bold text-lg">${user.name} <i class="fas fa-caret-down text-xs"></i></div>
-                        <i class="fas fa-bars text-xl text-white" onclick="app.toggleSidebar()"></i>
-                    </div>
-
-                    <div class="flex flex-col items-center mt-2">
-                        <div class="profile-avatar-lg relative">
-                            ${avatarStr}
-                            ${this.state.currentUser.id === userId ? `<div class="absolute bottom-0 right-0 bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center border-2 border-[#1a1a1a]"><i class="fas fa-plus text-xs text-white"></i></div>` : ''}
-                        </div>
-                        <div class="font-bold text-lg mt-2">@${user.username}</div>
-                        
-                        <div class="flex gap-6 mt-4 mb-4">
-                            <div class="text-center"><div class="font-bold text-lg">${user.following.length}</div><div class="text-xs text-gray-400" data-i18n="following">Following</div></div>
-                            <div class="text-center"><div class="font-bold text-lg">${user.followers.length}</div><div class="text-xs text-gray-400" data-i18n="followers">Followers</div></div>
-                            <div class="text-center"><div class="font-bold text-lg">345</div><div class="text-xs text-gray-400" data-i18n="likes">Likes</div></div>
-                        </div>
-
-                        ${this.state.currentUser.id === userId ? `<button class="bg-[#333] px-10 py-2 rounded font-semibold text-sm">Edit profile</button>` : `<button class="bg-red-500 px-10 py-2 rounded font-semibold text-sm text-white">Follow</button>`}
-
-                        <p class="text-sm mt-4 whitespace-pre-wrap text-center px-6">${user.bio}</p>
-                        ${linksHTML}
-                        
-                        ${this.state.currentUser.id === userId ? `<div class="mt-4 text-red-500 font-bold text-sm flex items-center gap-2"><i class="fas fa-video"></i> SOE Studio</div>` : ''}
-                    </div>
-
-                    <!-- Profile Tabs -->
-                    <div class="flex mt-6 border-b border-gray-800">
-                        <div class="flex-1 py-3 text-center border-b-2 border-white text-white cursor-pointer"><i class="fas fa-bars"></i></div>
-                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="fas fa-lock"></i></div>
-                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="fas fa-retweet"></i></div>
-                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="far fa-bookmark"></i></div>
-                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="far fa-heart"></i></div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-[1px] bg-black">
-                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 1.2M</div></div>
-                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 500K</div></div>
-                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 200K</div></div>
-                    </div>
-                `;
-            },
-
-            // --- ADMIN LOGIC ---
-            switchAdminTab(tab, el) {
-                // Update active tab styles
-                const tabs = el.parentElement.children;
-                for(let t of tabs) {
-                    t.classList.remove('text-[#d4af37]', 'border-b-2', 'border-[#d4af37]');
-                    t.classList.add('text-gray-400');
-                }
-                el.classList.remove('text-gray-400');
-                el.classList.add('text-[#d4af37]', 'border-b-2', 'border-[#d4af37]');
-
-                const content = document.getElementById('admin-content');
-                const isSuper = this.state.currentUser.role === 'super';
-
-                if(tab === 'users') {
-                    let uHTML = this.state.users.filter(u => u.role === 'user').map(u => `
-                        <div class="bg-[#1a1a1a] p-3 rounded-lg mb-3 flex justify-between items-center border border-gray-800">
-                            <div>
-                                <div class="font-bold ${u.banned ? 'text-red-500 line-through' : 'text-white'}">@${u.username}</div>
-                                <div class="text-xs text-gray-400">Followers: ${u.followers.length}</div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="app.adminAction('warn', '${u.id}')" class="bg-yellow-600 px-3 py-1 rounded text-xs text-white font-bold">Warn</button>
-                                ${isSuper ? `
-                                    <button onclick="app.adminAction('${u.banned ? 'unban' : 'ban'}', '${u.id}')" class="${u.banned ? 'bg-green-600' : 'bg-red-600'} px-3 py-1 rounded text-xs text-white font-bold">
-                                        ${u.banned ? 'Unban' : 'Ban'}
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `).join('');
-                    content.innerHTML = `<h2 class="text-lg font-bold text-white mb-4">User Management</h2>${uHTML || '<p class="text-gray-500">No users found.</p>'}`;
-                
-                } else if(tab === 'admins') {
-                    let aHTML = this.state.users.filter(u => u.role === 'super' || u.role === 'standard').map(u => `
-                        <div class="bg-[#1a1a1a] p-3 rounded-lg mb-3 flex justify-between items-center border border-gray-800">
-                            <div>
-                                <div class="font-bold text-white">@${u.username}</div>
-                                <div class="text-xs px-2 py-1 bg-gray-700 rounded inline-block mt-1 uppercase text-[#d4af37]">${u.role}</div>
-                            </div>
-                            ${(isSuper && u.id !== this.state.currentUser.id) ? `<button onclick="app.adminAction('remove_admin', '${u.id}')" class="text-red-500 text-sm"><i class="fas fa-trash"></i> Demote</button>` : ''}
-                        </div>
-                    `).join('');
-                    
-                    content.innerHTML = `
-                        <h2 class="text-lg font-bold text-white mb-4">Admin Management</h2>
-                        ${aHTML}
-                        ${isSuper ? `
-                            <div class="mt-6 p-4 border border-gray-700 rounded-lg">
-                                <h3 class="font-bold mb-2">Promote User to Standard Admin</h3>
-                                <div class="flex gap-2">
-                                    <input type="text" id="promote-username" class="input-field mb-0 flex-1" placeholder="Enter exact username">
-                                    <button class="bg-[#d4af37] text-black px-4 font-bold rounded" onclick="app.promoteAdmin()">Promote</button>
-                                </div>
-                            </div>
-                        ` : ''}
-                    `;
-                
-                } else if(tab === 'info') {
-                    const p = this.state.platform;
-                    content.innerHTML = `
-                        <h2 class="text-lg font-bold text-white mb-4">Platform Information</h2>
-                        <div class="flex flex-col gap-3">
-                            <div><label class="text-xs text-gray-400">HQ Address</label><input type="text" id="pi-address" class="input-field" value="${p.address}"></div>
-                            <div><label class="text-xs text-gray-400">Google Map Link</label><input type="text" id="pi-map" class="input-field" value="${p.mapLink}"></div>
-                            <div><label class="text-xs text-gray-400">Public Phone</label><input type="text" id="pi-phone" class="input-field" value="${p.phone}"></div>
-                            <div><label class="text-xs text-gray-400">Public Email</label><input type="text" id="pi-email" class="input-field" value="${p.email}"></div>
-                            <div><label class="text-xs text-gray-400">Support / Creator Email</label><input type="text" id="pi-support" class="input-field" value="${p.supportEmail}"></div>
-                            <div><label class="text-xs text-gray-400">Pro Subscription Price</label><input type="text" id="pi-price" class="input-field" value="${p.subPrice}"></div>
-                            <button class="btn-primary mt-2" onclick="app.savePlatformInfo()">Save Changes</button>
-                        </div>
-                    `;
-                } else if (tab === 'qr') {
-                    content.innerHTML = `
-                        <div class="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-xl bg-[#111]">
-                            <i class="fas fa-qrcode text-5xl text-gray-500 mb-4"></i>
-                            <p class="text-gray-400 mb-4 text-center px-8 text-sm">Scan a user or admin QR code to manage their profile directly.</p>
-                            <button class="bg-[#d4af37] text-black font-bold px-6 py-2 rounded-full shadow-lg" onclick="app.openModal('qr-modal')">Open Scanner</button>
-                        </div>
-                    `;
-                }
-            },
-
-            adminAction(action, userId) {
-                const u = this.state.users.find(x => x.id === userId);
-                if(!u) return;
-
-                if(action === 'warn') {
-                    alert(`Warning sent to @${u.username}`);
-                } else if (action === 'ban') {
-                    if(confirm(`Ban @${u.username}?`)) u.banned = true;
-                } else if (action === 'unban') {
-                    u.banned = false;
-                } else if (action === 'remove_admin') {
-                    if(confirm(`Demote @${u.username} to normal user?`)) u.role = 'user';
-                }
-                
-                this.saveDB();
-                // Refresh current tab
-                document.querySelector('#admin-view .text-\\[\\#d4af37\\]').click();
-            },
-
-            promoteAdmin() {
-                const un = document.getElementById('promote-username').value.trim();
-                const u = this.state.users.find(x => x.username === un);
-                if(!u) return alert("User not found");
-                if(u.role !== 'user') return alert("User is already an admin");
-                
-                u.role = 'standard';
-                this.saveDB();
-                document.querySelector('#admin-view .text-\\[\\#d4af37\\]').click();
-            },
-
-            savePlatformInfo() {
-                this.state.platform = {
-                    address: document.getElementById('pi-address').value,
-                    mapLink: document.getElementById('pi-map').value,
-                    phone: document.getElementById('pi-phone').value,
-                    email: document.getElementById('pi-email').value,
-                    supportEmail: document.getElementById('pi-support').value,
-                    subPrice: document.getElementById('pi-price').value
-                };
-                this.saveDB();
-                alert("Platform information saved!");
-            },
-
-            simulateQRScan() {
-                this.closeModal('qr-modal');
-                alert("Simulated QR Scan: Found User @abebe");
-                // In real app, this would route to their profile or admin edit page
-            },
-
-            // --- I18N LANGUAGE SYSTEM ---
-            renderLanguages() {
-                const container = document.getElementById('language-list');
-                container.innerHTML = this.availableLangs.map(l => `
-                    <div class="px-4 py-4 border-b border-gray-800 cursor-pointer flex justify-between items-center ${this.state.lang === l.code ? 'bg-gray-800 text-[#d4af37]' : 'text-white hover:bg-[#222]'}" onclick="app.setLanguage('${l.code}')">
-                        <div>
-                            <div class="font-bold text-sm">${l.name}</div>
-                            ${l.sub ? `<div class="text-[10px] text-gray-500">${l.sub}</div>` : ''}
-                        </div>
-                        ${this.state.lang === l.code ? '<i class="fas fa-check"></i>' : ''}
-                    </div>
-                `).join('');
-            },
-
-            setLanguage(code) {
-                this.state.lang = code;
-                this.renderLanguages();
-                this.applyLanguage();
-                this.closeModal('language-modal');
-            },
-
-            applyLanguage() {
-                const langDict = this.dict[this.state.lang] || this.dict['en'];
-                
-                // Translate DOM elements with data-i18n attributes
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if (langDict[key]) {
-                        el.innerText = langDict[key];
-                    }
+                // Nav state
+                ['feed','discover','inbox','profile'].forEach(v => {
+                    const el = document.getElementById(`nav-${v}`);
+                    if(el) el.classList.remove('active');
                 });
+                if(document.getElementById(`nav-${view}`)) document.getElementById(`nav-${view}`).classList.add('active');
+
+                // Header logic: hide on profile
+                if(view === 'profile') {
+                    header.style.display = 'none';
+                } else {
+                    header.style.display = 'flex';
+                }
+
+                if (view === 'feed') this.renderFeed();
+                else if (view === 'discover') this.renderDiscover();
+                else if (view === 'inbox') this.renderInbox();
+                else if (view === 'profile') this.renderProfile(this.state.currentUser.id);
             },
 
             // --- UTILS ---
-            openModal(id) {
-                document.getElementById(id).style.display = 'flex';
+            getUser(id) { return this.state.db.users.find(u => u.id === id); },
+            getAvatar(user) { return user.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-zinc-800 flex items-center justify-center font-bold">${user.name.charAt(0).toUpperCase()}</div>`; },
+            formatTime(ts) {
+                const diff = Math.floor((Date.now() - ts) / 1000);
+                if(diff < 60) return diff + 's';
+                if(diff < 3600) return Math.floor(diff/60) + 'm';
+                if(diff < 86400) return Math.floor(diff/3600) + 'h';
+                return Math.floor(diff/86400) + 'd';
             },
-            closeModal(id) {
-                document.getElementById(id).style.display = 'none';
+
+            // --- VIEW: FEED ---
+            renderFeed() {
+                const content = document.getElementById('content-area');
+                content.innerHTML = '<div class="feed-container" id="feed-scroll"></div>';
+                const feedScroll = document.getElementById('feed-scroll');
+
+                const posts = [...this.state.db.posts].sort((a,b) => b.timestamp - a.timestamp);
+                
+                if (posts.length === 0) {
+                    feedScroll.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-500"><i class="fas fa-video-slash text-4xl mb-4"></i><p>No lessons posted yet.</p></div>`;
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const author = this.getUser(post.authorId);
+                    if(!author || author.status === 'banned') return;
+                    
+                    const isLiked = post.likes.includes(this.state.currentUser.id);
+                    const isSaved = post.saves.includes(this.state.currentUser.id);
+                    const isReposted = post.reposts.includes(this.state.currentUser.id);
+                    const isFollowing = this.state.currentUser.following.includes(author.id);
+
+                    let mediaHTML = '';
+                    if (post.type === 'video') mediaHTML = `<video src="${post.media}" controls loop playsinline class="w-full h-full object-contain bg-black"></video>`;
+                    else if (post.type === 'image') mediaHTML = `<img src="${post.media}" class="w-full h-full object-contain bg-black">`;
+                    else if (post.type === 'pdf') mediaHTML = `<div class="pdf-frame cursor-pointer" onclick="alert('Opening PDF: ${post.media}')"><i class="fas fa-file-pdf"></i><h3 class="font-bold text-lg mb-1 line-clamp-1">${post.text}</h3><p class="text-sm text-gray-400">PDF Document • Tap to read</p></div>`;
+
+                    let followBtn = '';
+                    if(author.id !== this.state.currentUser.id && !isFollowing) {
+                        followBtn = `<button onclick="app.toggleFollow('${author.id}')" class="bg-white/20 hover:bg-white/30 backdrop-blur text-white text-xs px-3 py-1 rounded-full font-bold ml-auto transition">Follow</button>`;
+                    }
+
+                    const el = document.createElement('div');
+                    el.className = 'post-card h-full flex flex-col relative';
+                    el.innerHTML = `
+                        <!-- Media Area (Takes most space) -->
+                        <div class="flex-1 w-full bg-black flex items-center justify-center relative overflow-hidden" ondblclick="app.toggleInteraction('${post.id}', 'likes')">
+                            ${mediaHTML}
+                        </div>
+                        
+                        <!-- Details Overlay (Bottom) -->
+                        <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex items-end justify-between">
+                            <div class="w-4/5 pr-4">
+                                <div class="flex items-center gap-2 mb-2 cursor-pointer" onclick="app.renderProfile('${author.id}')">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden border border-zinc-700">${this.getAvatar(author)}</div>
+                                    <div>
+                                        <div class="font-bold text-sm flex items-center gap-1">${author.name} <i class="fas fa-check-circle text-[#d4af37] text-[10px]"></i></div>
+                                        <div class="text-xs text-gray-400">@${author.username}</div>
+                                    </div>
+                                    ${followBtn}
+                                </div>
+                                <p class="text-sm text-white line-clamp-2">${post.text}</p>
+                            </div>
+                            
+                            <!-- Action Column (Right side, Tiktok style) -->
+                            <div class="flex flex-col gap-4 items-center mb-2">
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'likes')">
+                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-heart text-xl ${isLiked ? 'text-red-500' : 'text-white'}"></i></div>
+                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.likes.length}</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="alert('Comments opening...')">
+                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-comment-dots text-xl text-white"></i></div>
+                                    <span class="text-xs font-bold shadow-black drop-shadow-md">0</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'saves')">
+                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-bookmark text-xl ${isSaved ? 'text-[#d4af37]' : 'text-white'}"></i></div>
+                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.saves.length}</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'reposts')">
+                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-retweet text-xl ${isReposted ? 'text-green-500' : 'text-white'}"></i></div>
+                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.reposts.length}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    feedScroll.appendChild(el);
+                });
+            },
+
+            // Generic toggle for likes, saves, reposts
+            toggleInteraction(postId, arrayName) {
+                const post = this.state.db.posts.find(p => p.id === postId);
+                if(!post) return;
+                const idx = post[arrayName].indexOf(this.state.currentUser.id);
+                if (idx === -1) post[arrayName].push(this.state.currentUser.id);
+                else post[arrayName].splice(idx, 1);
+                
+                this.saveDB();
+                if(this.state.currentView === 'feed') this.renderFeed();
+                if(this.state.currentView === 'profile') this.renderProfile(this.state.currentUser.id); // Refresh if viewing own profile
+            },
+
+            // --- VIEW: DISCOVER ---
+            renderDiscover() {
+                const content = document.getElementById('content-area');
+                
+                // Fake trending tags
+                const tags = ['#Math101', '#EthiopianHistory', '#LearnPython', '#Physics', '#OromoLanguage', '#AmharicLiterature'];
+                
+                content.innerHTML = `
+                    <div class="p-4 sticky top-0 bg-black z-10 border-b border-zinc-800">
+                        <div class="search-bar-container bg-zinc-900 border border-zinc-800">
+                            <i class="fas fa-search text-gray-400"></i>
+                            <input type="text" id="discover-search" class="search-input" placeholder="Search lessons, users, or tags..." onkeyup="app.handleSearch(event)">
+                        </div>
+                    </div>
+                    
+                    <div id="search-results" class="hidden p-4"></div>
+
+                    <div id="discover-default">
+                        <!-- Horizontal Trending Users -->
+                        <div class="p-4 border-b border-zinc-900">
+                            <h3 class="font-bold mb-3 text-sm text-gray-400 uppercase tracking-wider">Top Educators</h3>
+                            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+                                ${this.state.db.users.filter(u=>u.role==='user').map(u => `
+                                    <div class="flex flex-col items-center cursor-pointer min-w-[70px]" onclick="app.renderProfile('${u.id}')">
+                                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-700 mb-1">${this.getAvatar(u)}</div>
+                                        <span class="text-xs font-medium truncate w-full text-center">${u.name.split(' ')[0]}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Trending Tags Grid -->
+                        <div class="p-4 border-b border-zinc-900">
+                            <div class="flex flex-wrap gap-2">
+                                ${tags.map(t => `<div class="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer hover:bg-zinc-800 transition">${t}</div>`).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Explore Grid -->
+                        <div class="post-grid" id="discover-grid">
+                            ${this.state.db.posts.map(p => this.generateGridItem(p)).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            handleSearch(e) {
+                const q = e.target.value.toLowerCase();
+                const def = document.getElementById('discover-default');
+                const res = document.getElementById('search-results');
+                
+                if(!q) {
+                    def.classList.remove('hidden'); res.classList.add('hidden');
+                    return;
+                }
+                
+                def.classList.add('hidden'); res.classList.remove('hidden');
+                
+                const users = this.state.db.users.filter(u => u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q));
+                const posts = this.state.db.posts.filter(p => p.text.toLowerCase().includes(q));
+
+                let html = '';
+                if(users.length) {
+                    html += `<h3 class="font-bold mb-2 text-sm text-gray-400">Users</h3><div class="flex flex-col gap-2 mb-4">`;
+                    users.forEach(u => {
+                        html += `<div class="flex items-center gap-3 bg-zinc-900 p-2 rounded cursor-pointer" onclick="app.renderProfile('${u.id}')">
+                            <div class="w-10 h-10 rounded-full overflow-hidden">${this.getAvatar(u)}</div>
+                            <div><div class="font-bold text-sm">${u.name}</div><div class="text-xs text-gray-500">@${u.username}</div></div>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+                if(posts.length) {
+                    html += `<h3 class="font-bold mb-2 text-sm text-gray-400">Posts</h3><div class="post-grid">`;
+                    html += posts.map(p => this.generateGridItem(p)).join('');
+                    html += `</div>`;
+                }
+
+                if(!users.length && !posts.length) html = `<div class="text-center text-gray-500 py-10">No results found for "${q}"</div>`;
+                res.innerHTML = html;
+            },
+
+            generateGridItem(p) {
+                const views = Math.floor(Math.random() * 1000) + 100; // fake views
+                let inner = '';
+                if(p.type === 'image') inner = `<img src="${p.media}">`;
+                else if(p.type === 'video') inner = `<video src="${p.media}"></video><div class="grid-item-overlay"><i class="fas fa-play"></i> ${views}</div>`;
+                else inner = `<div class="w-full h-full bg-zinc-800 flex flex-col items-center justify-center p-2 text-center"><i class="fas fa-file-pdf text-red-500 text-2xl mb-1"></i><span class="text-[10px] leading-tight line-clamp-2">${p.text}</span></div>`;
+                
+                return `<div class="grid-item" onclick="alert('In a full app, this opens the feed view focused on this post.')">${inner}</div>`;
+            },
+
+            // --- VIEW: INBOX (7th img inspiration) ---
+            renderInbox() {
+                const content = document.getElementById('content-area');
+                
+                // Get active users for stories/live
+                const activeUsers = this.state.db.users.filter(u => u.id !== this.state.currentUser.id && u.role === 'user');
+
+                content.innerHTML = `
+                    <div class="flex items-center justify-between p-4 border-b border-zinc-900">
+                        <h2 class="font-bold text-xl">Inbox</h2>
+                        <i class="fas fa-edit text-xl text-gray-400"></i>
+                    </div>
+
+                    <!-- Stories / Live Row -->
+                    <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-zinc-900">
+                        <!-- Add Story -->
+                        <div class="flex flex-col items-center gap-1 cursor-pointer">
+                            <div class="relative w-[65px] h-[65px]">
+                                <div class="w-full h-full rounded-full overflow-hidden border-2 border-zinc-700 opacity-50">${this.getAvatar(this.state.currentUser)}</div>
+                                <div class="absolute bottom-0 right-0 bg-[#d4af37] text-black w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black"><i class="fas fa-plus"></i></div>
+                            </div>
+                            <span class="text-[10px] text-gray-400">Your Story</span>
+                        </div>
+                        <!-- Mock Live / Stories -->
+                        ${activeUsers.map((u, i) => `
+                            <div class="flex flex-col items-center gap-1 cursor-pointer">
+                                <div class="story-ring ${i%2===0 ? 'live' : ''}">
+                                    <div class="story-inner">${this.getAvatar(u)}</div>
+                                </div>
+                                <span class="text-[10px] text-white truncate w-14 text-center">${u.name.split(' ')[0]}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="flex gap-2 p-4 pb-2 border-b border-zinc-900">
+                        <button class="inbox-tab active" onclick="app.switchInboxTab('messages', this)">Messages</button>
+                        <button class="inbox-tab" onclick="app.switchInboxTab('notifications', this)">Notifications</button>
+                    </div>
+
+                    <div id="inbox-list" class="flex flex-col">
+                        <!-- Messages Injected here -->
+                    </div>
+                `;
+                this.switchInboxTab('messages', document.querySelector('.inbox-tab.active'));
+            },
+
+            switchInboxTab(tab, el) {
+                document.querySelectorAll('.inbox-tab').forEach(e => e.classList.remove('active'));
+                if(el) el.classList.add('active');
+                
+                const list = document.getElementById('inbox-list');
+                list.innerHTML = '';
+
+                if(tab === 'messages') {
+                    // Group messages by user (mock implementation)
+                    const friends = this.state.db.users.filter(u => this.state.currentUser.following.includes(u.id));
+                    if(friends.length === 0) list.innerHTML = `<div class="text-center p-10 text-gray-500">No messages yet.</div>`;
+                    
+                    friends.forEach(f => {
+                        list.innerHTML += `
+                            <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition" onclick="alert('Opening chat with ${f.name}...')">
+                                <div class="w-14 h-14 rounded-full overflow-hidden shrink-0">${this.getAvatar(f)}</div>
+                                <div class="flex-1 overflow-hidden">
+                                    <h4 class="font-bold text-sm text-white">${f.name}</h4>
+                                    <p class="text-xs text-gray-400 truncate">Tap to chat with this user.</p>
+                                </div>
+                                <i class="fas fa-camera text-gray-500 text-xl"></i>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Mock Notifications
+                    list.innerHTML = `
+                        <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition">
+                            <div class="w-12 h-12 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-500"><i class="fas fa-user-plus"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm"><strong>Abebe Tech</strong> started following you.</p>
+                                <p class="text-xs text-gray-500">2h ago</p>
+                            </div>
+                            <button class="bg-[#d4af37] text-black text-xs px-3 py-1.5 rounded font-bold">Follow Back</button>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition">
+                            <div class="w-12 h-12 rounded-full bg-red-900/50 flex items-center justify-center text-red-500"><i class="fas fa-heart"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm"><strong>Sara Math</strong> liked your post.</p>
+                                <p class="text-xs text-gray-500">5h ago</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            // --- VIEW: PROFILE (TikTok Style) ---
+            renderProfile(userId) {
+                const user = this.getUser(userId);
+                if(!user) { this.navigate('feed'); return; }
+                this.state.currentView = 'profile';
+
+                // Update Header state (hide global header)
+                document.getElementById('main-header').style.display = 'none';
+
+                const content = document.getElementById('content-area');
+                const isMe = this.state.currentUser.id === userId;
+                
+                // Top Action Bar (Add Friend, Account Switch, Hamburger)
+                let topBarHTML = `
+                    <div class="profile-header-actions">
+                        <button onclick="app.navigate('discover')" class="text-xl text-white"><i class="fas fa-user-plus"></i></button>
+                        <button class="font-bold text-lg flex items-center gap-2" onclick="${isMe ? "app.openModal('account-switcher-modal')" : ""}">
+                            ${user.name} ${isMe ? '<i class="fas fa-chevron-down text-xs"></i>' : ''}
+                        </button>
+                        <button onclick="${isMe ? "app.openModal('settings-modal')" : "alert('Report/Block menu opening...') "}" class="text-xl text-white">
+                            <i class="${isMe ? 'fas fa-bars' : 'fas fa-ellipsis-h'}"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Stats calculation
+                const userPosts = this.state.db.posts.filter(p => p.authorId === userId);
+                const totalLikes = userPosts.reduce((acc, curr) => acc + curr.likes.length, 0);
+
+                let actionButton = '';
+                if (isMe) {
+                    actionButton = `<div class="flex gap-2 justify-center px-6 mt-4 mb-2"><button onclick="app.openEditProfile()" class="btn-secondary !py-2 w-1/2">Edit profile</button><button onclick="alert('Share profile logic')" class="btn-secondary !py-2 w-1/2">Share profile</button></div>`;
+                } else {
+                    const isFollowing = this.state.currentUser.following.includes(userId);
+                    if (isFollowing) {
+                        actionButton = `<div class="flex gap-2 justify-center px-6 mt-4 mb-2"><button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-secondary !py-2 w-1/2">Following</button><button onclick="app.navigate('inbox')" class="btn-secondary !py-2 w-1/2">Message</button></div>`;
+                    } else {
+                        actionButton = `<div class="flex justify-center px-6 mt-4 mb-2"><button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-primary !py-2 w-3/4">Follow</button></div>`;
+                    }
+                }
+
+                // Render Base Profile Structure
+                content.innerHTML = `
+                    ${topBarHTML}
+                    <div class="flex flex-col items-center pt-4 pb-2">
+                        <div class="profile-avatar-lg relative group cursor-pointer" onclick="${isMe ? "app.openEditProfile()" : "app.openModal('qr-scanner-modal')"}">
+                            ${this.getAvatar(user)}
+                            ${isMe ? '<div class="absolute bottom-0 right-0 bg-[#d4af37] text-black w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-plus"></i></div>' : ''}
+                        </div>
+                        <h2 class="text-sm font-semibold text-gray-300">@${user.username}</h2>
+                        
+                        <div class="flex justify-center gap-8 mt-4 mb-2 w-full">
+                            <div class="stat-box">
+                                <span class="stat-val">${user.following.length}</span>
+                                <span class="stat-label">Following</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-val">${user.followers.length}</span>
+                                <span class="stat-label">Followers</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-val">${totalLikes}</span>
+                                <span class="stat-label">Likes</span>
+                            </div>
+                        </div>
+
+                        ${actionButton}
+                        
+                        <p class="text-sm text-center px-6 mt-2 whitespace-pre-wrap">${user.bio || 'Welcome to my EduStream profile!'}</p>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="profile-tabs mt-2 sticky top-[var(--header-height)] bg-black z-10">
+                        <div class="profile-tab active" onclick="app.switchProfileTab('grid', '${userId}', this)"><i class="fas fa-th text-xl"></i></div>
+                        <div class="profile-tab" onclick="app.switchProfileTab('likes', '${userId}', this)"><i class="fas fa-heart text-xl"></i></div>
+                        <div class="profile-tab" onclick="app.switchProfileTab('saves', '${userId}', this)"><i class="fas fa-bookmark text-xl"></i></div>
+                        <div class="profile-tab" onclick="app.switchProfileTab('reposts', '${userId}', this)"><i class="fas fa-retweet text-xl"></i></div>
+                    </div>
+
+                    <div id="profile-content-grid" class="post-grid pb-10 min-h-[300px] bg-black">
+                        <!-- Populated by switchProfileTab -->
+                    </div>
+                `;
+
+                // Render current accounts in switcher if viewing own profile
+                if(isMe) {
+                    document.getElementById('account-list').innerHTML = `
+                        <div class="flex items-center justify-between p-3 rounded-lg bg-zinc-800 border border-[#d4af37]">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full overflow-hidden">${this.getAvatar(this.state.currentUser)}</div>
+                                <div><div class="font-bold text-sm">${user.name}</div><div class="text-xs text-gray-400">@${user.username}</div></div>
+                            </div>
+                            <i class="fas fa-check text-[#d4af37]"></i>
+                        </div>
+                    `;
+                }
+
+                // Default load grid
+                this.switchProfileTab('grid', userId, document.querySelector('.profile-tab.active'));
+            },
+
+            switchProfileTab(tabType, userId, el) {
+                document.querySelectorAll('.profile-tab').forEach(e => e.classList.remove('active'));
+                if(el) el.classList.add('active');
+                
+                const grid = document.getElementById('profile-content-grid');
+                let postsToDisplay = [];
+
+                if (tabType === 'grid') {
+                    postsToDisplay = this.state.db.posts.filter(p => p.authorId === userId);
+                } else if (tabType === 'likes') {
+                    postsToDisplay = this.state.db.posts.filter(p => p.likes.includes(userId));
+                } else if (tabType === 'saves') {
+                    postsToDisplay = this.state.db.posts.filter(p => p.saves.includes(userId));
+                } else if (tabType === 'reposts') {
+                    postsToDisplay = this.state.db.posts.filter(p => p.reposts.includes(userId));
+                }
+
+                if (postsToDisplay.length === 0) {
+                    grid.style.display = 'block'; // remove grid to center text
+                    grid.innerHTML = `<div class="flex flex-col items-center justify-center py-20 text-gray-500"><i class="fas fa-box-open text-4xl mb-3"></i><p>No content here yet.</p></div>`;
+                } else {
+                    grid.style.display = 'grid';
+                    grid.innerHTML = postsToDisplay.sort((a,b)=>b.timestamp-a.timestamp).map(p => this.generateGridItem(p)).join('');
+                }
+            },
+
+            toggleFollow(targetId) {
+                const me = this.state.currentUser;
+                const target = this.getUser(targetId);
+                
+                const idx = me.following.indexOf(targetId);
+                if (idx === -1) {
+                    me.following.push(targetId);
+                    target.followers.push(me.id);
+                } else {
+                    me.following.splice(idx, 1);
+                    target.followers.splice(target.followers.indexOf(me.id), 1);
+                }
+                this.saveDB();
+            },
+
+            // --- MEDIA UPLOAD (Handling large files conceptually) ---
+            openPostModal() {
+                document.getElementById('post-text').value = '';
+                this.clearMedia();
+                this.openModal('post-modal');
+            },
+
+            clearMedia() {
+                document.getElementById('post-media').value = '';
+                document.getElementById('media-preview').innerHTML = '';
+                document.getElementById('media-preview').classList.add('hidden');
+                
+                // Cleanup temp URL to free memory if it existed
+                if(this.state.uploadData.isTemp && this.state.uploadData.url) {
+                    URL.revokeObjectURL(this.state.uploadData.url);
+                }
+                
+                this.state.uploadData = { file: null, url: null, type: null, isTemp: false };
+            },
+
+            handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const previewContainer = document.getElementById('media-preview');
+                previewContainer.classList.remove('hidden');
+                
+                let typeStr = '';
+                if (file.type.startsWith('image/')) typeStr = 'image';
+                else if (file.type.startsWith('video/')) typeStr = 'video';
+                else if (file.type === 'application/pdf') typeStr = 'pdf';
+                else return alert('Unsupported file format. Use Video, Image, or PDF.');
+
+                // Conceptual handle for large files (Up to 600MB request)
+                // Browser localStorage limit is ~5MB. We use ObjectURL to make it work in UI without crashing.
+                if (file.size > 5 * 1024 * 1024) {
+                    // It's a large file.
+                    const tempUrl = URL.createObjectURL(file);
+                    this.state.uploadData = { file: file, url: tempUrl, type: typeStr, isTemp: true };
+                    this.renderPreview(typeStr, tempUrl, true);
+                    alert("Note: Uploading a very large file. This works for this session but will require a real backend to persist across reloads.");
+                } else {
+                    // Small file, base64 encode for localStorage persistence
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.state.uploadData = { file: file, url: e.target.result, type: typeStr, isTemp: false };
+                        this.renderPreview(typeStr, e.target.result, false);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+
+            renderPreview(type, src, isLarge) {
+                const container = document.getElementById('media-preview');
+                let inner = '';
+                if(type === 'image') inner = `<img src="${src}" class="w-full max-h-64 object-contain">`;
+                if(type === 'video') inner = `<video src="${src}" controls class="w-full max-h-64 object-contain"></video>`;
+                if(type === 'pdf') inner = `<div class="p-6 flex flex-col items-center"><i class="fas fa-file-pdf text-4xl text-red-500 mb-2"></i><span class="font-bold">PDF Ready for Upload</span></div>`;
+                
+                container.innerHTML = inner + `<button onclick="app.clearMedia()" class="absolute top-2 right-2 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition"><i class="fas fa-times"></i></button>`;
+                
+                if(isLarge) container.innerHTML += `<div class="absolute bottom-2 left-2 bg-blue-500 text-white text-[10px] px-2 py-1 rounded">Large File Mode Active</div>`;
+            },
+
+            submitPost() {
+                const text = document.getElementById('post-text').value.trim();
+                const d = this.state.uploadData;
+                
+                if (!text && !d.url) return alert('Please write something or attach a file.');
+
+                const newPost = {
+                    id: 'p_' + Date.now(),
+                    authorId: this.state.currentUser.id,
+                    type: d.type || 'text',
+                    text: text,
+                    media: d.url, // Base64 or ObjectURL
+                    likes: [], saves: [], reposts: [],
+                    timestamp: Date.now()
+                };
+
+                this.state.db.posts.push(newPost);
+                this.saveDB();
+                this.closeModal('post-modal');
+                this.navigate('feed');
+            },
+
+            // --- PROFILE EDITING ---
+            openEditProfile() {
+                this.closeModal('settings-modal');
+                const u = this.state.currentUser;
+                document.getElementById('edit-name').value = u.name;
+                document.getElementById('edit-bio').value = u.bio;
+                document.getElementById('edit-avatar-preview').innerHTML = this.getAvatar(u);
+                this.openModal('edit-profile-modal');
+            },
+
+            updateAvatarPreview(e) {
+                const file = e.target.files[0];
+                if(file) {
+                    if(file.size > 2 * 1024 * 1024) return alert("Avatar must be under 2MB.");
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${ev.target.result}" data-b64="${ev.target.result}" class="w-full h-full object-cover">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+
+            saveProfile() {
+                const u = this.state.currentUser;
+                u.name = document.getElementById('edit-name').value.trim();
+                u.bio = document.getElementById('edit-bio').value.trim();
+                const img = document.querySelector('#edit-avatar-preview img');
+                if(img && img.dataset.b64) u.pic = img.dataset.b64;
+                
+                this.saveDB();
+                this.closeModal('edit-profile-modal');
+                this.renderProfile(u.id);
+            },
+
+            // --- QR & MODALS ---
+            openModal(id) {
+                const modal = document.getElementById(id);
+                modal.style.display = 'flex';
+                if(id === 'language-modal') this.renderLanguageList();
+                if(id === 'qr-scanner-modal') {
+                    document.getElementById('qr-username-display').innerText = '@' + (this.state.currentUser?.username || 'user');
+                    this.switchQRTab('my');
+                }
+            },
+            closeModal(id) { document.getElementById(id).style.display = 'none'; },
+
+            switchQRTab(tab) {
+                document.getElementById('qr-tab-my').classList.toggle('border-[#d4af37]', tab === 'my');
+                document.getElementById('qr-tab-my').classList.toggle('text-white', tab === 'my');
+                document.getElementById('qr-tab-my').classList.toggle('border-transparent', tab !== 'my');
+                document.getElementById('qr-tab-my').classList.toggle('text-gray-500', tab !== 'my');
+                
+                document.getElementById('qr-tab-scan').classList.toggle('border-[#d4af37]', tab === 'scan');
+                document.getElementById('qr-tab-scan').classList.toggle('text-white', tab === 'scan');
+                document.getElementById('qr-tab-scan').classList.toggle('border-transparent', tab !== 'scan');
+                document.getElementById('qr-tab-scan').classList.toggle('text-gray-500', tab !== 'scan');
+
+                document.getElementById('qr-my-view').style.display = tab === 'my' ? 'block' : 'none';
+                document.getElementById('qr-scan-view').style.display = tab === 'scan' ? 'block' : 'none';
+            },
+
+            // --- LANGUAGE SELECTOR ---
+            renderLanguageList(filter = '') {
+                // Expanding to Ethiopian + World languages as requested
+                const langs = [
+                    { name: 'English', sub: 'US/UK', code: 'en' },
+                    { name: 'አማርኛ', sub: 'Amharic (Ethiopia)', code: 'am' },
+                    { name: 'Afaan Oromoo', sub: 'Oromo (Ethiopia)', code: 'om' },
+                    { name: 'ትግርኛ', sub: 'Tigrinya (Ethiopia/Eritrea)', code: 'ti' },
+                    { name: 'Af-Soomaali', sub: 'Somali', code: 'so' },
+                    { name: 'Sidaamu Afoo', sub: 'Sidama', code: 'sid' },
+                    { name: 'Wolayttatto', sub: 'Wolaytta', code: 'wal' },
+                    { name: 'Qafar Afa', sub: 'Afar', code: 'aa' },
+                    { name: 'العربية', sub: 'Arabic', code: 'ar' },
+                    { name: 'Français', sub: 'French', code: 'fr' },
+                    { name: 'Español', sub: 'Spanish', code: 'es' },
+                    { name: '中文', sub: 'Chinese', code: 'zh' },
+                    { name: 'Deutsch', sub: 'German', code: 'de' },
+                    { name: 'हिन्दी', sub: 'Hindi', code: 'hi' }
+                ];
+
+                const container = document.getElementById('language-list');
+                const q = filter.toLowerCase();
+                const filtered = langs.filter(l => l.name.toLowerCase().includes(q) || l.sub.toLowerCase().includes(q));
+
+                container.innerHTML = filtered.map(l => {
+                    const isActive = this.state.activeLang === l.name;
+                    return `
+                    <div class="px-5 py-4 border-b border-zinc-800 cursor-pointer flex justify-between items-center transition ${isActive ? 'bg-[#d4af37]/10' : 'hover:bg-zinc-800'}" onclick="app.setLanguage('${l.name}')">
+                        <div>
+                            <div class="font-bold text-white">${l.name}</div>
+                            <div class="text-xs text-gray-500">${l.sub}</div>
+                        </div>
+                        ${isActive ? '<i class="fas fa-check text-[#d4af37]"></i>' : ''}
+                    </div>
+                `}).join('');
+            },
+
+            filterLanguages(val) { this.renderLanguageList(val); },
+            setLanguage(langName) {
+                this.state.activeLang = langName;
+                this.renderLanguageList();
+                setTimeout(() => {
+                    this.closeModal('language-modal');
+                    // Mock translation UI update
+                    alert(`Language preferences updated to: ${langName}`);
+                }, 300);
+            },
+
+            // --- ADMIN PANEL (Super & Standard Logic) ---
+            switchAdminTab(tab, el) {
+                document.querySelectorAll('.admin-nav-item').forEach(e => e.classList.remove('active'));
+                if(el) el.classList.add('active');
+                
+                // Close sidebar on mobile
+                document.getElementById('admin-sidebar').classList.add('-translate-x-full');
+
+                const content = document.getElementById('admin-content-area');
+                const me = this.state.currentUser;
+
+                if (tab === 'dashboard') {
+                    const uCount = this.state.db.users.filter(u=>u.role==='user').length;
+                    const pCount = this.state.db.posts.length;
+                    content.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-500 text-xl"><i class="fas fa-users"></i></div>
+                                <div><div class="text-3xl font-bold">${uCount}</div><div class="text-sm text-gray-400">Total Users</div></div>
+                            </div>
+                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-green-900/30 flex items-center justify-center text-green-500 text-xl"><i class="fas fa-file-video"></i></div>
+                                <div><div class="text-3xl font-bold">${pCount}</div><div class="text-sm text-gray-400">Total Lessons/Posts</div></div>
+                            </div>
+                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-[#d4af37]/20 flex items-center justify-center text-[#d4af37] text-xl"><i class="fas fa-exclamation-triangle"></i></div>
+                                <div><div class="text-3xl font-bold">0</div><div class="text-sm text-gray-400">Reports Pending</div></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (tab === 'users') {
+                    const normalUsers = this.state.db.users.filter(u => u.role === 'user');
+                    let tableRows = normalUsers.map(u => `
+                        <tr class="border-b border-zinc-800 hover:bg-[#1a1a1a]">
+                            <td class="p-4 flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full overflow-hidden">${this.getAvatar(u)}</div>
+                                <div><div class="font-bold text-sm">${u.username}</div><div class="text-xs text-gray-500">${u.name}</div></div>
+                            </td>
+                            <td class="p-4"><span class="badge ${u.status === 'active' ? 'badge-active' : 'badge-banned'}">${u.status}</span></td>
+                            <td class="p-4 text-sm text-center text-orange-400">${u.warnings || 0}</td>
+                            <td class="p-4 text-right">
+                                <button onclick="app.warnUser('${u.id}')" class="text-warning hover:text-white mr-3" title="Send Warning"><i class="fas fa-exclamation-circle"></i></button>
+                                ${me.role === 'super' ? `
+                                    <button onclick="app.toggleBanUser('${u.id}')" class="${u.status === 'active' ? 'text-danger' : 'text-success'} hover:text-white" title="${u.status === 'active' ? 'Ban' : 'Unban'}">
+                                        <i class="fas ${u.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+                                    </button>
+                                ` : `<button class="text-gray-600 cursor-not-allowed" title="Super Admin Required"><i class="fas fa-ban"></i></button>`}
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    content.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-6">User Management</h2>
+                        <div class="bg-[#111] border border-zinc-800 rounded-xl overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-[#1a1a1a] text-xs uppercase text-gray-500">
+                                    <tr><th class="p-4 font-bold">User</th><th class="p-4 font-bold">Status</th><th class="p-4 font-bold text-center">Warnings</th><th class="p-4 font-bold text-right">Actions</th></tr>
+                                </thead>
+                                <tbody>${tableRows}</tbody>
+                            </table>
+                        </div>
+                    `;
+                } else if (tab === 'admins') {
+                    if(me.role !== 'super') {
+                        content.innerHTML = `<div class="p-10 text-center text-red-500"><i class="fas fa-lock text-5xl mb-4"></i><h2 class="text-2xl font-bold">Access Denied</h2><p>Only Super Admins can manage other administrators.</p></div>`;
+                        return;
+                    }
+                    const admins = this.state.db.users.filter(u => u.role !== 'user');
+                    let tableRows = admins.map(u => `
+                        <tr class="border-b border-zinc-800 hover:bg-[#1a1a1a]">
+                            <td class="p-4 font-bold text-sm">${u.username}</td>
+                            <td class="p-4"><span class="badge ${u.role === 'super' ? 'badge-super' : 'badge-standard'}">${u.role}</span></td>
+                            <td class="p-4 text-right">
+                                ${u.id !== me.id ? `<button onclick="alert('Demote logic here')" class="text-danger hover:text-white"><i class="fas fa-arrow-down"></i></button>` : '<span class="text-xs text-gray-500">You</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                    content.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-6">Admin Management</h2>
+                        <div class="bg-[#111] border border-zinc-800 rounded-xl overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-[#1a1a1a] text-xs uppercase text-gray-500">
+                                    <tr><th class="p-4 font-bold">Username</th><th class="p-4 font-bold">Level</th><th class="p-4 font-bold text-right">Actions</th></tr>
+                                </thead>
+                                <tbody>${tableRows}</tbody>
+                            </table>
+                        </div>
+                    `;
+                } else if (tab === 'info') {
+                    const info = this.state.db.appInfo;
+                    const disabled = me.role !== 'super' ? 'disabled class="input-field opacity-50 cursor-not-allowed"' : 'class="input-field"';
+                    content.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-6">Platform Information</h2>
+                        ${me.role !== 'super' ? '<div class="bg-red-900/30 text-red-400 p-3 rounded mb-4 text-sm"><i class="fas fa-lock"></i> View Only. Super Admin required to edit.</div>' : ''}
+                        
+                        <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl max-w-2xl">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="text-xs text-gray-400">Support Email</label><input type="text" id="ai-email" value="${info.email}" ${disabled}></div>
+                                <div><label class="text-xs text-gray-400">Phone Number</label><input type="text" id="ai-phone" value="${info.phone}" ${disabled}></div>
+                                <div class="md:col-span-2"><label class="text-xs text-gray-400">HQ Address</label><input type="text" id="ai-hq" value="${info.hq}" ${disabled}></div>
+                                <div class="md:col-span-2"><label class="text-xs text-gray-400">Google Map Link</label><input type="text" id="ai-map" value="${info.mapLink}" ${disabled}></div>
+                                <div><label class="text-xs text-gray-400">Pro Subscription Price</label><input type="text" id="ai-sub" value="${info.subPrice}" ${disabled}></div>
+                            </div>
+                            ${me.role === 'super' ? `<button onclick="app.saveAppInfo()" class="btn-primary mt-4 max-w-[200px]"><i class="fas fa-save"></i> Save Changes</button>` : ''}
+                        </div>
+                    `;
+                }
+            },
+
+            renderAdminPanel(initialTab) {
+                // UI adjustment based on role
+                if(this.state.currentUser.role === 'standard') {
+                    document.getElementById('nav-admin-mgt').style.display = 'none';
+                    document.getElementById('admin-role-badge').innerText = 'Standard Admin';
+                    document.getElementById('admin-role-badge').className = 'badge badge-standard mt-1 inline-block';
+                }
+                this.switchAdminTab(initialTab, document.querySelector('.admin-nav-item'));
+            },
+
+            toggleBanUser(id) {
+                const u = this.getUser(id);
+                if(u) {
+                    u.status = u.status === 'active' ? 'banned' : 'active';
+                    this.saveDB();
+                    this.switchAdminTab('users');
+                }
+            },
+
+            warnUser(id) {
+                const u = this.getUser(id);
+                if(u) {
+                    const reason = prompt("Enter warning reason:");
+                    if(reason) {
+                        u.warnings = (u.warnings || 0) + 1;
+                        this.saveDB();
+                        this.switchAdminTab('users');
+                        alert(`Warning sent to ${u.username}. Total warnings: ${u.warnings}`);
+                    }
+                }
+            },
+
+            saveAppInfo() {
+                this.state.db.appInfo = {
+                    email: document.getElementById('ai-email').value,
+                    phone: document.getElementById('ai-phone').value,
+                    hq: document.getElementById('ai-hq').value,
+                    mapLink: document.getElementById('ai-map').value,
+                    subPrice: document.getElementById('ai-sub').value
+                };
+                this.saveDB();
+                alert('Platform Information Updated!');
             }
         };
 
-        // Initialize on load
-        window.onload = () => app.init();
-
+        // Initialize App on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
     </script>
 </body>
 </html>
