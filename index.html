@@ -4,38 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>School of Ethiopian - Learning Platform</title>
+    <title>EduStream Platform</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
         
         :root {
-            /* Theme Variables */
-            --bg-base: #000000;
-            --bg-panel: #121212;
-            --bg-hover: #1e1e1e;
-            --text-main: #ffffff;
-            --text-muted: #888888;
-            --accent: #d4af37; /* Ethiopian Gold */
-            --accent-hover: #b5952f;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --border-color: #262626;
-            
-            /* UI Dimensions */
-            --bottom-nav-height: 60px;
-            --header-height: 55px;
+            --bg-base: #0f0f0f;
+            --bg-panel: #212121;
+            --bg-hover: #3d3d3d;
+            --text-main: #f1f1f1;
+            --text-muted: #aaaaaa;
+            --accent: #ff0000; /* YouTube Red */
+            --accent-hover: #cc0000;
+            --border-color: #272727;
+            --bottom-nav-height: 48px;
+            --header-height: 56px;
         }
 
         body {
             background-color: var(--bg-base);
             color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
             margin: 0;
@@ -43,309 +37,180 @@
         }
 
         /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        ::-webkit-scrollbar { width: 0px; height: 0px; background: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Mobile App Container Constraint */
+        /* App Container Constraint */
         .app-container {
             max-width: 600px;
             margin: 0 auto;
-            min-height: 100vh;
+            height: 100vh;
             background-color: var(--bg-base);
             position: relative;
             border-left: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* ------------------------------------
-           UTILITIES & ANIMATIONS
-        ------------------------------------ */
+        /* Animations */
         .hidden { display: none !important; }
-        .glass { background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         .slide-up { animation: slideUp 0.3s ease-out forwards; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* ------------------------------------
-           NAVIGATION (BOTTOM NAV)
-        ------------------------------------ */
+        /* Navigation */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 600px;
-            height: var(--bottom-nav-height);
-            background-color: var(--bg-base);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 50;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: var(--bottom-nav-height);
+            background-color: var(--bg-base); border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-around; align-items: center; z-index: 50;
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
-
         .nav-item {
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex: 1;
+            color: var(--text-main); display: flex; flex-direction: column; align-items: center;
+            font-size: 10px; cursor: pointer; transition: 0.2s; flex: 1; opacity: 0.8;
         }
-        
-        .nav-item.active { color: var(--text-main); font-weight: 700; }
-        .nav-item i { font-size: 22px; margin-bottom: 3px; }
-        
-        .nav-fab {
-            background: linear-gradient(45deg, #111, var(--accent));
-            color: white;
-            width: 48px;
-            height: 32px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
-        }
+        .nav-item.active { opacity: 1; font-weight: bold; }
+        .nav-item i { font-size: 20px; margin-bottom: 2px; }
 
-        /* ------------------------------------
-           FEED & POSTS
-        ------------------------------------ */
-        .feed-container {
-            scroll-snap-type: y mandatory;
-            overflow-y: scroll;
-            height: calc(100vh - var(--bottom-nav-height));
-        }
+        /* YouTube-style Feed Cards */
+        .yt-card { margin-bottom: 16px; cursor: pointer; }
+        .yt-thumbnail { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden; }
+        .yt-thumbnail img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .yt-duration { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; font-size: 12px; padding: 2px 4px; border-radius: 4px; font-weight: 500; }
+        .yt-meta { display: flex; padding: 12px; gap: 12px; align-items: flex-start; }
+        .yt-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #333; flex-shrink: 0; }
+        .yt-info { flex: 1; overflow: hidden; }
+        .yt-title { font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; line-height: 1.2; }
+        .yt-subtitle { font-size: 12px; color: var(--text-muted); }
 
-        .post-card {
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 0;
-            scroll-snap-align: start;
-        }
+        /* Highlight/Scale Effect for Visitor Page */
+        .preview-card { transition: all 0.3s ease; transform-origin: center center; }
+        .preview-card:hover, .preview-card:active { transform: scale(1.08); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
-        .media-container {
-            width: 100%;
-            max-height: 75vh;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        .media-container img, .media-container video {
-            width: 100%;
-            max-height: 75vh;
-            object-fit: contain;
-        }
-
-        /* PDF Preview Styling */
-        .pdf-frame {
-            width: 90%;
-            margin: 10px auto;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--bg-panel);
-            padding: 25px 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .pdf-frame::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--danger);
-        }
-        .pdf-frame i { font-size: 48px; color: var(--danger); margin-bottom: 15px; }
-
-        .action-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-main); background: none; border: none; cursor: pointer; transition: 0.2s; }
-        .action-btn:hover { color: var(--text-muted); }
-        .action-btn.liked { color: var(--danger); }
-        .action-btn.saved { color: var(--accent); }
-        .action-btn.reposted { color: var(--success); }
-
-        /* ------------------------------------
-           PROFILE TIKTOK STYLE
-        ------------------------------------ */
-        .profile-header-actions {
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;
-            position: sticky; top: 0; background: var(--bg-base); z-index: 10;
-        }
-        .profile-avatar-lg {
-            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px;
-            background: var(--bg-panel); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 36px;
-            border: 2px solid var(--border-color);
-        }
-        .stat-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .stat-val { font-weight: 700; font-size: 18px; }
-        .stat-label { font-size: 13px; color: var(--text-muted); }
-        
-        .profile-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
-        .profile-tab { flex: 1; text-align: center; padding: 12px 0; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; }
-        .profile-tab.active { color: var(--text-main); border-bottom-color: var(--text-main); font-weight: 600; }
-
-        .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-color); }
-        .grid-item { aspect-ratio: 1; background: var(--bg-base); position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
-        .grid-item-overlay { position: absolute; bottom: 4px; left: 4px; font-size: 12px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px; }
-
-        /* ------------------------------------
-           INBOX & DISCOVER
-        ------------------------------------ */
-        .story-ring {
-            width: 65px; height: 65px; border-radius: 50%; padding: 3px;
-            background: linear-gradient(45deg, var(--warning), var(--danger));
-            display: flex; justify-content: center; align-items: center;
-        }
-        .story-ring.live { background: linear-gradient(45deg, #ff0050, #00f2fe); }
+        /* Inbox TikTok Style */
+        .inbox-header { display: flex; justify-content: center; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-color); position: relative; }
+        .story-ring { width: 60px; height: 60px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #ff0050, #00f2fe); display: flex; justify-content: center; align-items: center; }
         .story-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-base); border: 2px solid var(--bg-base); overflow: hidden; }
-        .story-inner img { width: 100%; height: 100%; object-fit: cover; }
-
-        .inbox-tab { padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
-        .inbox-tab.active { background: var(--bg-panel); color: var(--text-main); }
-
-        .search-bar-container { background: var(--bg-panel); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
-        .search-input { background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 14px; }
-
-        /* ------------------------------------
-           MODALS & OVERLAYS
-        ------------------------------------ */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 100;
-            display: none; align-items: flex-end; /* Bottom sheet style */
-            justify-content: center;
-        }
+        
+        /* Modals & Overlays */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
         .overlay.center { align-items: center; }
-        .modal {
-            background: var(--bg-panel); width: 100%; max-width: 600px;
-            border-radius: 20px 20px 0 0; padding: 25px 20px;
-            max-height: 90vh; overflow-y: auto; position: relative;
-        }
-        .modal.center { border-radius: 15px; width: 90%; max-width: 400px; }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 10px; }
-        .modal-drag-handle { width: 40px; height: 5px; background: #333; border-radius: 5px; margin: 0 auto 20px; }
+        .modal { background: var(--bg-panel); width: 100%; max-width: 600px; border-radius: 16px 16px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .modal.center { border-radius: 16px; width: 90%; max-width: 400px; }
+        .modal-drag { width: 40px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 15px; }
 
-        /* ------------------------------------
-           FORMS & BUTTONS
-        ------------------------------------ */
-        .input-field {
-            width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: white;
-            padding: 14px; border-radius: 10px; margin-bottom: 15px; outline: none; transition: 0.3s;
-        }
-        .input-field:focus { border-color: var(--accent); background: #222; }
-        
-        .btn-primary {
-            width: 100%; background: var(--accent); color: #000; font-weight: 700;
-            padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: 0.2s;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .btn-primary:active { transform: translateY(1px); }
-        
-        .btn-secondary {
-            width: 100%; background: transparent; color: var(--text-main); font-weight: 600;
-            padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;
-        }
-        .btn-secondary:hover { background: var(--bg-hover); }
-        
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;
-        }
+        /* Fullscreen Sub-views (Chat, Player) */
+        .sub-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-base); z-index: 80; display: none; flex-direction: column; }
 
-        /* ------------------------------------
-           ADMIN PANEL
-        ------------------------------------ */
-        .admin-sidebar { background: #0a0a0a; border-right: 1px solid var(--border-color); width: 250px; display: flex; flex-direction: column; }
-        .admin-nav-item { padding: 15px 20px; cursor: pointer; border-left: 3px solid transparent; color: var(--text-muted); display: flex; gap: 10px; align-items: center; }
-        .admin-nav-item:hover { background: #111; color: white; }
-        .admin-nav-item.active { border-left-color: var(--accent); color: white; background: #1a1a1a; font-weight: bold; }
-        
-        .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .badge-super { background: rgba(212, 175, 55, 0.2); color: var(--accent); }
-        .badge-standard { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-        .badge-active { background: rgba(34, 197, 94, 0.2); color: var(--success); }
-        .badge-banned { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        /* Custom Toast Notification */
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+
+        /* Camera Scanner Animation */
+        .scanner-line { width: 100%; height: 2px; background: #00ff00; position: absolute; top: 0; left: 0; box-shadow: 0 0 10px #00ff00; animation: scanAnim 2s linear infinite; }
+        @keyframes scanAnim { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
     </style>
 </head>
 <body>
 
+    <!-- Custom Toast -->
+    <div id="toast">Notification Message</div>
+
     <!-- ==========================================
          VISITOR / LANDING VIEW
     ========================================== -->
-    <div id="landing-view" class="app-container fade-in">
-        <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
-            <div class="flex items-center gap-3">
-                <!-- Custom SVG Logo -->
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <span class="font-bold text-xl tracking-tight">EduStream Ethiopia</span>
+    <div id="landing-view" class="app-container fade-in bg-black">
+        <header class="p-4 flex justify-between items-center absolute top-0 w-full z-20 bg-gradient-to-b from-black/80 to-transparent">
+            <div class="flex items-center gap-2">
+                <i class="fab fa-youtube text-[#ff0000] text-3xl"></i>
+                <span class="font-bold text-xl tracking-tight text-white">EduTube</span>
             </div>
-            <button onclick="app.navigateAuth()" class="bg-white text-black px-4 py-1.5 rounded-full font-bold text-sm hover:bg-gray-200 transition">Log In</button>
+            <button onclick="app.navigateAuth()" class="bg-blue-600 text-white px-4 py-1.5 rounded-full font-bold text-sm">Sign In</button>
         </header>
 
+        <!-- Carousel Hero -->
+        <div id="landing-hero" class="relative w-full h-[45%] bg-cover bg-center transition-all duration-1000 ease-in-out" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800');">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+            <div class="absolute bottom-6 left-4 right-4 z-10">
+                <h1 class="text-3xl font-black mb-2 text-white">Learn Without Limits.</h1>
+                <p class="text-gray-200 text-sm mb-4">Discover educational content from top creators across Ethiopia.</p>
+                <button onclick="app.navigateAuth('signup')" class="bg-white text-black px-6 py-2 rounded-full font-bold">Get Started</button>
+            </div>
+        </div>
+
         <main class="flex-1 overflow-y-auto pb-10">
-            <!-- Hero Section -->
-            <div class="relative w-full h-[500px] bg-zinc-900 flex flex-col justify-end p-6 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Students">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-                
-                <div class="relative z-10 text-center mb-10">
-                    <h1 class="text-4xl font-extrabold mb-3 leading-tight">Learn from the <span style="color: var(--accent)">Best.</span><br>Anywhere.</h1>
-                    <p class="text-gray-300 text-sm mb-6">Join Ethiopia's premier video learning platform. Connect with educators, students, and creators.</p>
-                    <button onclick="app.navigateAuth('signup')" class="btn-primary w-3/4 mx-auto !rounded-full !py-4 text-lg shadow-[0_0_20px_rgba(212,175,55,0.4)]">Start Learning Free</button>
-                </div>
-            </div>
-
-            <!-- Trending Categories -->
+            <!-- Explore Topics (Images instead of colors) -->
             <div class="p-4">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-fire text-orange-500"></i> Explore Topics</h2>
+                <h2 class="text-lg font-bold mb-3">Explore Topics</h2>
                 <div class="flex gap-3 overflow-x-auto pb-4 hide-scrollbar snap-x">
-                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-blue-900 to-blue-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <i class="fas fa-laptop-code absolute top-3 right-3 text-2xl opacity-50"></i>
-                        <span class="font-bold text-sm relative z-10">Technology & IT</span>
+                    <div class="min-w-[140px] h-[80px] rounded-lg bg-cover bg-center snap-start relative overflow-hidden cursor-pointer" style="background-image: url('https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400');" onclick="app.navigateAuth()">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="font-bold text-white shadow-black drop-shadow-md">Programming</span></div>
                     </div>
-                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-green-900 to-green-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <i class="fas fa-flask absolute top-3 right-3 text-2xl opacity-50"></i>
-                        <span class="font-bold text-sm relative z-10">Sciences</span>
+                    <div class="min-w-[140px] h-[80px] rounded-lg bg-cover bg-center snap-start relative overflow-hidden cursor-pointer" style="background-image: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400');" onclick="app.navigateAuth()">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="font-bold text-white shadow-black drop-shadow-md">Mathematics</span></div>
                     </div>
-                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-purple-900 to-purple-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <i class="fas fa-language absolute top-3 right-3 text-2xl opacity-50"></i>
-                        <span class="font-bold text-sm relative z-10">Languages</span>
+                    <div class="min-w-[140px] h-[80px] rounded-lg bg-cover bg-center snap-start relative overflow-hidden cursor-pointer" style="background-image: url('https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400');" onclick="app.navigateAuth()">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="font-bold text-white shadow-black drop-shadow-md">Literature</span></div>
                     </div>
-                    <div class="min-w-[120px] h-[160px] rounded-xl bg-gradient-to-br from-red-900 to-red-600 p-3 flex flex-col justify-end snap-start relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <i class="fas fa-calculator absolute top-3 right-3 text-2xl opacity-50"></i>
-                        <span class="font-bold text-sm relative z-10">Mathematics</span>
+                    <div class="min-w-[140px] h-[80px] rounded-lg bg-cover bg-center snap-start relative overflow-hidden cursor-pointer" style="background-image: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=400');" onclick="app.navigateAuth()">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="font-bold text-white shadow-black drop-shadow-md">Science</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Fake Trending Video Previews -->
-            <div class="p-4">
-                <h2 class="text-lg font-bold mb-4">Trending Previews</h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="aspect-[9/16] bg-zinc-800 rounded-lg relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" class="w-full h-full object-cover opacity-70">
-                        <div class="absolute bottom-2 left-2 right-2 text-xs font-bold line-clamp-2">Introduction to Python Programming (Amharic)</div>
-                        <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px]"><i class="fas fa-play text-white"></i></div>
+            <!-- Trending Previews (Horizontal, Expanding on Hover/Touch) -->
+            <div class="p-4 border-t border-zinc-800">
+                <h2 class="text-lg font-bold mb-4">Trending Lessons</h2>
+                <div class="flex gap-4 overflow-x-auto pb-6 hide-scrollbar py-2 px-1">
+                    
+                    <div class="min-w-[240px] preview-card cursor-pointer" onclick="app.navigateAuth()">
+                        <div class="w-full aspect-video rounded-xl bg-zinc-800 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" class="w-full h-full object-cover">
+                            <div class="yt-duration">12:45</div>
+                        </div>
+                        <div class="mt-2 flex gap-2">
+                            <div class="w-8 h-8 rounded-full bg-blue-500 shrink-0 mt-1"></div>
+                            <div>
+                                <h3 class="font-bold text-sm leading-tight line-clamp-2">Complete Python Crash Course (Amharic)</h3>
+                                <p class="text-xs text-gray-400 mt-1">Abebe Tech • 120K views</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="aspect-[9/16] bg-zinc-800 rounded-lg relative overflow-hidden cursor-pointer" onclick="app.navigateAuth()">
-                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80" class="w-full h-full object-cover opacity-70">
-                        <div class="absolute bottom-2 left-2 right-2 text-xs font-bold line-clamp-2">Ethiopian History: Grade 10 Review</div>
-                        <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px]"><i class="fas fa-play text-white"></i></div>
+
+                    <div class="min-w-[240px] preview-card cursor-pointer" onclick="app.navigateAuth()">
+                        <div class="w-full aspect-video rounded-xl bg-zinc-800 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600" class="w-full h-full object-cover">
+                            <div class="yt-duration">45:10</div>
+                        </div>
+                        <div class="mt-2 flex gap-2">
+                            <div class="w-8 h-8 rounded-full bg-red-500 shrink-0 mt-1"></div>
+                            <div>
+                                <h3 class="font-bold text-sm leading-tight line-clamp-2">Ethiopian History Grade 10 Final Review</h3>
+                                <p class="text-xs text-gray-400 mt-1">EthioLearn • 85K views</p>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="min-w-[240px] preview-card cursor-pointer" onclick="app.navigateAuth()">
+                        <div class="w-full aspect-video rounded-xl bg-zinc-800 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1596496181848-3091d4878b24?w=600" class="w-full h-full object-cover">
+                            <div class="yt-duration">08:22</div>
+                        </div>
+                        <div class="mt-2 flex gap-2">
+                            <div class="w-8 h-8 rounded-full bg-green-500 shrink-0 mt-1"></div>
+                            <div>
+                                <h3 class="font-bold text-sm leading-tight line-clamp-2">Physics: Understanding Gravity Fast</h3>
+                                <p class="text-xs text-gray-400 mt-1">ScienceHub • 42K views</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
@@ -354,292 +219,301 @@
     <!-- ==========================================
          AUTHENTICATION VIEW
     ========================================== -->
-    <div id="auth-view" class="app-container hidden fade-in flex flex-col justify-center items-center p-6 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800')] bg-cover bg-center">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        
-        <div class="relative z-10 w-full max-w-md">
-            <div class="flex justify-center mb-8">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black shadow-lg shadow-yellow-900/50">
-                    <i class="fas fa-book-open text-3xl"></i>
-                </div>
+    <div id="auth-view" class="app-container hidden fade-in flex flex-col justify-center items-center p-6 bg-[#0f0f0f]">
+        <div class="w-full max-w-sm">
+            <div class="flex justify-center mb-6">
+                <i class="fab fa-youtube text-[#ff0000] text-5xl"></i>
             </div>
-            <h1 class="text-3xl font-extrabold mb-2 text-center text-white">EduStream</h1>
-            <p class="text-gray-400 mb-8 text-center text-sm">Sign in to continue learning</p>
+            <h1 class="text-2xl font-bold mb-6 text-center text-white">Sign in to EduTube</h1>
             
-            <div class="w-full bg-[#121212]/90 border border-zinc-800 p-6 rounded-2xl shadow-2xl">
-                <!-- Login Form -->
+            <div class="bg-[#212121] border border-[#3d3d3d] p-6 rounded-lg">
                 <div id="login-form">
-                    <input type="text" id="login-user" class="input-field bg-black/50" placeholder="Username or Email">
-                    <input type="password" id="login-pass" class="input-field bg-black/50" placeholder="Password">
-                    <button onclick="app.login()" class="btn-primary mb-4">Log In</button>
-                    <p class="text-sm text-center text-gray-400">Don't have an account? <span class="text-[#d4af37] cursor-pointer font-bold hover:underline" onclick="app.toggleAuth()">Sign Up</span></p>
-                    <p class="text-xs text-center text-gray-500 mt-4 cursor-pointer" onclick="app.navigateLanding()">← Back to Home</p>
+                    <input type="text" id="login-user" class="w-full bg-transparent border border-[#3d3d3d] rounded p-3 mb-4 text-white outline-none focus:border-blue-500" placeholder="Username or Email">
+                    <input type="password" id="login-pass" class="w-full bg-transparent border border-[#3d3d3d] rounded p-3 mb-6 text-white outline-none focus:border-blue-500" placeholder="Password">
+                    <button onclick="app.login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Sign In</button>
+                    <p class="text-sm text-center text-gray-400 mt-4">New here? <span class="text-blue-500 cursor-pointer font-bold" onclick="app.toggleAuth()">Create account</span></p>
+                    <p class="text-xs text-center text-gray-500 mt-4 cursor-pointer" onclick="app.navigateLanding()">← Back to Explore</p>
                 </div>
 
-                <!-- Signup Form -->
                 <div id="signup-form" class="hidden">
-                    <input type="text" id="reg-name" class="input-field bg-black/50" placeholder="Full Name">
-                    <input type="text" id="reg-user" class="input-field bg-black/50" placeholder="Username">
-                    <input type="password" id="reg-pass" class="input-field bg-black/50" placeholder="Password">
-                    <button onclick="app.signup()" class="btn-primary mb-4">Create Account</button>
-                    <p class="text-sm text-center text-gray-400">Already registered? <span class="text-[#d4af37] cursor-pointer font-bold hover:underline" onclick="app.toggleAuth()">Log In</span></p>
+                    <input type="text" id="reg-name" class="w-full bg-transparent border border-[#3d3d3d] rounded p-3 mb-4 text-white outline-none focus:border-blue-500" placeholder="Full Name">
+                    <input type="text" id="reg-user" class="w-full bg-transparent border border-[#3d3d3d] rounded p-3 mb-4 text-white outline-none focus:border-blue-500" placeholder="Username">
+                    <input type="password" id="reg-pass" class="w-full bg-transparent border border-[#3d3d3d] rounded p-3 mb-6 text-white outline-none focus:border-blue-500" placeholder="Password">
+                    <button onclick="app.signup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Create Account</button>
+                    <p class="text-sm text-center text-gray-400 mt-4">Have an account? <span class="text-blue-500 cursor-pointer font-bold" onclick="app.toggleAuth()">Sign In</span></p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ==========================================
-         MAIN APP VIEW (User Logged In)
+         MAIN APP VIEW
     ========================================== -->
-    <div id="main-view" class="app-container hidden fade-in">
+    <div id="main-view" class="app-container hidden fade-in relative">
         
-        <!-- App Header (Hidden on Profile, dynamically managed) -->
-        <header id="main-header" class="h-[var(--header-height)] glass sticky top-0 z-40 border-b border-[var(--border-color)] px-4 flex justify-between items-center transition-all">
-            <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-gradient-to-br from-[#d4af37] to-[#8c7322] flex items-center justify-center text-black text-xs">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <h1 class="text-lg font-bold">EduStream</h1>
+        <!-- YouTube Style Header -->
+        <header id="main-header" class="h-[var(--header-height)] bg-[#0f0f0f] flex justify-between items-center px-4 shrink-0 z-20">
+            <div class="flex items-center gap-1">
+                <i class="fab fa-youtube text-[#ff0000] text-2xl"></i>
+                <span class="font-bold text-lg tracking-tighter">EduTube</span>
             </div>
-            <div class="flex gap-4 items-center">
-                <button onclick="app.openModal('language-modal')" class="text-gray-300 hover:text-white" title="Change Language"><i class="fas fa-globe"></i></button>
-                <button onclick="app.navigate('discover')" class="text-gray-300 hover:text-white"><i class="fas fa-search"></i></button>
+            <div class="flex items-center gap-4 text-xl">
+                <i class="fas fa-cast cursor-pointer"></i>
+                <i class="far fa-bell cursor-pointer relative"><span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span></i>
+                <i class="fas fa-search cursor-pointer" onclick="app.navigate('discover')"></i>
             </div>
         </header>
 
         <!-- Dynamic Content Area -->
-        <div id="content-area" class="flex-1 overflow-y-auto bg-black pb-[var(--bottom-nav-height)] relative">
-            <!-- Content Injected Here via JS -->
+        <div id="content-area" class="flex-1 overflow-y-auto bg-[#0f0f0f] pb-[var(--bottom-nav-height)]">
+            <!-- Feed injected here -->
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- YouTube Style Bottom Nav -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="app.navigate('feed')" id="nav-feed">
                 <i class="fas fa-home"></i><span>Home</span>
             </div>
             <div class="nav-item" onclick="app.navigate('discover')" id="nav-discover">
-                <i class="fas fa-compass"></i><span>Discover</span>
+                <i class="fas fa-bolt"></i><span>Shorts</span>
             </div>
-            <div class="nav-item" onclick="app.openPostModal()" id="nav-create">
-                <div class="nav-fab"><i class="fas fa-plus"></i></div>
+            <div class="nav-item" onclick="app.openModal('upload-modal')" style="opacity: 1;">
+                <i class="far fa-plus-square text-3xl font-light"></i>
             </div>
             <div class="nav-item" onclick="app.navigate('inbox')" id="nav-inbox">
-                <i class="fas fa-comment-dots"></i><span id="inbox-badge-text">Inbox</span>
+                <i class="far fa-envelope"></i><span>Inbox</span>
             </div>
             <div class="nav-item" onclick="app.navigate('profile')" id="nav-profile">
-                <i class="fas fa-user"></i><span>Profile</span>
+                <div class="w-6 h-6 rounded-full bg-gray-600 mb-[2px] overflow-hidden" id="nav-avatar-mini"></div>
+                <span>You</span>
             </div>
         </div>
-    </div>
 
-    <!-- ==========================================
-         ADMIN PANEL VIEW
-    ========================================== -->
-    <div id="admin-view" class="hidden w-full min-h-screen bg-black text-white flex fade-in">
-        <!-- Admin Sidebar -->
-        <aside class="admin-sidebar fixed h-full z-20 md:relative transition-transform transform -translate-x-full md:translate-x-0" id="admin-sidebar">
-            <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-[#111]">
-                <div>
-                    <h2 class="font-bold text-xl text-[#d4af37]">EduAdmin</h2>
-                    <span id="admin-role-badge" class="badge badge-super mt-1 inline-block">Super Admin</span>
-                </div>
-                <button class="md:hidden text-white" onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"><i class="fas fa-times"></i></button>
+        <!-- Sub-Views that overlap main content -->
+        <!-- Chat View -->
+        <div id="chat-view" class="sub-view slide-in-right">
+            <div class="h-[60px] border-b border-zinc-800 flex items-center px-4 bg-[#111] shrink-0 gap-3">
+                <i class="fas fa-arrow-left text-xl cursor-pointer" onclick="app.closeSubView('chat-view')"></i>
+                <div class="w-8 h-8 rounded-full bg-zinc-700 overflow-hidden" id="chat-header-avatar"></div>
+                <h2 class="font-bold flex-1" id="chat-header-name">User Name</h2>
+                <i class="fas fa-video text-xl text-gray-400"></i>
             </div>
-            <nav class="flex-1 overflow-y-auto py-4">
-                <div class="admin-nav-item active" onclick="app.switchAdminTab('dashboard', this)"><i class="fas fa-chart-line w-6"></i> Dashboard</div>
-                <div class="admin-nav-item" onclick="app.switchAdminTab('users', this)"><i class="fas fa-users w-6"></i> User Management</div>
-                <div class="admin-nav-item" id="nav-admin-mgt" onclick="app.switchAdminTab('admins', this)"><i class="fas fa-shield-alt w-6"></i> Admin Management</div>
-                <div class="admin-nav-item" onclick="app.switchAdminTab('info', this)"><i class="fas fa-info-circle w-6"></i> Platform Info</div>
-                <div class="admin-nav-item" onclick="app.openModal('qr-scanner-modal')"><i class="fas fa-qrcode w-6"></i> Scan QR Code</div>
-            </nav>
-            <div class="p-4 border-t border-zinc-800">
-                <button onclick="app.logout()" class="btn-secondary w-full flex items-center justify-center gap-2 text-red-400 hover:text-red-300 border-red-900/50"><i class="fas fa-sign-out-alt"></i> Exit Admin</button>
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-black" id="chat-messages">
+                <!-- Messages -->
             </div>
-        </aside>
-
-        <!-- Admin Content -->
-        <main class="flex-1 h-screen overflow-y-auto relative">
-            <header class="h-[60px] border-b border-zinc-800 flex items-center px-4 bg-[#111] sticky top-0 z-10 md:hidden">
-                <button onclick="document.getElementById('admin-sidebar').classList.remove('-translate-x-full')" class="mr-4 text-xl"><i class="fas fa-bars"></i></button>
-                <h1 class="font-bold">EduAdmin Portal</h1>
-            </header>
-            
-            <div class="p-6 max-w-5xl mx-auto" id="admin-content-area">
-                <!-- Injected via JS -->
-            </div>
-        </main>
-    </div>
-
-
-    <!-- ==========================================
-         MODALS & OVERLAYS
-    ========================================== -->
-
-    <!-- Create Post Modal -->
-    <div id="post-modal" class="overlay">
-        <div class="modal slide-up">
-            <div class="modal-drag-handle"></div>
-            <h2 class="text-xl font-bold mb-4">Create Lesson or Post</h2>
-            
-            <textarea id="post-text" class="input-field h-24 resize-none text-lg" placeholder="Share knowledge, notes, or thoughts..."></textarea>
-            
-            <div class="bg-[#1a1a1a] border border-zinc-800 rounded-xl p-4 mb-4">
-                <label class="block mb-2 text-sm font-bold text-gray-300">Attach Media</label>
-                <p class="text-xs text-gray-500 mb-3">Upload Video, Image, or PDF. (Max 600MB simulated)</p>
-                
-                <div class="flex gap-2">
-                    <label class="flex-1 bg-[#222] hover:bg-[#333] border border-zinc-700 border-dashed rounded-lg p-4 flex flex-col items-center cursor-pointer transition">
-                        <i class="fas fa-cloud-upload-alt text-2xl text-[#d4af37] mb-2"></i>
-                        <span class="text-xs font-bold">Select File</span>
-                        <input type="file" id="post-media" accept="image/*,video/*,application/pdf" class="hidden" onchange="app.handleFileSelect(event)">
-                    </label>
-                </div>
-
-                <div id="media-preview" class="w-full mt-4 bg-black rounded overflow-hidden hidden relative">
-                    <!-- Preview injected here -->
-                    <button onclick="app.clearMedia()" class="absolute top-2 right-2 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
-                </div>
-            </div>
-
-            <button onclick="app.submitPost()" class="btn-primary py-4 text-lg">Publish Post</button>
-        </div>
-    </div>
-
-    <!-- Account Switcher Modal -->
-    <div id="account-switcher-modal" class="overlay center">
-        <div class="modal center fade-in pb-4">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('account-switcher-modal')"></i>
-            <h2 class="text-lg font-bold mb-4 text-center">Switch Account</h2>
-            
-            <div id="account-list" class="flex flex-col gap-2 mb-4">
-                <!-- Current account injected here -->
-            </div>
-            
-            <button onclick="app.logout(); app.closeModal('account-switcher-modal'); app.toggleAuth();" class="w-full p-3 rounded-lg border border-dashed border-zinc-600 text-gray-300 hover:bg-zinc-800 flex items-center justify-center gap-2 transition">
-                <i class="fas fa-plus"></i> Add or Create Account
-            </button>
-        </div>
-    </div>
-
-    <!-- Profile Settings (Hamburger) Modal -->
-    <div id="settings-modal" class="overlay">
-        <div class="modal slide-up">
-            <div class="modal-drag-handle"></div>
-            <h2 class="text-xl font-bold mb-4">Settings & Privacy</h2>
-            
-            <div class="flex flex-col gap-1">
-                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]" onclick="app.openEditProfile()">
-                    <div class="flex items-center gap-3"><i class="fas fa-user-edit w-5 text-gray-400"></i> Edit Profile</div>
-                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-                </button>
-                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]" onclick="app.openModal('qr-scanner-modal'); app.closeModal('settings-modal');">
-                    <div class="flex items-center gap-3"><i class="fas fa-qrcode w-5 text-gray-400"></i> My QR Code / Scanner</div>
-                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-                </button>
-                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-2 hover:bg-[#222]">
-                    <div class="flex items-center gap-3"><i class="fas fa-chart-bar w-5 text-gray-400"></i> Creator Tools</div>
-                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-                </button>
-                <button class="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg mb-6 hover:bg-[#222]">
-                    <div class="flex items-center gap-3"><i class="fas fa-shield-alt w-5 text-gray-400"></i> Privacy & Safety</div>
-                    <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-                </button>
-                
-                <button onclick="app.logout()" class="btn-danger py-3 text-lg"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            <div class="p-3 bg-[#111] border-t border-zinc-800 flex gap-2 shrink-0">
+                <input type="text" class="flex-1 bg-[#222] rounded-full px-4 text-sm outline-none border border-zinc-700 focus:border-blue-500" placeholder="Message...">
+                <button class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white" onclick="app.showToast('Message sent!')"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
-    </div>
 
-    <!-- Edit Profile Modal -->
-    <div id="edit-profile-modal" class="overlay">
-        <div class="modal slide-up">
-            <div class="modal-drag-handle"></div>
-            <div class="flex justify-between items-center mb-6">
-                <button onclick="app.closeModal('edit-profile-modal')" class="text-gray-400">Cancel</button>
-                <h2 class="text-lg font-bold">Edit Profile</h2>
-                <button onclick="app.saveProfile()" class="text-[#d4af37] font-bold">Save</button>
+        <!-- Dedicated Video Player View -->
+        <div id="player-view" class="sub-view slide-up bg-black">
+            <div id="player-media-container" class="w-full aspect-video bg-black relative sticky top-0 z-10 flex items-center justify-center">
+                <button class="absolute top-4 left-4 z-20 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center" onclick="app.closeSubView('player-view')"><i class="fas fa-chevron-down"></i></button>
+                <!-- Media Injected here -->
             </div>
-            
-            <div class="flex flex-col items-center mb-6">
-                <label class="relative cursor-pointer group">
-                    <div id="edit-avatar-preview" class="w-24 h-24 rounded-full bg-zinc-800 border-2 border-zinc-600 overflow-hidden flex items-center justify-center text-3xl"></div>
-                    <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                        <i class="fas fa-camera text-white text-xl"></i>
+            <div class="flex-1 overflow-y-auto pb-4 bg-[#0f0f0f]" id="player-details">
+                <!-- Title & Meta -->
+                <div class="p-4 border-b border-zinc-800">
+                    <h2 class="text-lg font-bold mb-1" id="player-title">Video Title</h2>
+                    <p class="text-xs text-gray-400 mb-3"><span id="player-views">10K</span> views • 2 days ago</p>
+                    
+                    <div class="flex gap-4 overflow-x-auto hide-scrollbar">
+                        <div class="flex items-center bg-[#272727] rounded-full">
+                            <button class="px-4 py-2 flex items-center gap-2 border-r border-[#3f3f3f] hover:bg-[#3f3f3f] rounded-l-full" onclick="app.showToast('Added to liked videos')"><i class="far fa-thumbs-up"></i> 1.2K</button>
+                            <button class="px-4 py-2 hover:bg-[#3f3f3f] rounded-r-full"><i class="far fa-thumbs-down"></i></button>
+                        </div>
+                        <button class="bg-[#272727] hover:bg-[#3f3f3f] px-4 py-2 rounded-full flex items-center gap-2 font-medium" onclick="app.showToast('Link copied to clipboard')"><i class="fas fa-share"></i> Share</button>
+                        <button class="bg-[#272727] hover:bg-[#3f3f3f] px-4 py-2 rounded-full flex items-center gap-2 font-medium" onclick="app.showToast('Saved to playlist')"><i class="far fa-bookmark"></i> Save</button>
                     </div>
-                    <input type="file" accept="image/*" class="hidden" onchange="app.updateAvatarPreview(event)">
+                </div>
+
+                <!-- Channel Info -->
+                <div class="p-4 flex items-center justify-between border-b border-zinc-800">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-zinc-700 overflow-hidden" id="player-avatar"></div>
+                        <div>
+                            <div class="font-bold text-sm" id="player-author">Channel Name</div>
+                            <div class="text-xs text-gray-400">100K subscribers</div>
+                        </div>
+                    </div>
+                    <button class="bg-white text-black px-4 py-1.5 rounded-full font-bold text-sm" onclick="app.showToast('Subscribed!')">Subscribe</button>
+                </div>
+
+                <!-- Comments Placeholder -->
+                <div class="p-4">
+                    <h3 class="font-bold text-sm mb-3">Comments <span class="text-gray-400 font-normal ml-1">124</span></h3>
+                    <div class="flex items-center gap-3 bg-[#212121] p-3 rounded-lg">
+                        <div class="w-6 h-6 rounded-full bg-gray-500 overflow-hidden" id="player-my-avatar"></div>
+                        <span class="text-sm text-gray-400">Add a comment...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         MODALS (Settings, QR, Upload)
+    ========================================== -->
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="overlay">
+        <div class="modal slide-up">
+            <div class="modal-drag"></div>
+            <h2 class="text-xl font-bold mb-4">Create</h2>
+            <div class="flex flex-col gap-4">
+                <button class="flex items-center gap-4 p-3 hover:bg-[#272727] rounded-lg transition" onclick="app.showToast('Opening camera...'); app.closeModal('upload-modal')">
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xl"><i class="fas fa-video"></i></div>
+                    <span class="text-lg">Create a Short</span>
+                </button>
+                <label class="flex items-center gap-4 p-3 hover:bg-[#272727] rounded-lg transition cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xl"><i class="fas fa-upload"></i></div>
+                    <span class="text-lg">Upload a video or PDF</span>
+                    <input type="file" class="hidden" onchange="app.showToast('Simulating upload success!'); app.closeModal('upload-modal')">
                 </label>
-                <span class="text-xs text-gray-400 mt-2">Change Photo</span>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400 ml-1">Name</label>
-                    <input type="text" id="edit-name" class="input-field !mb-0 mt-1" placeholder="Your Display Name">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-1">Bio</label>
-                    <textarea id="edit-bio" class="input-field h-20 resize-none !mb-0 mt-1" placeholder="Tell students about yourself..."></textarea>
-                </div>
+                <button class="flex items-center gap-4 p-3 hover:bg-[#272727] rounded-lg transition" onclick="app.showToast('Live feature coming soon'); app.closeModal('upload-modal')">
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xl"><i class="fas fa-broadcast-tower"></i></div>
+                    <span class="text-lg">Go Live</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Language Selector Modal -->
-    <div id="language-modal" class="overlay">
-        <div class="modal slide-up !p-0 overflow-hidden flex flex-col h-[80vh]">
-            <div class="p-4 border-b border-zinc-800 flex items-center gap-4 bg-[#121212] shrink-0">
-                <i class="fas fa-times cursor-pointer text-lg" onclick="app.closeModal('language-modal')"></i>
-                <h2 class="text-lg font-bold">Choose Language</h2>
-            </div>
-            <div class="p-3 bg-[#1a1a1a] border-b border-zinc-800 shrink-0">
-                <div class="search-bar-container">
-                    <i class="fas fa-search text-gray-500"></i>
-                    <input type="text" class="search-input" placeholder="Search languages..." onkeyup="app.filterLanguages(this.value)">
-                </div>
-            </div>
-            <div class="flex-1 overflow-y-auto" id="language-list">
-                <!-- Populated via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- QR Scanner / Generator Modal -->
-    <div id="qr-scanner-modal" class="overlay center">
-        <div class="modal center fade-in text-center pb-6">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('qr-scanner-modal')"></i>
-            <h2 class="text-xl font-bold mb-2">QR Code</h2>
+    <!-- QR Scanner & Profile Modals -->
+    <div id="qr-modal" class="overlay center">
+        <div class="modal center fade-in pb-6">
+            <i class="fas fa-times absolute top-4 right-4 text-xl text-gray-400 cursor-pointer" onclick="app.closeModal('qr-modal')"></i>
+            <h2 class="text-xl font-bold mb-4 text-center">QR Code</h2>
             
-            <!-- Tabs -->
             <div class="flex border-b border-zinc-800 mb-6">
-                <button class="flex-1 py-3 text-sm font-bold border-b-2 border-[#d4af37] text-white" id="qr-tab-my" onclick="app.switchQRTab('my')">My Code</button>
+                <button class="flex-1 py-3 text-sm font-bold border-b-2 border-white text-white" id="qr-tab-my" onclick="app.switchQRTab('my')">My Code</button>
                 <button class="flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500" id="qr-tab-scan" onclick="app.switchQRTab('scan')">Scan</button>
             </div>
 
-            <!-- My Code -->
-            <div id="qr-my-view">
-                <div class="bg-white p-4 rounded-xl inline-block mb-4 shadow-lg shadow-[#d4af37]/20">
-                    <!-- Fake QR Code Image -->
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EduStreamUser" alt="QR Code" class="w-40 h-40">
+            <!-- My Code Panel -->
+            <div id="qr-my-view" class="text-center">
+                <div class="bg-white p-4 rounded-2xl inline-block mb-4 shadow-lg" id="qr-image-container">
+                    <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=EduStreamUser" alt="QR Code" class="w-48 h-48">
                 </div>
                 <h3 class="font-bold text-lg" id="qr-username-display">@username</h3>
-                <p class="text-sm text-gray-400 mb-4">Show this to a friend to connect</p>
-                <button class="btn-secondary text-sm"><i class="fas fa-download"></i> Save Image</button>
+                
+                <div class="flex gap-4 mt-6">
+                    <button class="flex-1 bg-[#272727] hover:bg-[#3d3d3d] py-3 rounded-full font-medium transition" onclick="app.downloadQR()"><i class="fas fa-download mr-2"></i> Download</button>
+                    <button class="flex-1 bg-white text-black hover:bg-gray-200 py-3 rounded-full font-medium transition" onclick="app.shareProfile()"><i class="fas fa-share mr-2"></i> Share</button>
+                </div>
             </div>
 
-            <!-- Scan Code -->
-            <div id="qr-scan-view" class="hidden">
-                <div class="w-full aspect-square bg-black border-2 border-dashed border-[#d4af37] rounded-xl flex flex-col items-center justify-center mb-4 relative overflow-hidden">
-                    <i class="fas fa-camera text-4xl text-gray-600 mb-2"></i>
-                    <span class="text-sm text-gray-500">Camera Active (Simulated)</span>
-                    <div class="absolute w-full h-1 bg-[#d4af37] opacity-50 shadow-[0_0_10px_#d4af37] top-1/2 animate-pulse"></div>
+            <!-- Scan Code Panel -->
+            <div id="qr-scan-view" class="hidden text-center">
+                <div class="w-full aspect-square bg-black border-2 border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center mb-6 relative overflow-hidden" id="scanner-box">
+                    <i class="fas fa-qrcode text-6xl text-gray-700 mb-4"></i>
+                    <span class="text-sm text-gray-500">Point camera at a QR code</span>
+                    <div class="scanner-line hidden" id="scanner-laser"></div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="btn-primary flex-1 text-sm"><i class="fas fa-camera"></i> Open Camera</button>
-                    <label class="btn-secondary flex-1 text-sm flex items-center justify-center cursor-pointer">
-                        <i class="fas fa-image mr-2"></i> Upload Image
-                        <input type="file" accept="image/*" class="hidden" onchange="alert('Image scanned successfully! (Demo)')">
-                    </label>
+                <button class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-full font-bold transition mb-3" onclick="app.simulateCameraScan()">Open Camera Scan</button>
+                <label class="w-full bg-[#272727] hover:bg-[#3d3d3d] py-3 rounded-full font-medium transition flex items-center justify-center cursor-pointer">
+                    <i class="fas fa-image mr-2"></i> Scan from Image
+                    <input type="file" accept="image/*" class="hidden" onchange="app.showToast('Image scanned successfully!')">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Settings Panel (from Hamburger) -->
+    <div id="settings-modal" class="overlay">
+        <div class="modal slide-up h-[70vh]">
+            <div class="modal-drag"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Settings</h2>
+                <i class="fas fa-times text-xl text-gray-400 cursor-pointer" onclick="app.closeModal('settings-modal')"></i>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+                <!-- Navigation Items -->
+                <button class="flex items-center justify-between p-4 bg-[#212121] rounded-lg hover:bg-[#3d3d3d] transition" onclick="app.openSubSetting('creator-tools-panel')">
+                    <div class="flex items-center gap-3"><i class="fas fa-chart-line w-6 text-center"></i> Creator Tools</div>
+                    <i class="fas fa-chevron-right text-gray-500 text-sm"></i>
+                </button>
+                <button class="flex items-center justify-between p-4 bg-[#212121] rounded-lg hover:bg-[#3d3d3d] transition" onclick="app.openSubSetting('subscription-panel')">
+                    <div class="flex items-center gap-3"><i class="fas fa-star w-6 text-center text-yellow-500"></i> Subscription</div>
+                    <i class="fas fa-chevron-right text-gray-500 text-sm"></i>
+                </button>
+                <button class="flex items-center justify-between p-4 bg-[#212121] rounded-lg hover:bg-[#3d3d3d] transition" onclick="app.openSubSetting('privacy-panel')">
+                    <div class="flex items-center gap-3"><i class="fas fa-shield-alt w-6 text-center"></i> Privacy & Safety</div>
+                    <i class="fas fa-chevron-right text-gray-500 text-sm"></i>
+                </button>
+                
+                <div class="border-t border-zinc-800 my-4"></div>
+                
+                <button onclick="app.logout()" class="flex items-center justify-center gap-2 p-4 text-red-500 hover:bg-red-500/10 rounded-lg transition font-bold">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-Settings Panels -->
+    <!-- Creator Tools -->
+    <div id="creator-tools-panel" class="overlay center">
+        <div class="modal center slide-in-right h-[80vh] flex flex-col">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fas fa-arrow-left cursor-pointer" onclick="app.closeSubSetting('creator-tools-panel')"></i>
+                <h2 class="text-xl font-bold">Creator Tools</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="bg-[#212121] p-4 rounded-xl mb-4 text-center">
+                    <p class="text-sm text-gray-400 mb-1">Total Views (Last 28 Days)</p>
+                    <h3 class="text-3xl font-bold text-white">24.5K</h3>
+                    <p class="text-xs text-green-500 mt-2"><i class="fas fa-arrow-up"></i> 12% vs previous period</p>
                 </div>
+                <h4 class="font-bold mb-2">Analytics</h4>
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-[#212121] p-3 rounded-lg"><p class="text-xs text-gray-400">Watch Time</p><p class="font-bold">1.2K hrs</p></div>
+                    <div class="bg-[#212121] p-3 rounded-lg"><p class="text-xs text-gray-400">Subscribers</p><p class="font-bold">+45</p></div>
+                </div>
+                <button class="w-full bg-[#272727] py-3 rounded-full font-bold" onclick="app.showToast('Detailed analytics feature coming soon')">View Advanced Analytics</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Panel -->
+    <div id="subscription-panel" class="overlay center">
+        <div class="modal center slide-in-right h-[80vh] flex flex-col">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fas fa-arrow-left cursor-pointer" onclick="app.closeSubSetting('subscription-panel')"></i>
+                <h2 class="text-xl font-bold">Subscription Status</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto text-center">
+                <i class="fas fa-gem text-5xl text-blue-500 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">EduTube Premium</h3>
+                <p class="text-gray-400 text-sm mb-6">Ad-free, background play, and offline downloads.</p>
+                
+                <div id="sub-status-display" class="bg-[#212121] p-4 rounded-xl mb-6">
+                    <p class="font-bold text-white mb-1">Current Plan: Basic (Free)</p>
+                    <p class="text-xs text-gray-400">Upgrade for premium features.</p>
+                </div>
+
+                <button class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-full transition shadow-[0_0_15px_rgba(37,99,235,0.4)]" onclick="app.upgradeSubscription()">Upgrade to Premium - $4.99/mo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Panel -->
+    <div id="privacy-panel" class="overlay center">
+        <div class="modal center slide-in-right h-[80vh] flex flex-col">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fas fa-arrow-left cursor-pointer" onclick="app.closeSubSetting('privacy-panel')"></i>
+                <h2 class="text-xl font-bold">Privacy & Safety</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="flex items-center justify-between p-4 border-b border-zinc-800">
+                    <div><p class="font-bold">Private Account</p><p class="text-xs text-gray-400">Only approved followers can see your videos.</p></div>
+                    <input type="checkbox" class="w-5 h-5 rounded cursor-pointer" onchange="app.showToast('Privacy setting updated')">
+                </div>
+                <button class="w-full text-left p-4 border-b border-zinc-800 font-bold" onclick="app.showToast('Blocked list opened')">Blocked Accounts</button>
+                <button class="w-full text-left p-4 font-bold text-red-500" onclick="app.showToast('Account deletion request initiated')">Delete Account</button>
             </div>
         </div>
     </div>
@@ -650,100 +524,72 @@
     ========================================== -->
     <script>
         const app = {
-            // --- STATE MANAGEMENT ---
             state: {
-                db: {
-                    users: [],
-                    posts: [],
-                    messages: [],
-                    appInfo: {
-                        email: 'support@edustream.et',
-                        phone: '+251 911 234 567',
-                        hq: 'Addis Ababa, Bole',
-                        mapLink: 'https://maps.google.com/?q=Addis+Ababa',
-                        subPrice: '1500 ETB / Month'
-                    }
-                },
+                users: [
+                    { id: 'u1', username: 'abebe_tech', name: 'Abebe Tech', pic: 'https://i.pravatar.cc/150?img=11', followers: 12000, isPremium: false },
+                    { id: 'u2', username: 'sara_math', name: 'Sara Math Tutor', pic: 'https://i.pravatar.cc/150?img=5', followers: 45000, isPremium: true },
+                    { id: 'u3', username: 'ethio_history', name: 'EthioLearn History', pic: 'https://i.pravatar.cc/150?img=12', followers: 85000, isPremium: false }
+                ],
+                posts: [
+                    { id: 'p1', authorId: 'u1', type: 'video', title: 'Complete Python Crash Course (Amharic)', thumb: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600', media: 'https://www.w3schools.com/html/mov_bbb.mp4', views: '120K', duration: '12:45', timestamp: '2 days ago' },
+                    { id: 'p2', authorId: 'u2', type: 'video', title: 'Calculus Integration Tricks - Easy Method!', thumb: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600', media: 'https://www.w3schools.com/html/mov_bbb.mp4', views: '45K', duration: '08:22', timestamp: '5 hours ago' },
+                    { id: 'p3', authorId: 'u3', type: 'video', title: 'The Axumite Empire - Detailed Documentary', thumb: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600', media: 'https://www.w3schools.com/html/mov_bbb.mp4', views: '85K', duration: '45:10', timestamp: '1 week ago' },
+                    { id: 'p4', authorId: 'u1', type: 'image', title: 'JavaScript Cheat Sheet PDF', thumb: 'https://images.unsplash.com/photo-1596496181848-3091d4878b24?w=600', media: 'https://images.unsplash.com/photo-1596496181848-3091d4878b24?w=800', views: '12K', duration: 'IMAGE', timestamp: '1 hour ago' }
+                ],
                 currentUser: null,
-                currentView: '',
-                uploadData: { file: null, url: null, type: null, isTemp: false },
-                activeLang: 'English (US)'
+                bgInterval: null
             },
 
-            // --- INITIALIZATION ---
             init() {
-                const savedDB = localStorage.getItem('edustream_db');
-                if (savedDB) {
-                    try {
-                        this.state.db = JSON.parse(savedDB);
-                    } catch(e) { console.error("DB Parse error", e); this.seedDatabase(); }
-                } else {
-                    this.seedDatabase();
-                }
-
-                // Check active session
-                const sessionUser = sessionStorage.getItem('edustream_session');
+                this.setupLandingCarousel();
+                // Check mock session
+                const sessionUser = sessionStorage.getItem('edutube_session');
                 if (sessionUser) {
-                    this.state.currentUser = this.state.db.users.find(u => u.id === sessionUser);
-                }
-
-                if (this.state.currentUser) {
+                    this.state.currentUser = this.state.users.find(u => u.id === sessionUser);
                     this.routeUser();
                 } else {
                     document.getElementById('landing-view').classList.remove('hidden');
                 }
             },
 
-            seedDatabase() {
-                this.state.db.users = [
-                    { id: 'u_super', username: 'superadmin', pass: 'admin123', role: 'super', name: 'System Chief', bio: 'Platform Overseer', pic: '', followers: [], following: [], links: [], isPremium: true, status: 'active', warnings: 0 },
-                    { id: 'u_std', username: 'admin', pass: 'admin123', role: 'standard', name: 'Moderator Alpha', bio: 'Keeping the community safe.', pic: '', followers: [], following: [], links: [], isPremium: true, status: 'active', warnings: 0 },
-                    { id: 'u1', username: 'abebe_tech', pass: '123', role: 'user', name: 'Abebe Kebede', bio: 'Software Engineering Instructor. Learn Python and JS with me! 🇪🇹💻', pic: 'https://i.pravatar.cc/150?img=11', followers: ['u2', 'u3'], following: ['u2'], links: ['https://youtube.com/abebe'], isPremium: false, status: 'active', warnings: 0 },
-                    { id: 'u2', username: 'sara_math', pass: '123', role: 'user', name: 'Sara T.', bio: 'Making Math easy for everyone. Highschool & Freshmen.', pic: 'https://i.pravatar.cc/150?img=5', followers: ['u1'], following: ['u1', 'u3'], links: [], isPremium: true, status: 'active', warnings: 0 },
-                    { id: 'u3', username: 'chala_history', pass: '123', role: 'user', name: 'Chala D.', bio: 'History enthusiast.', pic: 'https://i.pravatar.cc/150?img=12', followers: ['u2'], following: [], links: [], isPremium: false, status: 'active', warnings: 0 }
-                ];
-                
-                const now = Date.now();
-                this.state.db.posts = [
-                    { id: 'p1', authorId: 'u1', type: 'video', text: 'JavaScript Basics: Let vs Const. Short tutorial for beginners! #programming #tech', media: 'https://www.w3schools.com/html/mov_bbb.mp4', likes: ['u2'], saves: ['u3'], reposts: [], timestamp: now - 100000 },
-                    { id: 'p2', authorId: 'u2', type: 'image', text: 'Calculus cheat sheet! Make sure to save this for your finals. 📚✍️', media: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80', likes: ['u1', 'u3'], saves: ['u1'], reposts: ['u1'], timestamp: now - 50000 },
-                    { id: 'p3', authorId: 'u3', type: 'pdf', text: 'The History of Axumite Empire - Full Chapter Summary PDF', media: 'mock_axum.pdf', likes: [], saves: [], reposts: [], timestamp: now - 10000 }
-                ];
-
-                this.state.db.messages = [
-                    { id: 'm1', from: 'u1', to: 'u2', text: 'Hey Sara, loved the math video!', timestamp: now - 8000 },
-                    { id: 'm2', from: 'u2', to: 'u1', text: 'Thanks Abebe! Yours was great too.', timestamp: now - 4000 }
-                ];
-
-                this.saveDB();
+            // --- UI UTILS ---
+            showToast(msg) {
+                const t = document.getElementById('toast');
+                t.innerText = msg;
+                t.style.opacity = '1';
+                setTimeout(() => t.style.opacity = '0', 2500);
+            },
+            
+            getAvatar(user) {
+                return user?.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-blue-600 flex items-center justify-center font-bold text-white">${user?.name?.charAt(0).toUpperCase() || 'U'}</div>`;
             },
 
-            saveDB() {
-                // Warning: We don't save massive Base64 strings to avoid crashing.
-                // Any post with isTemp: true (meaning it was a huge file mocked via URL.createObjectURL)
-                // is saved, but the URL will break on reload. This is a known limitation handled for the prompt.
-                localStorage.setItem('edustream_db', JSON.stringify(this.state.db));
+            // --- LANDING PAGE ---
+            setupLandingCarousel() {
+                const bgs = [
+                    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800',
+                    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+                    'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800'
+                ];
+                let idx = 0;
+                const hero = document.getElementById('landing-hero');
+                this.state.bgInterval = setInterval(() => {
+                    idx = (idx + 1) % bgs.length;
+                    hero.style.backgroundImage = `url('${bgs[idx]}')`;
+                }, 4000);
             },
 
-            // --- ROUTING & AUTH ---
+            // --- AUTHENTICATION ---
             navigateLanding() {
                 document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('main-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.add('hidden');
                 document.getElementById('landing-view').classList.remove('hidden');
             },
 
             navigateAuth(mode = 'login') {
                 document.getElementById('landing-view').classList.add('hidden');
                 document.getElementById('auth-view').classList.remove('hidden');
-                
-                if(mode === 'signup') {
-                    document.getElementById('login-form').classList.add('hidden');
-                    document.getElementById('signup-form').classList.remove('hidden');
-                } else {
-                    document.getElementById('login-form').classList.remove('hidden');
-                    document.getElementById('signup-form').classList.add('hidden');
-                }
+                document.getElementById('login-form').classList.toggle('hidden', mode === 'signup');
+                document.getElementById('signup-form').classList.toggle('hidden', mode === 'login');
             },
 
             toggleAuth() {
@@ -752,881 +598,409 @@
             },
 
             login() {
-                const u = document.getElementById('login-user').value.trim();
-                const p = document.getElementById('login-pass').value.trim();
-                const user = this.state.db.users.find(x => (x.username === u || x.id === u) && x.pass === p);
-                
-                if (user) {
-                    if (user.status === 'banned') return alert('This account has been banned by an administrator.');
-                    this.state.currentUser = user;
-                    sessionStorage.setItem('edustream_session', user.id);
-                    this.routeUser();
-                } else {
-                    alert('Invalid credentials');
-                }
+                // Mock login accepting anything for demo
+                const u = document.getElementById('login-user').value.trim() || 'User';
+                this.handleSessionStart(u, 'User Name');
             },
 
             signup() {
-                const name = document.getElementById('reg-name').value.trim();
-                const u = document.getElementById('reg-user').value.trim();
-                const p = document.getElementById('reg-pass').value.trim();
-                
-                if(!name || !u || !p) return alert("All fields required");
-                if(this.state.db.users.find(x => x.username === u)) return alert("Username taken");
+                const u = document.getElementById('reg-user').value.trim() || 'NewUser';
+                const n = document.getElementById('reg-name').value.trim() || 'New User';
+                this.handleSessionStart(u, n);
+            },
 
-                const newUser = {
-                    id: 'u_' + Date.now(),
-                    username: u,
-                    pass: p,
-                    role: 'user',
-                    name: name,
-                    bio: '',
-                    pic: '',
-                    followers: [],
-                    following: [],
-                    links: [],
-                    isPremium: false,
-                    status: 'active',
-                    warnings: 0
-                };
-                this.state.db.users.push(newUser);
-                this.saveDB();
-                this.state.currentUser = newUser;
-                sessionStorage.setItem('edustream_session', newUser.id);
+            handleSessionStart(username, name) {
+                let user = this.state.users.find(x => x.username === username);
+                if (!user) {
+                    user = { id: 'u_new', username: username, name: name, pic: '', followers: 0, isPremium: false };
+                    this.state.users.push(user);
+                }
+                this.state.currentUser = user;
+                sessionStorage.setItem('edutube_session', user.id);
+                document.getElementById('nav-avatar-mini').innerHTML = this.getAvatar(user);
                 this.routeUser();
             },
 
             logout() {
                 this.state.currentUser = null;
-                sessionStorage.removeItem('edustream_session');
+                sessionStorage.removeItem('edutube_session');
                 this.closeModal('settings-modal');
+                document.getElementById('main-view').classList.add('hidden');
                 this.navigateLanding();
             },
 
             routeUser() {
+                clearInterval(this.state.bgInterval); // stop carousel to save resources
                 document.getElementById('landing-view').classList.add('hidden');
                 document.getElementById('auth-view').classList.add('hidden');
-                
-                if (this.state.currentUser.role === 'super' || this.state.currentUser.role === 'standard') {
-                    document.getElementById('admin-view').classList.remove('hidden');
-                    this.renderAdminPanel('dashboard');
-                } else {
-                    document.getElementById('main-view').classList.remove('hidden');
-                    this.navigate('feed');
-                }
-            },
-
-            navigate(view) {
-                this.state.currentView = view;
-                const content = document.getElementById('content-area');
-                const header = document.getElementById('main-header');
-                
-                // Nav state
-                ['feed','discover','inbox','profile'].forEach(v => {
-                    const el = document.getElementById(`nav-${v}`);
-                    if(el) el.classList.remove('active');
-                });
-                if(document.getElementById(`nav-${view}`)) document.getElementById(`nav-${view}`).classList.add('active');
-
-                // Header logic: hide on profile
-                if(view === 'profile') {
-                    header.style.display = 'none';
-                } else {
-                    header.style.display = 'flex';
-                }
-
-                if (view === 'feed') this.renderFeed();
-                else if (view === 'discover') this.renderDiscover();
-                else if (view === 'inbox') this.renderInbox();
-                else if (view === 'profile') this.renderProfile(this.state.currentUser.id);
-            },
-
-            // --- UTILS ---
-            getUser(id) { return this.state.db.users.find(u => u.id === id); },
-            getAvatar(user) { return user.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-zinc-800 flex items-center justify-center font-bold">${user.name.charAt(0).toUpperCase()}</div>`; },
-            formatTime(ts) {
-                const diff = Math.floor((Date.now() - ts) / 1000);
-                if(diff < 60) return diff + 's';
-                if(diff < 3600) return Math.floor(diff/60) + 'm';
-                if(diff < 86400) return Math.floor(diff/3600) + 'h';
-                return Math.floor(diff/86400) + 'd';
-            },
-
-            // --- VIEW: FEED ---
-            renderFeed() {
-                const content = document.getElementById('content-area');
-                content.innerHTML = '<div class="feed-container" id="feed-scroll"></div>';
-                const feedScroll = document.getElementById('feed-scroll');
-
-                const posts = [...this.state.db.posts].sort((a,b) => b.timestamp - a.timestamp);
-                
-                if (posts.length === 0) {
-                    feedScroll.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-500"><i class="fas fa-video-slash text-4xl mb-4"></i><p>No lessons posted yet.</p></div>`;
-                    return;
-                }
-
-                posts.forEach(post => {
-                    const author = this.getUser(post.authorId);
-                    if(!author || author.status === 'banned') return;
-                    
-                    const isLiked = post.likes.includes(this.state.currentUser.id);
-                    const isSaved = post.saves.includes(this.state.currentUser.id);
-                    const isReposted = post.reposts.includes(this.state.currentUser.id);
-                    const isFollowing = this.state.currentUser.following.includes(author.id);
-
-                    let mediaHTML = '';
-                    if (post.type === 'video') mediaHTML = `<video src="${post.media}" controls loop playsinline class="w-full h-full object-contain bg-black"></video>`;
-                    else if (post.type === 'image') mediaHTML = `<img src="${post.media}" class="w-full h-full object-contain bg-black">`;
-                    else if (post.type === 'pdf') mediaHTML = `<div class="pdf-frame cursor-pointer" onclick="alert('Opening PDF: ${post.media}')"><i class="fas fa-file-pdf"></i><h3 class="font-bold text-lg mb-1 line-clamp-1">${post.text}</h3><p class="text-sm text-gray-400">PDF Document • Tap to read</p></div>`;
-
-                    let followBtn = '';
-                    if(author.id !== this.state.currentUser.id && !isFollowing) {
-                        followBtn = `<button onclick="app.toggleFollow('${author.id}')" class="bg-white/20 hover:bg-white/30 backdrop-blur text-white text-xs px-3 py-1 rounded-full font-bold ml-auto transition">Follow</button>`;
-                    }
-
-                    const el = document.createElement('div');
-                    el.className = 'post-card h-full flex flex-col relative';
-                    el.innerHTML = `
-                        <!-- Media Area (Takes most space) -->
-                        <div class="flex-1 w-full bg-black flex items-center justify-center relative overflow-hidden" ondblclick="app.toggleInteraction('${post.id}', 'likes')">
-                            ${mediaHTML}
-                        </div>
-                        
-                        <!-- Details Overlay (Bottom) -->
-                        <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex items-end justify-between">
-                            <div class="w-4/5 pr-4">
-                                <div class="flex items-center gap-2 mb-2 cursor-pointer" onclick="app.renderProfile('${author.id}')">
-                                    <div class="w-10 h-10 rounded-full overflow-hidden border border-zinc-700">${this.getAvatar(author)}</div>
-                                    <div>
-                                        <div class="font-bold text-sm flex items-center gap-1">${author.name} <i class="fas fa-check-circle text-[#d4af37] text-[10px]"></i></div>
-                                        <div class="text-xs text-gray-400">@${author.username}</div>
-                                    </div>
-                                    ${followBtn}
-                                </div>
-                                <p class="text-sm text-white line-clamp-2">${post.text}</p>
-                            </div>
-                            
-                            <!-- Action Column (Right side, Tiktok style) -->
-                            <div class="flex flex-col gap-4 items-center mb-2">
-                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'likes')">
-                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-heart text-xl ${isLiked ? 'text-red-500' : 'text-white'}"></i></div>
-                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.likes.length}</span>
-                                </div>
-                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="alert('Comments opening...')">
-                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-comment-dots text-xl text-white"></i></div>
-                                    <span class="text-xs font-bold shadow-black drop-shadow-md">0</span>
-                                </div>
-                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'saves')">
-                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-bookmark text-xl ${isSaved ? 'text-[#d4af37]' : 'text-white'}"></i></div>
-                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.saves.length}</span>
-                                </div>
-                                <div class="flex flex-col items-center gap-1 cursor-pointer group" onclick="app.toggleInteraction('${post.id}', 'reposts')">
-                                    <div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition group-hover:bg-black/60"><i class="fas fa-retweet text-xl ${isReposted ? 'text-green-500' : 'text-white'}"></i></div>
-                                    <span class="text-xs font-bold shadow-black drop-shadow-md">${post.reposts.length}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    feedScroll.appendChild(el);
-                });
-            },
-
-            // Generic toggle for likes, saves, reposts
-            toggleInteraction(postId, arrayName) {
-                const post = this.state.db.posts.find(p => p.id === postId);
-                if(!post) return;
-                const idx = post[arrayName].indexOf(this.state.currentUser.id);
-                if (idx === -1) post[arrayName].push(this.state.currentUser.id);
-                else post[arrayName].splice(idx, 1);
-                
-                this.saveDB();
-                if(this.state.currentView === 'feed') this.renderFeed();
-                if(this.state.currentView === 'profile') this.renderProfile(this.state.currentUser.id); // Refresh if viewing own profile
-            },
-
-            // --- VIEW: DISCOVER ---
-            renderDiscover() {
-                const content = document.getElementById('content-area');
-                
-                // Fake trending tags
-                const tags = ['#Math101', '#EthiopianHistory', '#LearnPython', '#Physics', '#OromoLanguage', '#AmharicLiterature'];
-                
-                content.innerHTML = `
-                    <div class="p-4 sticky top-0 bg-black z-10 border-b border-zinc-800">
-                        <div class="search-bar-container bg-zinc-900 border border-zinc-800">
-                            <i class="fas fa-search text-gray-400"></i>
-                            <input type="text" id="discover-search" class="search-input" placeholder="Search lessons, users, or tags..." onkeyup="app.handleSearch(event)">
-                        </div>
-                    </div>
-                    
-                    <div id="search-results" class="hidden p-4"></div>
-
-                    <div id="discover-default">
-                        <!-- Horizontal Trending Users -->
-                        <div class="p-4 border-b border-zinc-900">
-                            <h3 class="font-bold mb-3 text-sm text-gray-400 uppercase tracking-wider">Top Educators</h3>
-                            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-                                ${this.state.db.users.filter(u=>u.role==='user').map(u => `
-                                    <div class="flex flex-col items-center cursor-pointer min-w-[70px]" onclick="app.renderProfile('${u.id}')">
-                                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-700 mb-1">${this.getAvatar(u)}</div>
-                                        <span class="text-xs font-medium truncate w-full text-center">${u.name.split(' ')[0]}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Trending Tags Grid -->
-                        <div class="p-4 border-b border-zinc-900">
-                            <div class="flex flex-wrap gap-2">
-                                ${tags.map(t => `<div class="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer hover:bg-zinc-800 transition">${t}</div>`).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Explore Grid -->
-                        <div class="post-grid" id="discover-grid">
-                            ${this.state.db.posts.map(p => this.generateGridItem(p)).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-
-            handleSearch(e) {
-                const q = e.target.value.toLowerCase();
-                const def = document.getElementById('discover-default');
-                const res = document.getElementById('search-results');
-                
-                if(!q) {
-                    def.classList.remove('hidden'); res.classList.add('hidden');
-                    return;
-                }
-                
-                def.classList.add('hidden'); res.classList.remove('hidden');
-                
-                const users = this.state.db.users.filter(u => u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q));
-                const posts = this.state.db.posts.filter(p => p.text.toLowerCase().includes(q));
-
-                let html = '';
-                if(users.length) {
-                    html += `<h3 class="font-bold mb-2 text-sm text-gray-400">Users</h3><div class="flex flex-col gap-2 mb-4">`;
-                    users.forEach(u => {
-                        html += `<div class="flex items-center gap-3 bg-zinc-900 p-2 rounded cursor-pointer" onclick="app.renderProfile('${u.id}')">
-                            <div class="w-10 h-10 rounded-full overflow-hidden">${this.getAvatar(u)}</div>
-                            <div><div class="font-bold text-sm">${u.name}</div><div class="text-xs text-gray-500">@${u.username}</div></div>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
-                if(posts.length) {
-                    html += `<h3 class="font-bold mb-2 text-sm text-gray-400">Posts</h3><div class="post-grid">`;
-                    html += posts.map(p => this.generateGridItem(p)).join('');
-                    html += `</div>`;
-                }
-
-                if(!users.length && !posts.length) html = `<div class="text-center text-gray-500 py-10">No results found for "${q}"</div>`;
-                res.innerHTML = html;
-            },
-
-            generateGridItem(p) {
-                const views = Math.floor(Math.random() * 1000) + 100; // fake views
-                let inner = '';
-                if(p.type === 'image') inner = `<img src="${p.media}">`;
-                else if(p.type === 'video') inner = `<video src="${p.media}"></video><div class="grid-item-overlay"><i class="fas fa-play"></i> ${views}</div>`;
-                else inner = `<div class="w-full h-full bg-zinc-800 flex flex-col items-center justify-center p-2 text-center"><i class="fas fa-file-pdf text-red-500 text-2xl mb-1"></i><span class="text-[10px] leading-tight line-clamp-2">${p.text}</span></div>`;
-                
-                return `<div class="grid-item" onclick="alert('In a full app, this opens the feed view focused on this post.')">${inner}</div>`;
-            },
-
-            // --- VIEW: INBOX (7th img inspiration) ---
-            renderInbox() {
-                const content = document.getElementById('content-area');
-                
-                // Get active users for stories/live
-                const activeUsers = this.state.db.users.filter(u => u.id !== this.state.currentUser.id && u.role === 'user');
-
-                content.innerHTML = `
-                    <div class="flex items-center justify-between p-4 border-b border-zinc-900">
-                        <h2 class="font-bold text-xl">Inbox</h2>
-                        <i class="fas fa-edit text-xl text-gray-400"></i>
-                    </div>
-
-                    <!-- Stories / Live Row -->
-                    <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-zinc-900">
-                        <!-- Add Story -->
-                        <div class="flex flex-col items-center gap-1 cursor-pointer">
-                            <div class="relative w-[65px] h-[65px]">
-                                <div class="w-full h-full rounded-full overflow-hidden border-2 border-zinc-700 opacity-50">${this.getAvatar(this.state.currentUser)}</div>
-                                <div class="absolute bottom-0 right-0 bg-[#d4af37] text-black w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black"><i class="fas fa-plus"></i></div>
-                            </div>
-                            <span class="text-[10px] text-gray-400">Your Story</span>
-                        </div>
-                        <!-- Mock Live / Stories -->
-                        ${activeUsers.map((u, i) => `
-                            <div class="flex flex-col items-center gap-1 cursor-pointer">
-                                <div class="story-ring ${i%2===0 ? 'live' : ''}">
-                                    <div class="story-inner">${this.getAvatar(u)}</div>
-                                </div>
-                                <span class="text-[10px] text-white truncate w-14 text-center">${u.name.split(' ')[0]}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <!-- Tabs -->
-                    <div class="flex gap-2 p-4 pb-2 border-b border-zinc-900">
-                        <button class="inbox-tab active" onclick="app.switchInboxTab('messages', this)">Messages</button>
-                        <button class="inbox-tab" onclick="app.switchInboxTab('notifications', this)">Notifications</button>
-                    </div>
-
-                    <div id="inbox-list" class="flex flex-col">
-                        <!-- Messages Injected here -->
-                    </div>
-                `;
-                this.switchInboxTab('messages', document.querySelector('.inbox-tab.active'));
-            },
-
-            switchInboxTab(tab, el) {
-                document.querySelectorAll('.inbox-tab').forEach(e => e.classList.remove('active'));
-                if(el) el.classList.add('active');
-                
-                const list = document.getElementById('inbox-list');
-                list.innerHTML = '';
-
-                if(tab === 'messages') {
-                    // Group messages by user (mock implementation)
-                    const friends = this.state.db.users.filter(u => this.state.currentUser.following.includes(u.id));
-                    if(friends.length === 0) list.innerHTML = `<div class="text-center p-10 text-gray-500">No messages yet.</div>`;
-                    
-                    friends.forEach(f => {
-                        list.innerHTML += `
-                            <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition" onclick="alert('Opening chat with ${f.name}...')">
-                                <div class="w-14 h-14 rounded-full overflow-hidden shrink-0">${this.getAvatar(f)}</div>
-                                <div class="flex-1 overflow-hidden">
-                                    <h4 class="font-bold text-sm text-white">${f.name}</h4>
-                                    <p class="text-xs text-gray-400 truncate">Tap to chat with this user.</p>
-                                </div>
-                                <i class="fas fa-camera text-gray-500 text-xl"></i>
-                            </div>
-                        `;
-                    });
-                } else {
-                    // Mock Notifications
-                    list.innerHTML = `
-                        <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition">
-                            <div class="w-12 h-12 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-500"><i class="fas fa-user-plus"></i></div>
-                            <div class="flex-1">
-                                <p class="text-sm"><strong>Abebe Tech</strong> started following you.</p>
-                                <p class="text-xs text-gray-500">2h ago</p>
-                            </div>
-                            <button class="bg-[#d4af37] text-black text-xs px-3 py-1.5 rounded font-bold">Follow Back</button>
-                        </div>
-                        <div class="flex items-center gap-4 p-4 hover:bg-zinc-900 cursor-pointer transition">
-                            <div class="w-12 h-12 rounded-full bg-red-900/50 flex items-center justify-center text-red-500"><i class="fas fa-heart"></i></div>
-                            <div class="flex-1">
-                                <p class="text-sm"><strong>Sara Math</strong> liked your post.</p>
-                                <p class="text-xs text-gray-500">5h ago</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            },
-
-            // --- VIEW: PROFILE (TikTok Style) ---
-            renderProfile(userId) {
-                const user = this.getUser(userId);
-                if(!user) { this.navigate('feed'); return; }
-                this.state.currentView = 'profile';
-
-                // Update Header state (hide global header)
-                document.getElementById('main-header').style.display = 'none';
-
-                const content = document.getElementById('content-area');
-                const isMe = this.state.currentUser.id === userId;
-                
-                // Top Action Bar (Add Friend, Account Switch, Hamburger)
-                let topBarHTML = `
-                    <div class="profile-header-actions">
-                        <button onclick="app.navigate('discover')" class="text-xl text-white"><i class="fas fa-user-plus"></i></button>
-                        <button class="font-bold text-lg flex items-center gap-2" onclick="${isMe ? "app.openModal('account-switcher-modal')" : ""}">
-                            ${user.name} ${isMe ? '<i class="fas fa-chevron-down text-xs"></i>' : ''}
-                        </button>
-                        <button onclick="${isMe ? "app.openModal('settings-modal')" : "alert('Report/Block menu opening...') "}" class="text-xl text-white">
-                            <i class="${isMe ? 'fas fa-bars' : 'fas fa-ellipsis-h'}"></i>
-                        </button>
-                    </div>
-                `;
-
-                // Stats calculation
-                const userPosts = this.state.db.posts.filter(p => p.authorId === userId);
-                const totalLikes = userPosts.reduce((acc, curr) => acc + curr.likes.length, 0);
-
-                let actionButton = '';
-                if (isMe) {
-                    actionButton = `<div class="flex gap-2 justify-center px-6 mt-4 mb-2"><button onclick="app.openEditProfile()" class="btn-secondary !py-2 w-1/2">Edit profile</button><button onclick="alert('Share profile logic')" class="btn-secondary !py-2 w-1/2">Share profile</button></div>`;
-                } else {
-                    const isFollowing = this.state.currentUser.following.includes(userId);
-                    if (isFollowing) {
-                        actionButton = `<div class="flex gap-2 justify-center px-6 mt-4 mb-2"><button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-secondary !py-2 w-1/2">Following</button><button onclick="app.navigate('inbox')" class="btn-secondary !py-2 w-1/2">Message</button></div>`;
-                    } else {
-                        actionButton = `<div class="flex justify-center px-6 mt-4 mb-2"><button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-primary !py-2 w-3/4">Follow</button></div>`;
-                    }
-                }
-
-                // Render Base Profile Structure
-                content.innerHTML = `
-                    ${topBarHTML}
-                    <div class="flex flex-col items-center pt-4 pb-2">
-                        <div class="profile-avatar-lg relative group cursor-pointer" onclick="${isMe ? "app.openEditProfile()" : "app.openModal('qr-scanner-modal')"}">
-                            ${this.getAvatar(user)}
-                            ${isMe ? '<div class="absolute bottom-0 right-0 bg-[#d4af37] text-black w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-plus"></i></div>' : ''}
-                        </div>
-                        <h2 class="text-sm font-semibold text-gray-300">@${user.username}</h2>
-                        
-                        <div class="flex justify-center gap-8 mt-4 mb-2 w-full">
-                            <div class="stat-box">
-                                <span class="stat-val">${user.following.length}</span>
-                                <span class="stat-label">Following</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-val">${user.followers.length}</span>
-                                <span class="stat-label">Followers</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-val">${totalLikes}</span>
-                                <span class="stat-label">Likes</span>
-                            </div>
-                        </div>
-
-                        ${actionButton}
-                        
-                        <p class="text-sm text-center px-6 mt-2 whitespace-pre-wrap">${user.bio || 'Welcome to my EduStream profile!'}</p>
-                    </div>
-
-                    <!-- Tabs -->
-                    <div class="profile-tabs mt-2 sticky top-[var(--header-height)] bg-black z-10">
-                        <div class="profile-tab active" onclick="app.switchProfileTab('grid', '${userId}', this)"><i class="fas fa-th text-xl"></i></div>
-                        <div class="profile-tab" onclick="app.switchProfileTab('likes', '${userId}', this)"><i class="fas fa-heart text-xl"></i></div>
-                        <div class="profile-tab" onclick="app.switchProfileTab('saves', '${userId}', this)"><i class="fas fa-bookmark text-xl"></i></div>
-                        <div class="profile-tab" onclick="app.switchProfileTab('reposts', '${userId}', this)"><i class="fas fa-retweet text-xl"></i></div>
-                    </div>
-
-                    <div id="profile-content-grid" class="post-grid pb-10 min-h-[300px] bg-black">
-                        <!-- Populated by switchProfileTab -->
-                    </div>
-                `;
-
-                // Render current accounts in switcher if viewing own profile
-                if(isMe) {
-                    document.getElementById('account-list').innerHTML = `
-                        <div class="flex items-center justify-between p-3 rounded-lg bg-zinc-800 border border-[#d4af37]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full overflow-hidden">${this.getAvatar(this.state.currentUser)}</div>
-                                <div><div class="font-bold text-sm">${user.name}</div><div class="text-xs text-gray-400">@${user.username}</div></div>
-                            </div>
-                            <i class="fas fa-check text-[#d4af37]"></i>
-                        </div>
-                    `;
-                }
-
-                // Default load grid
-                this.switchProfileTab('grid', userId, document.querySelector('.profile-tab.active'));
-            },
-
-            switchProfileTab(tabType, userId, el) {
-                document.querySelectorAll('.profile-tab').forEach(e => e.classList.remove('active'));
-                if(el) el.classList.add('active');
-                
-                const grid = document.getElementById('profile-content-grid');
-                let postsToDisplay = [];
-
-                if (tabType === 'grid') {
-                    postsToDisplay = this.state.db.posts.filter(p => p.authorId === userId);
-                } else if (tabType === 'likes') {
-                    postsToDisplay = this.state.db.posts.filter(p => p.likes.includes(userId));
-                } else if (tabType === 'saves') {
-                    postsToDisplay = this.state.db.posts.filter(p => p.saves.includes(userId));
-                } else if (tabType === 'reposts') {
-                    postsToDisplay = this.state.db.posts.filter(p => p.reposts.includes(userId));
-                }
-
-                if (postsToDisplay.length === 0) {
-                    grid.style.display = 'block'; // remove grid to center text
-                    grid.innerHTML = `<div class="flex flex-col items-center justify-center py-20 text-gray-500"><i class="fas fa-box-open text-4xl mb-3"></i><p>No content here yet.</p></div>`;
-                } else {
-                    grid.style.display = 'grid';
-                    grid.innerHTML = postsToDisplay.sort((a,b)=>b.timestamp-a.timestamp).map(p => this.generateGridItem(p)).join('');
-                }
-            },
-
-            toggleFollow(targetId) {
-                const me = this.state.currentUser;
-                const target = this.getUser(targetId);
-                
-                const idx = me.following.indexOf(targetId);
-                if (idx === -1) {
-                    me.following.push(targetId);
-                    target.followers.push(me.id);
-                } else {
-                    me.following.splice(idx, 1);
-                    target.followers.splice(target.followers.indexOf(me.id), 1);
-                }
-                this.saveDB();
-            },
-
-            // --- MEDIA UPLOAD (Handling large files conceptually) ---
-            openPostModal() {
-                document.getElementById('post-text').value = '';
-                this.clearMedia();
-                this.openModal('post-modal');
-            },
-
-            clearMedia() {
-                document.getElementById('post-media').value = '';
-                document.getElementById('media-preview').innerHTML = '';
-                document.getElementById('media-preview').classList.add('hidden');
-                
-                // Cleanup temp URL to free memory if it existed
-                if(this.state.uploadData.isTemp && this.state.uploadData.url) {
-                    URL.revokeObjectURL(this.state.uploadData.url);
-                }
-                
-                this.state.uploadData = { file: null, url: null, type: null, isTemp: false };
-            },
-
-            handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const previewContainer = document.getElementById('media-preview');
-                previewContainer.classList.remove('hidden');
-                
-                let typeStr = '';
-                if (file.type.startsWith('image/')) typeStr = 'image';
-                else if (file.type.startsWith('video/')) typeStr = 'video';
-                else if (file.type === 'application/pdf') typeStr = 'pdf';
-                else return alert('Unsupported file format. Use Video, Image, or PDF.');
-
-                // Conceptual handle for large files (Up to 600MB request)
-                // Browser localStorage limit is ~5MB. We use ObjectURL to make it work in UI without crashing.
-                if (file.size > 5 * 1024 * 1024) {
-                    // It's a large file.
-                    const tempUrl = URL.createObjectURL(file);
-                    this.state.uploadData = { file: file, url: tempUrl, type: typeStr, isTemp: true };
-                    this.renderPreview(typeStr, tempUrl, true);
-                    alert("Note: Uploading a very large file. This works for this session but will require a real backend to persist across reloads.");
-                } else {
-                    // Small file, base64 encode for localStorage persistence
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.state.uploadData = { file: file, url: e.target.result, type: typeStr, isTemp: false };
-                        this.renderPreview(typeStr, e.target.result, false);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            },
-
-            renderPreview(type, src, isLarge) {
-                const container = document.getElementById('media-preview');
-                let inner = '';
-                if(type === 'image') inner = `<img src="${src}" class="w-full max-h-64 object-contain">`;
-                if(type === 'video') inner = `<video src="${src}" controls class="w-full max-h-64 object-contain"></video>`;
-                if(type === 'pdf') inner = `<div class="p-6 flex flex-col items-center"><i class="fas fa-file-pdf text-4xl text-red-500 mb-2"></i><span class="font-bold">PDF Ready for Upload</span></div>`;
-                
-                container.innerHTML = inner + `<button onclick="app.clearMedia()" class="absolute top-2 right-2 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition"><i class="fas fa-times"></i></button>`;
-                
-                if(isLarge) container.innerHTML += `<div class="absolute bottom-2 left-2 bg-blue-500 text-white text-[10px] px-2 py-1 rounded">Large File Mode Active</div>`;
-            },
-
-            submitPost() {
-                const text = document.getElementById('post-text').value.trim();
-                const d = this.state.uploadData;
-                
-                if (!text && !d.url) return alert('Please write something or attach a file.');
-
-                const newPost = {
-                    id: 'p_' + Date.now(),
-                    authorId: this.state.currentUser.id,
-                    type: d.type || 'text',
-                    text: text,
-                    media: d.url, // Base64 or ObjectURL
-                    likes: [], saves: [], reposts: [],
-                    timestamp: Date.now()
-                };
-
-                this.state.db.posts.push(newPost);
-                this.saveDB();
-                this.closeModal('post-modal');
+                document.getElementById('main-view').classList.remove('hidden');
                 this.navigate('feed');
             },
 
-            // --- PROFILE EDITING ---
-            openEditProfile() {
-                this.closeModal('settings-modal');
-                const u = this.state.currentUser;
-                document.getElementById('edit-name').value = u.name;
-                document.getElementById('edit-bio').value = u.bio;
-                document.getElementById('edit-avatar-preview').innerHTML = this.getAvatar(u);
-                this.openModal('edit-profile-modal');
-            },
+            // --- NAVIGATION LOGIC ---
+            navigate(view) {
+                const content = document.getElementById('content-area');
+                const header = document.getElementById('main-header');
+                
+                // Update Nav Bar UI
+                ['feed','discover','inbox','profile'].forEach(v => {
+                    const el = document.getElementById(`nav-${v}`);
+                    if(el) {
+                        el.classList.remove('active');
+                        // Reset icon to outline state if fontawesome supports it
+                        const i = el.querySelector('i');
+                        if(i && v !== 'profile') {
+                            i.classList.remove('fas'); i.classList.add('far');
+                        }
+                    }
+                });
+                
+                const activeEl = document.getElementById(`nav-${view}`);
+                if(activeEl) {
+                    activeEl.classList.add('active');
+                    const i = activeEl.querySelector('i');
+                    if(i && view !== 'profile') {
+                        i.classList.remove('far'); i.classList.add('fas');
+                    }
+                }
 
-            updateAvatarPreview(e) {
-                const file = e.target.files[0];
-                if(file) {
-                    if(file.size > 2 * 1024 * 1024) return alert("Avatar must be under 2MB.");
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${ev.target.result}" data-b64="${ev.target.result}" class="w-full h-full object-cover">`;
-                    };
-                    reader.readAsDataURL(file);
+                // Render Views
+                if (view === 'feed') {
+                    header.style.display = 'flex';
+                    this.renderYouTubeFeed();
+                } else if (view === 'discover') {
+                    header.style.display = 'flex';
+                    this.renderShortsView();
+                } else if (view === 'inbox') {
+                    header.style.display = 'none'; // Inbox has its own TikTok header
+                    this.renderTikTokInbox();
+                } else if (view === 'profile') {
+                    header.style.display = 'none'; // Profile has custom layout
+                    this.renderProfileView();
                 }
             },
 
-            saveProfile() {
-                const u = this.state.currentUser;
-                u.name = document.getElementById('edit-name').value.trim();
-                u.bio = document.getElementById('edit-bio').value.trim();
-                const img = document.querySelector('#edit-avatar-preview img');
-                if(img && img.dataset.b64) u.pic = img.dataset.b64;
+            // --- VIEWS ---
+            
+            renderYouTubeFeed() {
+                const c = document.getElementById('content-area');
+                let html = '<div class="pb-4">';
                 
-                this.saveDB();
-                this.closeModal('edit-profile-modal');
-                this.renderProfile(u.id);
+                // Categories strip
+                html += `
+                    <div class="flex gap-2 p-3 overflow-x-auto hide-scrollbar sticky top-0 bg-[#0f0f0f] z-10 border-b border-zinc-800">
+                        <div class="bg-white text-black px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer">All</div>
+                        <div class="bg-[#272727] text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]">Programming</div>
+                        <div class="bg-[#272727] text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]">Math</div>
+                        <div class="bg-[#272727] text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]">History</div>
+                        <div class="bg-[#272727] text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]">Physics</div>
+                    </div>
+                `;
+
+                // Feed Cards
+                this.state.posts.forEach(p => {
+                    const author = this.state.users.find(u => u.id === p.authorId);
+                    html += `
+                        <div class="yt-card" onclick="app.openPlayer('${p.id}')">
+                            <div class="yt-thumbnail">
+                                <img src="${p.thumb}">
+                                <div class="yt-duration">${p.duration}</div>
+                            </div>
+                            <div class="yt-meta">
+                                <div class="yt-avatar">${this.getAvatar(author)}</div>
+                                <div class="yt-info">
+                                    <h3 class="yt-title">${p.title}</h3>
+                                    <div class="yt-subtitle">${author.name} • ${p.views} views • ${p.timestamp}</div>
+                                </div>
+                                <i class="fas fa-ellipsis-v text-gray-400 p-2 cursor-pointer" onclick="event.stopPropagation(); app.showToast('Post options')"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                c.innerHTML = html + '</div>';
             },
 
-            // --- QR & MODALS ---
+            renderShortsView() {
+                const c = document.getElementById('content-area');
+                c.innerHTML = `
+                    <div class="h-full bg-zinc-900 flex flex-col items-center justify-center text-center p-6 relative">
+                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600')] bg-cover bg-center opacity-30"></div>
+                        <div class="relative z-10">
+                            <i class="fas fa-bolt text-5xl text-yellow-500 mb-4"></i>
+                            <h2 class="text-2xl font-bold mb-2">Shorts Feed</h2>
+                            <p class="text-gray-300">Vertical scrolling educational shorts will appear here. Swipe up to explore!</p>
+                            <p class="text-xs mt-4 text-gray-500">(Following the image reference 1000087392.jpg placeholder UI style)</p>
+                        </div>
+                        
+                        <!-- Mock Sidebar overlay for shorts -->
+                        <div class="absolute bottom-20 right-4 flex flex-col gap-6 items-center z-20">
+                            <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="app.showToast('Liked')"><i class="fas fa-thumbs-up text-2xl"></i><span class="text-xs">10K</span></div>
+                            <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="app.showToast('Comments')"><i class="fas fa-comment-dots text-2xl"></i><span class="text-xs">124</span></div>
+                            <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="app.showToast('Shared')"><i class="fas fa-share text-2xl"></i><span class="text-xs">Share</span></div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Inbox - TikTok Style (ref: 1000087379.jpg)
+            renderTikTokInbox() {
+                const c = document.getElementById('content-area');
+                const others = this.state.users.filter(u => u.id !== this.state.currentUser.id);
+                
+                let html = `
+                    <div class="inbox-header">
+                        <h2 class="font-bold text-lg">Inbox <i class="fas fa-caret-down text-xs ml-1"></i></h2>
+                        <i class="fas fa-search absolute right-4 text-xl cursor-pointer" onclick="app.showToast('Search')"></i>
+                    </div>
+
+                    <!-- Promo Banner -->
+                    <div class="m-3 p-3 bg-[#212121] rounded-lg flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-envelope text-red-500 text-xl"></i>
+                            <span class="text-sm font-medium leading-tight">Get emails when people interact with your account.</span>
+                        </div>
+                        <button class="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shrink-0" onclick="app.showToast('Email alerts setup')">Learn more</button>
+                    </div>
+
+                    <!-- Stories / Top Row -->
+                    <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-zinc-800">
+                        <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="app.openModal('upload-modal')">
+                            <div class="relative w-[60px] h-[60px]">
+                                <div class="w-full h-full rounded-full overflow-hidden bg-[#212121] border-2 border-transparent opacity-80">${this.getAvatar(this.state.currentUser)}</div>
+                                <div class="absolute bottom-0 right-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black"><i class="fas fa-plus"></i></div>
+                            </div>
+                            <span class="text-[11px] font-medium mt-1">Create</span>
+                        </div>
+                `;
+
+                others.forEach(u => {
+                    html += `
+                        <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="app.showToast('Viewing story of ${u.name}')">
+                            <div class="story-ring"><div class="story-inner">${this.getAvatar(u)}</div></div>
+                            <span class="text-[11px] font-medium mt-1 truncate w-[60px] text-center">${u.name.split(' ')[0]}</span>
+                        </div>
+                    `;
+                });
+                html += `</div> <div class="flex flex-col mt-2">`;
+
+                // Messages / Activity List
+                const activities = [
+                    { icon: '<div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center"><i class="fas fa-user-friends text-white text-xl"></i></div>', title: 'New followers', desc: 'Abebe Tech started following you', badge: '2', action: null },
+                    { icon: '<div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center"><i class="fas fa-heart text-white text-xl"></i></div>', title: 'Activity', desc: 'Sara Math and 6 others liked your comment', badge: '22', action: null },
+                ];
+
+                activities.forEach(a => {
+                    html += `
+                        <div class="flex items-center gap-4 p-4 hover:bg-[#212121] cursor-pointer" onclick="app.showToast('Opening ${a.title}')">
+                            ${a.icon}
+                            <div class="flex-1">
+                                <h4 class="font-bold text-[15px]">${a.title}</h4>
+                                <p class="text-[13px] text-gray-400 truncate">${a.desc}</p>
+                            </div>
+                            ${a.badge ? `<div class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${a.badge}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                // Direct Messages (Clicking opens Chat view)
+                others.forEach(u => {
+                    html += `
+                        <div class="flex items-center gap-4 p-4 hover:bg-[#212121] cursor-pointer" onclick="app.openChat('${u.id}')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden shrink-0">${this.getAvatar(u)}</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-[15px]">${u.name}</h4>
+                                <p class="text-[13px] text-gray-400 truncate">shared a video • 15h</p>
+                            </div>
+                            <i class="fas fa-camera text-gray-400 text-xl px-2"></i>
+                        </div>
+                    `;
+                });
+
+                c.innerHTML = html + `</div>`;
+            },
+
+            // YouTube Channel Style Profile
+            renderProfileView() {
+                const c = document.getElementById('content-area');
+                const u = this.state.currentUser;
+                
+                c.innerHTML = `
+                    <div class="relative w-full h-[120px] bg-[url('https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800')] bg-cover bg-center">
+                        <div class="absolute top-4 right-4 flex gap-3 z-10">
+                            <div class="w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center cursor-pointer" onclick="app.openModal('qr-modal')"><i class="fas fa-qrcode text-white text-sm"></i></div>
+                            <div class="w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center cursor-pointer" onclick="app.openModal('settings-modal')"><i class="fas fa-cog text-white text-sm"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="px-4 pb-4 bg-[#0f0f0f]">
+                        <div class="flex justify-between items-end -mt-10 mb-3 relative z-10">
+                            <div class="w-20 h-20 rounded-full border-4 border-[#0f0f0f] bg-[#212121] overflow-hidden">${this.getAvatar(u)}</div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 mb-1">
+                            <h2 class="text-2xl font-bold">${u.name}</h2>
+                            <i class="fas fa-pen text-gray-400 text-sm cursor-pointer p-1" onclick="app.showToast('Edit Profile (Simulated)')"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-1">@${u.username} • 0 subscribers • 0 videos</p>
+                        <p class="text-sm mb-4 line-clamp-2">Welcome to my educational channel! I post content about programming and tech in Amharic.</p>
+                        
+                        <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
+                            <button class="bg-[#212121] text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]" onclick="app.showToast('Channel analytics')"><i class="fas fa-chart-bar mr-2"></i>Analytics</button>
+                            <button class="bg-[#212121] text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-[#3d3d3d]" onclick="app.openModal('upload-modal')"><i class="fas fa-video mr-2"></i>Manage Videos</button>
+                        </div>
+                    </div>
+
+                    <!-- Channel Tabs -->
+                    <div class="flex border-b border-zinc-800 sticky top-0 bg-[#0f0f0f] z-10">
+                        <div class="flex-1 text-center py-3 font-medium border-b-2 border-white text-white cursor-pointer">Home</div>
+                        <div class="flex-1 text-center py-3 font-medium border-b-2 border-transparent text-gray-400 cursor-pointer hover:text-white">Videos</div>
+                        <div class="flex-1 text-center py-3 font-medium border-b-2 border-transparent text-gray-400 cursor-pointer hover:text-white">Playlists</div>
+                    </div>
+
+                    <!-- Grid Content (Click opens player) -->
+                    <div class="p-4 flex flex-col items-center justify-center text-center py-12">
+                        <i class="far fa-play-circle text-5xl text-gray-600 mb-4"></i>
+                        <h3 class="font-bold text-lg mb-1">Create a video</h3>
+                        <p class="text-sm text-gray-400 mb-4">Share your knowledge with everyone.</p>
+                        <button class="bg-blue-600 px-4 py-2 rounded-full font-bold text-sm text-white" onclick="app.openModal('upload-modal')">Create</button>
+                    </div>
+                `;
+            },
+
+            // --- SUB-VIEWS LOGIC (Player, Chat) ---
+            openPlayer(postId) {
+                const post = this.state.posts.find(p => p.id === postId);
+                if(!post) return;
+                
+                document.getElementById('player-title').innerText = post.title;
+                document.getElementById('player-views').innerText = post.views;
+                
+                const author = this.state.users.find(u => u.id === post.authorId);
+                document.getElementById('player-author').innerText = author ? author.name : 'Unknown';
+                document.getElementById('player-avatar').innerHTML = this.getAvatar(author);
+                document.getElementById('player-my-avatar').innerHTML = this.getAvatar(this.state.currentUser);
+
+                const container = document.getElementById('player-media-container');
+                let mediaElement = '';
+                if(post.type === 'video') {
+                    // Standard HTML5 video for demo
+                    mediaElement = `<video src="${post.media}" controls autoplay class="w-full h-full object-contain"></video>`;
+                } else {
+                    mediaElement = `<img src="${post.media}" class="w-full h-full object-contain">`;
+                }
+                
+                // Add back button into container
+                container.innerHTML = `<button class="absolute top-4 left-4 z-20 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center" onclick="app.closeSubView('player-view')"><i class="fas fa-chevron-down"></i></button>` + mediaElement;
+
+                document.getElementById('player-view').style.display = 'flex';
+            },
+
+            openChat(userId) {
+                const target = this.state.users.find(u => u.id === userId);
+                if(!target) return;
+                
+                document.getElementById('chat-header-name').innerText = target.name;
+                document.getElementById('chat-header-avatar').innerHTML = this.getAvatar(target);
+                
+                // Mock messages
+                const c = document.getElementById('chat-messages');
+                c.innerHTML = `
+                    <div class="text-center text-xs text-gray-500 mb-4">Today 10:45 AM</div>
+                    <div class="flex items-end gap-2 max-w-[80%] mr-auto">
+                        <div class="w-6 h-6 rounded-full overflow-hidden shrink-0">${this.getAvatar(target)}</div>
+                        <div class="bg-[#212121] px-4 py-2 rounded-2xl rounded-bl-sm text-sm">Hello! Thanks for checking out my content.</div>
+                    </div>
+                    <div class="flex items-end gap-2 max-w-[80%] ml-auto justify-end">
+                        <div class="bg-blue-600 px-4 py-2 rounded-2xl rounded-br-sm text-sm text-white">Hey! No problem, great stuff.</div>
+                    </div>
+                `;
+                
+                document.getElementById('chat-view').style.display = 'flex';
+            },
+
+            closeSubView(id) {
+                document.getElementById(id).style.display = 'none';
+                if(id === 'player-view') {
+                    // Stop video playback by wiping innerHTML except the button
+                    document.getElementById('player-media-container').innerHTML = `<button class="absolute top-4 left-4 z-20 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center" onclick="app.closeSubView('player-view')"><i class="fas fa-chevron-down"></i></button>`;
+                }
+            },
+
+            // --- MODALS & SETTINGS LOGIC ---
             openModal(id) {
-                const modal = document.getElementById(id);
-                modal.style.display = 'flex';
-                if(id === 'language-modal') this.renderLanguageList();
-                if(id === 'qr-scanner-modal') {
-                    document.getElementById('qr-username-display').innerText = '@' + (this.state.currentUser?.username || 'user');
-                    this.switchQRTab('my');
+                document.getElementById(id).style.display = 'flex';
+                if(id === 'qr-modal') {
+                    document.getElementById('qr-username-display').innerText = '@' + this.state.currentUser.username;
                 }
             },
             closeModal(id) { document.getElementById(id).style.display = 'none'; },
 
+            // QR Code specific logic
             switchQRTab(tab) {
-                document.getElementById('qr-tab-my').classList.toggle('border-[#d4af37]', tab === 'my');
-                document.getElementById('qr-tab-my').classList.toggle('text-white', tab === 'my');
-                document.getElementById('qr-tab-my').classList.toggle('border-transparent', tab !== 'my');
-                document.getElementById('qr-tab-my').classList.toggle('text-gray-500', tab !== 'my');
+                const isMy = tab === 'my';
+                document.getElementById('qr-tab-my').className = `flex-1 py-3 text-sm font-bold border-b-2 ${isMy ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+                document.getElementById('qr-tab-scan').className = `flex-1 py-3 text-sm font-bold border-b-2 ${!isMy ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+                document.getElementById('qr-my-view').style.display = isMy ? 'block' : 'none';
+                document.getElementById('qr-scan-view').style.display = !isMy ? 'block' : 'none';
+            },
+
+            downloadQR() {
+                // Real functional download logic
+                const img = document.getElementById('qr-image');
+                const a = document.createElement('a');
+                a.href = img.src;
+                a.download = `EduTube_QR_${this.state.currentUser.username}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                this.showToast('QR Code downloaded successfully!');
+            },
+
+            shareProfile() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My EduTube Profile',
+                        text: 'Check out my educational content on EduTube!',
+                        url: 'https://edutube.com/@' + this.state.currentUser.username
+                    }).catch(console.error);
+                } else {
+                    this.showToast('Profile link copied to clipboard!');
+                }
+            },
+
+            simulateCameraScan() {
+                const box = document.getElementById('scanner-box');
+                const laser = document.getElementById('scanner-laser');
+                laser.classList.remove('hidden');
+                box.style.borderColor = '#00ff00';
                 
-                document.getElementById('qr-tab-scan').classList.toggle('border-[#d4af37]', tab === 'scan');
-                document.getElementById('qr-tab-scan').classList.toggle('text-white', tab === 'scan');
-                document.getElementById('qr-tab-scan').classList.toggle('border-transparent', tab !== 'scan');
-                document.getElementById('qr-tab-scan').classList.toggle('text-gray-500', tab !== 'scan');
-
-                document.getElementById('qr-my-view').style.display = tab === 'my' ? 'block' : 'none';
-                document.getElementById('qr-scan-view').style.display = tab === 'scan' ? 'block' : 'none';
-            },
-
-            // --- LANGUAGE SELECTOR ---
-            renderLanguageList(filter = '') {
-                // Expanding to Ethiopian + World languages as requested
-                const langs = [
-                    { name: 'English', sub: 'US/UK', code: 'en' },
-                    { name: 'አማርኛ', sub: 'Amharic (Ethiopia)', code: 'am' },
-                    { name: 'Afaan Oromoo', sub: 'Oromo (Ethiopia)', code: 'om' },
-                    { name: 'ትግርኛ', sub: 'Tigrinya (Ethiopia/Eritrea)', code: 'ti' },
-                    { name: 'Af-Soomaali', sub: 'Somali', code: 'so' },
-                    { name: 'Sidaamu Afoo', sub: 'Sidama', code: 'sid' },
-                    { name: 'Wolayttatto', sub: 'Wolaytta', code: 'wal' },
-                    { name: 'Qafar Afa', sub: 'Afar', code: 'aa' },
-                    { name: 'العربية', sub: 'Arabic', code: 'ar' },
-                    { name: 'Français', sub: 'French', code: 'fr' },
-                    { name: 'Español', sub: 'Spanish', code: 'es' },
-                    { name: '中文', sub: 'Chinese', code: 'zh' },
-                    { name: 'Deutsch', sub: 'German', code: 'de' },
-                    { name: 'हिन्दी', sub: 'Hindi', code: 'hi' }
-                ];
-
-                const container = document.getElementById('language-list');
-                const q = filter.toLowerCase();
-                const filtered = langs.filter(l => l.name.toLowerCase().includes(q) || l.sub.toLowerCase().includes(q));
-
-                container.innerHTML = filtered.map(l => {
-                    const isActive = this.state.activeLang === l.name;
-                    return `
-                    <div class="px-5 py-4 border-b border-zinc-800 cursor-pointer flex justify-between items-center transition ${isActive ? 'bg-[#d4af37]/10' : 'hover:bg-zinc-800'}" onclick="app.setLanguage('${l.name}')">
-                        <div>
-                            <div class="font-bold text-white">${l.name}</div>
-                            <div class="text-xs text-gray-500">${l.sub}</div>
-                        </div>
-                        ${isActive ? '<i class="fas fa-check text-[#d4af37]"></i>' : ''}
-                    </div>
-                `}).join('');
-            },
-
-            filterLanguages(val) { this.renderLanguageList(val); },
-            setLanguage(langName) {
-                this.state.activeLang = langName;
-                this.renderLanguageList();
                 setTimeout(() => {
-                    this.closeModal('language-modal');
-                    // Mock translation UI update
-                    alert(`Language preferences updated to: ${langName}`);
-                }, 300);
+                    laser.classList.add('hidden');
+                    box.style.borderColor = '#4b5563'; // back to gray-600
+                    this.showToast('QR Code Scanned! (Simulation)');
+                }, 2500);
             },
 
-            // --- ADMIN PANEL (Super & Standard Logic) ---
-            switchAdminTab(tab, el) {
-                document.querySelectorAll('.admin-nav-item').forEach(e => e.classList.remove('active'));
-                if(el) el.classList.add('active');
-                
-                // Close sidebar on mobile
-                document.getElementById('admin-sidebar').classList.add('-translate-x-full');
-
-                const content = document.getElementById('admin-content-area');
-                const me = this.state.currentUser;
-
-                if (tab === 'dashboard') {
-                    const uCount = this.state.db.users.filter(u=>u.role==='user').length;
-                    const pCount = this.state.db.posts.length;
-                    content.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-500 text-xl"><i class="fas fa-users"></i></div>
-                                <div><div class="text-3xl font-bold">${uCount}</div><div class="text-sm text-gray-400">Total Users</div></div>
-                            </div>
-                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-green-900/30 flex items-center justify-center text-green-500 text-xl"><i class="fas fa-file-video"></i></div>
-                                <div><div class="text-3xl font-bold">${pCount}</div><div class="text-sm text-gray-400">Total Lessons/Posts</div></div>
-                            </div>
-                            <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-[#d4af37]/20 flex items-center justify-center text-[#d4af37] text-xl"><i class="fas fa-exclamation-triangle"></i></div>
-                                <div><div class="text-3xl font-bold">0</div><div class="text-sm text-gray-400">Reports Pending</div></div>
-                            </div>
-                        </div>
-                    `;
-                } else if (tab === 'users') {
-                    const normalUsers = this.state.db.users.filter(u => u.role === 'user');
-                    let tableRows = normalUsers.map(u => `
-                        <tr class="border-b border-zinc-800 hover:bg-[#1a1a1a]">
-                            <td class="p-4 flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full overflow-hidden">${this.getAvatar(u)}</div>
-                                <div><div class="font-bold text-sm">${u.username}</div><div class="text-xs text-gray-500">${u.name}</div></div>
-                            </td>
-                            <td class="p-4"><span class="badge ${u.status === 'active' ? 'badge-active' : 'badge-banned'}">${u.status}</span></td>
-                            <td class="p-4 text-sm text-center text-orange-400">${u.warnings || 0}</td>
-                            <td class="p-4 text-right">
-                                <button onclick="app.warnUser('${u.id}')" class="text-warning hover:text-white mr-3" title="Send Warning"><i class="fas fa-exclamation-circle"></i></button>
-                                ${me.role === 'super' ? `
-                                    <button onclick="app.toggleBanUser('${u.id}')" class="${u.status === 'active' ? 'text-danger' : 'text-success'} hover:text-white" title="${u.status === 'active' ? 'Ban' : 'Unban'}">
-                                        <i class="fas ${u.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
-                                    </button>
-                                ` : `<button class="text-gray-600 cursor-not-allowed" title="Super Admin Required"><i class="fas fa-ban"></i></button>`}
-                            </td>
-                        </tr>
-                    `).join('');
-
-                    content.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-6">User Management</h2>
-                        <div class="bg-[#111] border border-zinc-800 rounded-xl overflow-hidden">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-[#1a1a1a] text-xs uppercase text-gray-500">
-                                    <tr><th class="p-4 font-bold">User</th><th class="p-4 font-bold">Status</th><th class="p-4 font-bold text-center">Warnings</th><th class="p-4 font-bold text-right">Actions</th></tr>
-                                </thead>
-                                <tbody>${tableRows}</tbody>
-                            </table>
-                        </div>
-                    `;
-                } else if (tab === 'admins') {
-                    if(me.role !== 'super') {
-                        content.innerHTML = `<div class="p-10 text-center text-red-500"><i class="fas fa-lock text-5xl mb-4"></i><h2 class="text-2xl font-bold">Access Denied</h2><p>Only Super Admins can manage other administrators.</p></div>`;
-                        return;
-                    }
-                    const admins = this.state.db.users.filter(u => u.role !== 'user');
-                    let tableRows = admins.map(u => `
-                        <tr class="border-b border-zinc-800 hover:bg-[#1a1a1a]">
-                            <td class="p-4 font-bold text-sm">${u.username}</td>
-                            <td class="p-4"><span class="badge ${u.role === 'super' ? 'badge-super' : 'badge-standard'}">${u.role}</span></td>
-                            <td class="p-4 text-right">
-                                ${u.id !== me.id ? `<button onclick="alert('Demote logic here')" class="text-danger hover:text-white"><i class="fas fa-arrow-down"></i></button>` : '<span class="text-xs text-gray-500">You</span>'}
-                            </td>
-                        </tr>
-                    `).join('');
-                    content.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-6">Admin Management</h2>
-                        <div class="bg-[#111] border border-zinc-800 rounded-xl overflow-hidden">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-[#1a1a1a] text-xs uppercase text-gray-500">
-                                    <tr><th class="p-4 font-bold">Username</th><th class="p-4 font-bold">Level</th><th class="p-4 font-bold text-right">Actions</th></tr>
-                                </thead>
-                                <tbody>${tableRows}</tbody>
-                            </table>
-                        </div>
-                    `;
-                } else if (tab === 'info') {
-                    const info = this.state.db.appInfo;
-                    const disabled = me.role !== 'super' ? 'disabled class="input-field opacity-50 cursor-not-allowed"' : 'class="input-field"';
-                    content.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-6">Platform Information</h2>
-                        ${me.role !== 'super' ? '<div class="bg-red-900/30 text-red-400 p-3 rounded mb-4 text-sm"><i class="fas fa-lock"></i> View Only. Super Admin required to edit.</div>' : ''}
-                        
-                        <div class="bg-[#1a1a1a] border border-zinc-800 p-6 rounded-xl max-w-2xl">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="text-xs text-gray-400">Support Email</label><input type="text" id="ai-email" value="${info.email}" ${disabled}></div>
-                                <div><label class="text-xs text-gray-400">Phone Number</label><input type="text" id="ai-phone" value="${info.phone}" ${disabled}></div>
-                                <div class="md:col-span-2"><label class="text-xs text-gray-400">HQ Address</label><input type="text" id="ai-hq" value="${info.hq}" ${disabled}></div>
-                                <div class="md:col-span-2"><label class="text-xs text-gray-400">Google Map Link</label><input type="text" id="ai-map" value="${info.mapLink}" ${disabled}></div>
-                                <div><label class="text-xs text-gray-400">Pro Subscription Price</label><input type="text" id="ai-sub" value="${info.subPrice}" ${disabled}></div>
-                            </div>
-                            ${me.role === 'super' ? `<button onclick="app.saveAppInfo()" class="btn-primary mt-4 max-w-[200px]"><i class="fas fa-save"></i> Save Changes</button>` : ''}
-                        </div>
-                    `;
-                }
-            },
-
-            renderAdminPanel(initialTab) {
-                // UI adjustment based on role
-                if(this.state.currentUser.role === 'standard') {
-                    document.getElementById('nav-admin-mgt').style.display = 'none';
-                    document.getElementById('admin-role-badge').innerText = 'Standard Admin';
-                    document.getElementById('admin-role-badge').className = 'badge badge-standard mt-1 inline-block';
-                }
-                this.switchAdminTab(initialTab, document.querySelector('.admin-nav-item'));
-            },
-
-            toggleBanUser(id) {
-                const u = this.getUser(id);
-                if(u) {
-                    u.status = u.status === 'active' ? 'banned' : 'active';
-                    this.saveDB();
-                    this.switchAdminTab('users');
-                }
-            },
-
-            warnUser(id) {
-                const u = this.getUser(id);
-                if(u) {
-                    const reason = prompt("Enter warning reason:");
-                    if(reason) {
-                        u.warnings = (u.warnings || 0) + 1;
-                        this.saveDB();
-                        this.switchAdminTab('users');
-                        alert(`Warning sent to ${u.username}. Total warnings: ${u.warnings}`);
-                    }
-                }
-            },
-
-            saveAppInfo() {
-                this.state.db.appInfo = {
-                    email: document.getElementById('ai-email').value,
-                    phone: document.getElementById('ai-phone').value,
-                    hq: document.getElementById('ai-hq').value,
-                    mapLink: document.getElementById('ai-map').value,
-                    subPrice: document.getElementById('ai-sub').value
-                };
-                this.saveDB();
-                alert('Platform Information Updated!');
+            // Settings Panels
+            openSubSetting(id) { document.getElementById(id).style.display = 'flex'; },
+            closeSubSetting(id) { document.getElementById(id).style.display = 'none'; },
+            
+            upgradeSubscription() {
+                this.state.currentUser.isPremium = true;
+                document.getElementById('sub-status-display').innerHTML = `
+                    <p class="font-bold text-blue-400 mb-1">Current Plan: Premium</p>
+                    <p class="text-xs text-gray-400">All features unlocked.</p>
+                `;
+                this.showToast('Successfully upgraded to Premium!');
             }
         };
 
-        // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
-        });
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
 </html>
+
 
 ```
