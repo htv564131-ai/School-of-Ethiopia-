@@ -29,410 +29,457 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Hide scrollbar for clean feed look */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .app-container {
-            max-width: 600px;
+            max-width: 600px; /* Mobile first styling wrapper */
             margin: 0 auto;
             min-height: 100vh;
             background-color: var(--bg-dark);
             position: relative;
-            border-left: 1px solid #222;
-            border-right: 1px solid #222;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            overflow-x: hidden;
         }
 
-        /* Bottom Navigation */
+        /* --- VISITOR PAGE (WANDER INSPIRATION) --- */
+        .visitor-hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=1000&auto=format&fit=crop') center/cover;
+            border-radius: 0 0 30px 30px;
+        }
+        .feature-card { background: #1a1a1a; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; border: 1px solid #333; }
+        .destination-card { min-width: 140px; height: 200px; border-radius: 12px; position: relative; overflow: hidden; margin-right: 10px; background: #222; }
+        .destination-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .destination-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
+
+        /* --- UI COMPONENTS --- */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 600px;
-            background-color: var(--bg-dark);
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            padding-bottom: env(safe-area-inset-bottom, 10px);
-            z-index: 50;
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 600px; background-color: var(--bg-dark);
+            border-top: 1px solid #333; display: flex; justify-content: space-around;
+            padding: 10px 0; padding-bottom: env(safe-area-inset-bottom, 10px); z-index: 50;
         }
-
-        .nav-item {
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            cursor: pointer;
-            transition: color 0.2s;
-            width: 20%;
-        }
+        .nav-item { color: var(--text-muted); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; width: 20%; transition: 0.2s;}
         .nav-item.active { color: var(--text-main); font-weight: 600; }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; }
         
         .nav-fab {
-            background: linear-gradient(45deg, #111, var(--accent));
-            color: white;
-            width: 45px;
-            height: 30px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            margin-top: -5px;
+            background: linear-gradient(45deg, #222, var(--accent)); color: white;
+            width: 45px; height: 30px; border-radius: 10px; display: flex;
+            justify-content: center; align-items: center; font-size: 16px; margin-top: -5px;
         }
 
-        /* Feed Post */
-        .post-card {
-            border-bottom: 1px solid #222;
-            padding: 15px 0;
+        /* --- SIDEBAR MENU (HAMBURGER) --- */
+        #sidebar-menu {
+            position: fixed; top: 0; left: -100%; width: 75%; max-width: 350px; height: 100vh;
+            background: #111; z-index: 100; transition: left 0.3s ease;
+            border-right: 1px solid #333; display: flex; flex-direction: column;
         }
-        .post-header {
-            display: flex;
-            align-items: center;
-            padding: 0 15px 10px;
-        }
-        .avatar {
-            width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #333;
-            display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;
-        }
-        .media-container {
-            width: 100%;
-            max-height: 600px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .media-container img, .media-container video {
-            width: 100%;
-            max-height: 600px;
-            object-fit: contain;
-        }
-        
-        /* PDF Frame */
-        .pdf-frame {
-            width: 90%;
-            margin: 10px auto;
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            background: var(--bg-panel);
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
-        }
-        .pdf-frame i { font-size: 40px; color: var(--danger); margin-bottom: 10px; }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 15px;
-        }
-        .action-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-main); background: none; border: none; cursor: pointer; }
-        .action-btn.liked { color: var(--danger); }
-        .action-btn.followed { color: var(--success); }
-
-        /* Modals & Overlays */
-        .overlay {
+        #sidebar-menu.open { left: 0; }
+        .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 100;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.6); z-index: 99; display: none; backdrop-filter: blur(2px);
         }
-        .modal {
-            background: var(--bg-panel);
-            width: 90%; max-width: 400px; border-radius: 12px; padding: 20px;
-            max-height: 85vh; overflow-y: auto; position: relative;
-        }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+        .sidebar-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; font-size: 15px; color: #eee; cursor: pointer; transition: 0.2s; }
+        .sidebar-item:hover { background: #222; }
+        .sidebar-item i { width: 20px; text-align: center; font-size: 18px; color: #ccc; }
 
-        /* Inputs */
-        .input-field {
-            width: 100%; background: #222; border: 1px solid #333; color: white;
-            padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none;
-        }
-        .input-field:focus { border-color: var(--accent); }
-        
-        .btn-primary {
-            width: 100%; background: var(--accent); color: #000; font-weight: bold;
-            padding: 12px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s;
-        }
-        .btn-primary:hover { background: var(--accent-hover); }
-        .btn-secondary {
-            background: #333; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px;
-        }
+        /* --- INBOX --- */
+        .story-bubble { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #333; padding: 2px; position: relative; flex-shrink: 0; }
+        .story-bubble.active { border-color: var(--danger); }
+        .story-bubble img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .inbox-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; cursor: pointer; transition: 0.2s; }
+        .inbox-item:active { background: #222; }
+        .inbox-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #333; flex-shrink: 0; }
+        .inbox-badge { background: var(--danger); color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
 
-        /* Profile Layout (TikTok Style) */
-        .profile-header { text-align: center; padding: 20px 15px; border-bottom: 1px solid #222; }
+        /* --- PROFILE --- */
         .profile-avatar-lg { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 15px; background: #333; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 32px;}
-        .profile-stats { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; }
-        .stat-box { display: flex; flex-direction: column; align-items: center; }
-        .stat-val { font-weight: bold; font-size: 18px; }
-        .stat-label { font-size: 12px; color: var(--text-muted); }
-        .social-link-tag { display: inline-flex; align-items: center; gap: 5px; background: #222; padding: 4px 10px; border-radius: 12px; font-size: 12px; margin: 2px; }
-
-        /* Grid */
+        .social-link-tag { display: inline-flex; align-items: center; gap: 5px; background: #222; padding: 6px 12px; border-radius: 4px; font-size: 13px; margin: 4px; border: 1px solid #333;}
         .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
         .grid-item { aspect-ratio: 1; background: #222; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Loader */
-        .loader { border: 3px solid #333; border-top: 3px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* --- MODALS & FORMS --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal { background: var(--bg-panel); width: 95%; max-width: 400px; border-radius: 12px; padding: 20px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+        .input-field { width: 100%; background: #222; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .input-field:focus { border-color: var(--accent); }
+        .btn-primary { width: 100%; background: var(--accent); color: #000; font-weight: bold; padding: 12px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: var(--accent-hover); }
 
-        /* Utility */
+        /* --- QR SCANNER ANIMATION --- */
+        .qr-scanner-box { width: 250px; height: 250px; border: 2px solid var(--accent); margin: 0 auto; position: relative; overflow: hidden; border-radius: 20px; background: #000; }
+        .qr-scan-line { width: 100%; height: 3px; background: var(--danger); position: absolute; top: 0; left: 0; animation: scan 2s infinite linear; box-shadow: 0 0 10px var(--danger); }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN / SIGNUP SCREEN -->
-    <div id="auth-view" class="app-container flex flex-col justify-center items-center p-6">
-        <h1 class="text-3xl font-bold mb-2 text-center" style="color: var(--accent);">School of Ethiopian</h1>
-        <p class="text-gray-400 mb-8 text-center text-sm">Welcome to our community platform.</p>
-        
-        <div class="w-full bg-[#1a1a1a] p-6 rounded-xl border border-gray-800">
-            <div id="login-form">
-                <h2 class="text-xl font-semibold mb-4">Log In</h2>
-                <input type="text" id="login-user" class="input-field" placeholder="Username">
-                <input type="password" id="login-pass" class="input-field" placeholder="Password">
-                <button onclick="app.login()" class="btn-primary mb-4">Log In</button>
-                <p class="text-sm text-center text-gray-400">Don't have an account? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Sign Up</span></p>
+    <!-- ================= 1. VISITOR PAGE (LANDING) ================= -->
+    <div id="visitor-view" class="app-container">
+        <!-- Hero Section -->
+        <div class="visitor-hero h-[50vh] flex flex-col justify-between p-6 relative">
+            <div class="flex justify-between items-center text-white relative z-10">
+                <div class="font-bold text-xl tracking-wider">SOE<span class="text-[#d4af37]">.</span></div>
+                <div class="flex gap-4 text-sm font-semibold">
+                    <span class="cursor-pointer" onclick="app.openModal('language-modal')"><i class="fas fa-globe"></i> <span data-i18n="lang">Lang</span></span>
+                </div>
             </div>
-
-            <div id="signup-form" class="hidden">
-                <h2 class="text-xl font-semibold mb-4">Sign Up</h2>
-                <input type="text" id="reg-user" class="input-field" placeholder="Choose a Username">
-                <input type="password" id="reg-pass" class="input-field" placeholder="Choose a Password">
-                <button onclick="app.signup()" class="btn-primary mb-4">Create Account</button>
-                <p class="text-sm text-center text-gray-400">Already registered? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Log In</span></p>
+            <div class="relative z-10 mb-8">
+                <h1 class="text-4xl font-extrabold text-white leading-tight mb-2 uppercase" data-i18n="school_title">SCHOOL OF ETHIOPIAN</h1>
+                <p class="text-sm text-gray-200 mb-6 w-4/5" data-i18n="school_desc">Discover breathtaking knowledge across Ethiopia with curated learning, local insights, and hassle-free networking in one platform.</p>
+                <div class="flex gap-3">
+                    <button onclick="app.showAuth()" class="bg-white text-black px-6 py-2 rounded-full font-bold text-sm shadow-lg hover:bg-gray-200 transition" data-i18n="join">Plan Your Journey</button>
+                </div>
             </div>
         </div>
 
-        <button onclick="app.showTutorial()" class="mt-8 text-sm text-gray-500 underline"><i class="fas fa-info-circle"></i> How this platform works</button>
+        <!-- Features -->
+        <div class="p-6 bg-[#0f0f0f]">
+            <h2 class="text-lg font-bold mb-4" data-i18n="why_choose">Why Thousands Choose SOE</h2>
+            <div class="feature-card">
+                <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-2xl text-[#d4af37]"><i class="fas fa-map-signs"></i></div>
+                <div>
+                    <h3 class="font-bold text-sm" data-i18n="feat1_title">Local Expertise</h3>
+                    <p class="text-xs text-gray-400" data-i18n="feat1_desc">Unique experiences with insider knowledge.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-2xl text-[#d4af37]"><i class="fas fa-calendar-check"></i></div>
+                <div>
+                    <h3 class="font-bold text-sm" data-i18n="feat2_title">All-in-One Platform</h3>
+                    <p class="text-xs text-gray-400" data-i18n="feat2_desc">Learn, connect, and share in one place.</p>
+                </div>
+            </div>
+            
+            <!-- Destinations/Top Content -->
+            <div class="mt-8">
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-lg font-bold" data-i18n="top_content">Top Destinations</h2>
+                </div>
+                <div class="flex overflow-x-auto hide-scrollbar pb-4">
+                    <div class="destination-card">
+                        <img src="https://images.unsplash.com/photo-1600100397608-f010f419c8de?q=80&w=400&auto=format&fit=crop">
+                        <div class="destination-info">
+                            <h4 class="font-bold text-sm text-white">Lalibela</h4>
+                            <p class="text-[10px] text-[#d4af37]"><i class="fas fa-star"></i> 4.9 (12k)</p>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://images.unsplash.com/photo-1549491129-d56de5420d5a?q=80&w=400&auto=format&fit=crop">
+                        <div class="destination-info">
+                            <h4 class="font-bold text-sm text-white">Addis Ababa</h4>
+                            <p class="text-[10px] text-[#d4af37]"><i class="fas fa-star"></i> 4.8 (8k)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="app.showAuth()" class="btn-primary mt-4" data-i18n="login_join">Login / Register to Continue</button>
+        </div>
     </div>
 
-    <!-- MAIN APP SCREEN -->
-    <div id="main-view" class="app-container hidden">
+    <!-- ================= 2. AUTHENTICATION ================= -->
+    <div id="auth-view" class="app-container hidden flex-col justify-center items-center p-6">
+        <button onclick="app.showVisitor()" class="absolute top-6 left-6 text-gray-400"><i class="fas fa-arrow-left"></i></button>
+        <h1 class="text-3xl font-bold mb-2 text-center" style="color: var(--accent);">SOE App</h1>
+        <p class="text-gray-400 mb-8 text-center text-sm" data-i18n="auth_sub">Enter the community.</p>
         
+        <div class="w-full bg-[#1a1a1a] p-6 rounded-xl border border-gray-800 shadow-2xl">
+            <div id="login-form">
+                <h2 class="text-xl font-semibold mb-4" data-i18n="login">Log In</h2>
+                <input type="text" id="login-user" class="input-field" placeholder="Username">
+                <input type="password" id="login-pass" class="input-field" placeholder="Password">
+                <button onclick="app.login()" class="btn-primary mb-4" data-i18n="login">Log In</button>
+                <p class="text-sm text-center text-gray-400">New here? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Sign Up</span></p>
+            </div>
+
+            <div id="signup-form" class="hidden">
+                <h2 class="text-xl font-semibold mb-4" data-i18n="signup">Sign Up</h2>
+                <input type="text" id="reg-user" class="input-field" placeholder="Choose a Username">
+                <input type="password" id="reg-pass" class="input-field" placeholder="Choose a Password">
+                <button onclick="app.signup()" class="btn-primary mb-4" data-i18n="signup">Create Account</button>
+                <p class="text-sm text-center text-gray-400">Already registered? <span class="text-[#d4af37] cursor-pointer" onclick="app.toggleAuth()">Log In</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 3. MAIN APP ================= -->
+    <div id="main-view" class="app-container hidden">
         <!-- Header -->
         <header class="sticky top-0 bg-[#0f0f0f] z-40 border-b border-gray-800 p-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold" style="color: var(--accent);">School of Ethiopian</h1>
-            <div class="flex gap-4">
-                <i class="fas fa-globe text-xl cursor-pointer" onclick="app.openModal('language-modal')"></i>
-                <i class="fas fa-search text-xl"></i>
+            <div class="flex items-center gap-4">
+                <i class="fas fa-bars text-xl cursor-pointer" onclick="app.toggleSidebar()"></i>
+                <h1 class="text-lg font-bold" style="color: var(--accent);">SOE</h1>
+            </div>
+            <div class="flex gap-4 items-center">
+                <i class="fas fa-globe text-lg cursor-pointer text-gray-400" onclick="app.openModal('language-modal')"></i>
+                <i class="fas fa-search text-lg cursor-pointer text-gray-400"></i>
             </div>
         </header>
 
         <!-- Content Area -->
-        <div id="content-area" class="pb-20">
-            <!-- Feed injected here -->
-        </div>
+        <div id="content-area" class="pb-20"></div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="app.navigate('feed')">
-                <i class="fas fa-home"></i><span>Home</span>
+                <i class="fas fa-home"></i><span data-i18n="home">Home</span>
             </div>
             <div class="nav-item" onclick="app.navigate('discover')">
-                <i class="fas fa-compass"></i><span>Discover</span>
+                <i class="fas fa-compass"></i><span data-i18n="discover">Discover</span>
             </div>
-            <div class="nav-item" onclick="app.openPostModal()">
+            <div class="nav-item" onclick="alert('Post modal open...')">
                 <div class="nav-fab"><i class="fas fa-plus"></i></div>
             </div>
             <div class="nav-item" onclick="app.navigate('inbox')">
-                <i class="fas fa-comment-dots"></i><span>Inbox</span>
+                <div class="relative">
+                    <i class="fas fa-comment-dots"></i>
+                    <div class="absolute -top-1 -right-2 bg-red-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">5</div>
+                </div>
+                <span data-i18n="inbox">Inbox</span>
             </div>
             <div class="nav-item" onclick="app.navigate('profile')">
-                <i class="fas fa-user"></i><span>Profile</span>
+                <i class="fas fa-user"></i><span data-i18n="profile">Profile</span>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN PANEL SCREEN -->
-    <div id="admin-view" class="app-container hidden">
-        <header class="sticky top-0 bg-red-900 z-40 border-b border-red-700 p-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-white">Admin Control Panel</h1>
-            <button onclick="app.logout()" class="text-white"><i class="fas fa-sign-out-alt"></i> Exit</button>
+    <!-- ================= 4. SIDEBAR MENU ================= -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+    <div id="sidebar-menu">
+        <div class="p-5 border-b border-gray-800">
+            <div class="font-bold text-lg text-white" id="sidebar-username">User</div>
+            <div class="text-xs text-gray-500" data-i18n="menu_title">Menu Options</div>
+        </div>
+        
+        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Assets</div>
+        <div class="sidebar-item"><i class="fas fa-wallet"></i> Balance</div>
+        
+        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Personal Tools</div>
+        <div class="sidebar-item"><i class="fas fa-history"></i> Activity center</div>
+        <div class="sidebar-item"><i class="fas fa-download"></i> Offline videos</div>
+        <div class="sidebar-item" onclick="app.openModal('qr-modal'); app.toggleSidebar()"><i class="fas fa-qrcode"></i> Your QR code</div>
+        
+        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">Creation & Business</div>
+        <div class="sidebar-item"><i class="fas fa-star text-[#d4af37]"></i> SOE Studio</div>
+        
+        <div class="px-3 py-2 text-xs text-gray-500 font-bold uppercase mt-2">General</div>
+        <div class="sidebar-item"><i class="fas fa-cog"></i> Settings and privacy</div>
+        
+        <div class="sidebar-item text-red-500 mt-auto border-t border-gray-800" onclick="app.logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+    </div>
+
+    <!-- ================= 5. ADMIN PANEL ================= -->
+    <div id="admin-view" class="app-container hidden bg-[#111]">
+        <header class="sticky top-0 bg-gray-900 z-40 border-b border-gray-700 p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#d4af37]"><i class="fas fa-shield-alt"></i> Admin Panel</h1>
+            <button onclick="app.logout()" class="text-gray-400 text-sm"><i class="fas fa-sign-out-alt"></i> Exit</button>
         </header>
-        <div class="p-4 pb-20">
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-[#1a1a1a] p-4 rounded-lg text-center border border-gray-700">
-                    <div class="text-2xl font-bold text-[#d4af37]" id="admin-user-count">0</div>
-                    <div class="text-xs text-gray-400 uppercase">Total Users</div>
-                </div>
-                <div class="bg-[#1a1a1a] p-4 rounded-lg text-center border border-gray-700">
-                    <div class="text-2xl font-bold text-[#d4af37]" id="admin-post-count">0</div>
-                    <div class="text-xs text-gray-400 uppercase">Total Posts</div>
-                </div>
-            </div>
 
-            <h2 class="text-lg font-semibold mb-3 border-b border-gray-700 pb-2">Manage Users</h2>
-            <div id="admin-user-list" class="flex flex-col gap-2 mb-8"></div>
+        <!-- Admin Tabs -->
+        <div class="flex border-b border-gray-800 overflow-x-auto hide-scrollbar text-sm font-semibold">
+            <div class="px-4 py-3 cursor-pointer text-[#d4af37] border-b-2 border-[#d4af37] whitespace-nowrap" onclick="app.switchAdminTab('users', this)">Users</div>
+            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" id="admin-tab-managers" onclick="app.switchAdminTab('admins', this)">Admins</div>
+            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" onclick="app.switchAdminTab('info', this)">Platform Info</div>
+            <div class="px-4 py-3 cursor-pointer text-gray-400 whitespace-nowrap" onclick="app.switchAdminTab('qr', this)">QR Scanner</div>
+        </div>
 
-            <h2 class="text-lg font-semibold mb-3 border-b border-gray-700 pb-2">Manage Content</h2>
-            <div id="admin-post-list" class="flex flex-col gap-2"></div>
+        <div class="p-4 pb-20" id="admin-content">
+            <!-- Dynamic Admin Content Injected Here -->
         </div>
     </div>
-
 
     <!-- ================= MODALS ================= -->
 
-    <!-- Create Post Modal -->
-    <div id="post-modal" class="overlay">
-        <div class="modal">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('post-modal')"></i>
-            <h2 class="text-xl font-bold mb-4">Create Post</h2>
-            
-            <textarea id="post-text" class="input-field h-24 resize-none" placeholder="What do you want to teach or share?"></textarea>
-            
-            <label class="block mb-2 text-sm text-gray-400">Attach Media (Image, Video, PDF)</label>
-            <input type="file" id="post-media" accept="image/*,video/*,application/pdf" class="input-field p-2" onchange="app.handleFileSelect(event)">
-            
-            <div id="media-preview" class="w-full max-h-40 bg-black mb-4 flex items-center justify-center overflow-hidden hidden rounded">
-                <!-- Preview injected here -->
-            </div>
-
-            <button onclick="app.submitPost()" class="btn-primary mt-2">Publish</button>
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div id="edit-profile-modal" class="overlay">
-        <div class="modal">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('edit-profile-modal')"></i>
-            <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
-            
-            <div class="flex justify-center mb-4">
-                <label class="relative cursor-pointer">
-                    <div id="edit-avatar-preview" class="profile-avatar-lg border-2 border-[#d4af37]"></div>
-                    <div class="absolute bottom-0 right-0 bg-[#d4af37] text-black p-2 rounded-full text-xs"><i class="fas fa-camera"></i></div>
-                    <input type="file" id="edit-avatar" accept="image/*" class="hidden" onchange="app.updateAvatarPreview(event)">
-                </label>
-            </div>
-
-            <input type="text" id="edit-name" class="input-field" placeholder="Display Name">
-            <textarea id="edit-bio" class="input-field h-20 resize-none" placeholder="Bio / Description"></textarea>
-            
-            <div class="mb-4 p-3 bg-[#111] rounded border border-gray-700">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm font-bold">Social Links <span id="link-count" class="text-gray-400">(0/5)</span></span>
-                    <button onclick="app.upgradePremium()" class="text-xs bg-[#d4af37] text-black px-2 py-1 rounded font-bold" id="premium-btn">Upgrade to Pro (20 Links)</button>
-                </div>
-                <div id="social-links-inputs" class="flex flex-col gap-2">
-                    <input type="url" id="link-input-1" class="w-full bg-[#222] text-sm p-2 rounded text-white border border-gray-700 focus:border-[#d4af37] outline-none" placeholder="e.g. https://instagram.com/user">
-                </div>
-                <button onclick="app.addLinkInput()" class="text-xs text-[#d4af37] mt-2">+ Add another link</button>
-            </div>
-
-            <button onclick="app.saveProfile()" class="btn-primary">Save Changes</button>
-        </div>
-    </div>
-
-    <!-- Language Selector Modal (Based on Uploaded Images) -->
+    <!-- Workable Language Selector Modal -->
     <div id="language-modal" class="overlay">
-        <div class="modal" style="padding: 0;">
+        <div class="modal" style="padding: 0; background: #111;">
             <div class="p-4 border-b border-gray-800 flex items-center gap-4 sticky top-0 bg-[#1a1a1a] z-10">
-                <i class="fas fa-arrow-left cursor-pointer" onclick="app.closeModal('language-modal')"></i>
-                <h2 class="text-lg font-bold">Search language</h2>
+                <i class="fas fa-arrow-left cursor-pointer text-white" onclick="app.closeModal('language-modal')"></i>
+                <h2 class="text-lg font-bold text-white">Search language</h2>
             </div>
-            <div class="flex flex-col" id="language-list">
-                <!-- Populated via JS based on images -->
+            <div class="flex flex-col max-h-[60vh] overflow-y-auto hide-scrollbar" id="language-list">
+                <!-- Rendered by JS -->
             </div>
         </div>
     </div>
 
-    <!-- Tutorial/About Modal -->
-    <div id="tutorial-modal" class="overlay">
-        <div class="modal">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('tutorial-modal')"></i>
-            <h2 class="text-xl font-bold mb-4 text-[#d4af37]"><i class="fas fa-graduation-cap"></i> School of Ethiopian</h2>
-            <div class="space-y-4 text-sm text-gray-300">
-                <p>Welcome to our hybrid learning and social platform!</p>
-                <div class="flex items-center gap-3 bg-[#111] p-3 rounded">
-                    <i class="fas fa-video text-xl text-blue-400"></i>
-                    <p><b>Post Multimedia:</b> Share images, vertical short videos, or beautifully framed PDF documents.</p>
-                </div>
-                <div class="flex items-center gap-3 bg-[#111] p-3 rounded">
-                    <i class="fas fa-heart text-xl text-red-500"></i>
-                    <p><b>Interact:</b> Real-time counting for likes, follows, and interactions just like TikTok/Instagram.</p>
-                </div>
-                <div class="flex items-center gap-3 bg-[#111] p-3 rounded">
-                    <i class="fas fa-link text-xl text-[#d4af37]"></i>
-                    <p><b>Pro Profiles:</b> Free accounts can add 5 social links. Upgrade to Pro to add up to 20 links to your profile!</p>
+    <!-- QR Code Scanner Modal -->
+    <div id="qr-modal" class="overlay">
+        <div class="modal text-center">
+            <i class="fas fa-times modal-close" onclick="app.closeModal('qr-modal')"></i>
+            <h2 class="text-xl font-bold mb-2 text-white"><i class="fas fa-qrcode"></i> Scan QR</h2>
+            <p class="text-xs text-gray-400 mb-6">Position QR code inside the frame to view profile or admin details.</p>
+            
+            <div class="qr-scanner-box mb-6">
+                <div class="qr-scan-line"></div>
+                <!-- Fake camera feed bg -->
+                <div class="w-full h-full bg-gray-900 opacity-50 flex items-center justify-center">
+                    <i class="fas fa-camera text-4xl text-gray-700"></i>
                 </div>
             </div>
-            <button onclick="app.closeModal('tutorial-modal')" class="btn-primary mt-6">Got it!</button>
+
+            <button class="btn-primary" onclick="app.simulateQRScan()">Simulate Scan</button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <!-- Javascript Application Logic -->
     <script>
         const app = {
             state: {
                 users: [],
                 posts: [],
+                inbox: [],
+                platform: {},
                 currentUser: null,
-                currentView: 'feed',
-                uploadedFileData: null,
-                uploadedFileType: null
+                currentView: 'visitor', // visitor, main, admin
+                currentNav: 'feed',
+                lang: 'en'
             },
 
-            // --- INITIALIZATION & DB SETUP ---
+            // --- I18N DICTIONARY ---
+            dict: {
+                'en': {
+                    lang: 'English', home: 'Home', discover: 'Discover', inbox: 'Inbox', profile: 'Profile', 
+                    login: 'Log In', signup: 'Sign Up', join: 'Plan Your Journey',
+                    school_title: 'SCHOOL OF ETHIOPIAN', school_desc: 'Discover breathtaking knowledge across Ethiopia with curated learning, local insights, and hassle-free networking.',
+                    why_choose: 'Why Thousands Choose SOE', feat1_title: 'Local Expertise', feat1_desc: 'Unique experiences with insider knowledge.',
+                    feat2_title: 'All-in-One Platform', feat2_desc: 'Learn, connect, and share in one place.', top_content: 'Top Destinations',
+                    login_join: 'Login / Register to Continue', auth_sub: 'Enter the community.',
+                    menu_title: 'Menu Options', following: 'Following', followers: 'Followers', likes: 'Likes'
+                },
+                'am': {
+                    lang: 'አማርኛ', home: 'ዋና', discover: 'ፈልግ', inbox: 'መልእክት', profile: 'ማህደር',
+                    login: 'ግባ', signup: 'ተመዝገብ', join: 'ጉዞዎን ያቅዱ',
+                    school_title: 'የኢትዮጵያ ትምህርት ቤት', school_desc: 'በኢትዮጵያ ውስጥ አስደናቂ እውቀቶችን ያግኙ። የተመረጡ ትምህርቶች እና የአካባቢ ግንዛቤዎች።',
+                    why_choose: 'ለምን SOE እንመርጣለን', feat1_title: 'የአካባቢ እውቀት', feat1_desc: 'ልዩ ልምዶች ከውስጥ አዋቂነት ጋር።',
+                    feat2_title: 'ሁሉንም በአንድ', feat2_desc: 'በአንድ ቦታ ይማሩ፣ ይገናኙ እና ያጋሩ።', top_content: 'ከፍተኛ መዳረሻዎች',
+                    login_join: 'ለመቀጠል ይግቡ / ይመዝገቡ', auth_sub: 'ማህበረሰቡን ይቀላቀሉ።',
+                    menu_title: 'ምናሌ ምርጫዎች', following: 'የሚከተሏቸው', followers: 'ተከታዮች', likes: 'መውደዶች'
+                },
+                'ar': {
+                    lang: 'العربية', home: 'الرئيسية', discover: 'اكتشف', inbox: 'صندوق', profile: 'ملف',
+                    login: 'دخول', signup: 'تسجيل', join: 'خطط لرحلتك',
+                    school_title: 'مدرسة الإثيوبية', school_desc: 'اكتشف المعرفة المذهلة في جميع أنحاء إثيوبيا من خلال التعلم المنسق والرؤى المحلية.',
+                    why_choose: 'لماذا تختار SOE', feat1_title: 'خبرة محلية', feat1_desc: 'تجارب فريدة بمعرفة داخلية.',
+                    feat2_title: 'منصة شاملة', feat2_desc: 'تعلم وتواصل وشارك في مكان واحد.', top_content: 'أفضل الوجهات',
+                    login_join: 'تسجيل الدخول / التسجيل للمتابعة', auth_sub: 'ادخل المجتمع.',
+                    menu_title: 'خيارات القائمة', following: 'متابع', followers: 'متابعون', likes: 'إعجابات'
+                }
+            },
+
+            availableLangs: [
+                { code: 'en', name: 'English (US)' },
+                { code: 'am', name: 'አማርኛ', sub: 'Amharic (Ethiopia)' },
+                { code: 'ar', name: 'العربية (مصر)', sub: 'Arabic (Egypt)' },
+                { code: 'es', name: 'Español', sub: 'Spanish' } // Fallback to EN if missing in dict
+            ],
+
+            // --- INITIALIZATION ---
             init() {
-                // Initialize DB from LocalStorage or seed default data
-                const savedDB = localStorage.getItem('soe_db');
-                if (savedDB) {
-                    const parsed = JSON.parse(savedDB);
-                    this.state.users = parsed.users;
-                    this.state.posts = parsed.posts;
+                this.loadDB();
+                this.renderLanguages();
+                this.applyLanguage();
+                this.showVisitor();
+            },
+
+            loadDB() {
+                const saved = localStorage.getItem('soe_db_v2');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    this.state.users = parsed.users || [];
+                    this.state.posts = parsed.posts || [];
+                    this.state.inbox = parsed.inbox || [];
+                    this.state.platform = parsed.platform || this.getDefaultPlatform();
                 } else {
                     this.seedDatabase();
                 }
                 
-                // For admin testing reference (Hidden from UI):
-                // Super Admin -> user: super, pass: admin123
-                // Standard Admin -> user: admin, pass: admin123
+                // Add default users if missing for testing
+                if(!this.state.users.find(u => u.username === 'super')) {
+                    this.state.users.push({ id: 'u1', username: 'super', pass: 'admin123', role: 'super', name: 'Super Admin', bio: '', pic: '', links: [], followers: [], following: [], banned: false });
+                }
+                if(!this.state.users.find(u => u.username === 'admin')) {
+                    this.state.users.push({ id: 'u2', username: 'admin', pass: 'admin123', role: 'standard', name: 'Standard Admin', bio: '', pic: '', links: [], followers: [], following: [], banned: false });
+                }
+            },
+
+            getDefaultPlatform() {
+                return {
+                    email: 'hello@schoolofethiopian.com',
+                    phone: '+251 911 234 567',
+                    address: 'Bole Road, Addis Ababa, Ethiopia',
+                    mapLink: 'https://maps.google.com/...',
+                    subPrice: '$9.99/mo',
+                    supportEmail: 'support@schoolofethiopian.com'
+                };
             },
 
             seedDatabase() {
                 this.state.users = [
-                    { id: 'u1', username: 'super', pass: 'admin123', role: 'super', name: 'Super Admin', bio: 'System Guardian', pic: '', followers: [], following: [], links: [], isPremium: true },
-                    { id: 'u2', username: 'admin', pass: 'admin123', role: 'standard', name: 'Moderator', bio: 'Platform Mod', pic: '', followers: [], following: [], links: [], isPremium: true },
-                    { id: 'u3', username: 'abebe', pass: '123', role: 'user', name: 'Abebe Kebede', bio: 'Content Creator & Educator from Addis Ababa.', pic: 'https://i.pravatar.cc/150?img=11', followers: ['u4'], following: [], links: ['https://youtube.com/abebe'], isPremium: false },
-                    { id: 'u4', username: 'sara', pass: '123', role: 'user', name: 'Sara T', bio: 'Learning everyday!', pic: 'https://i.pravatar.cc/150?img=5', followers: [], following: ['u3'], links: [], isPremium: false }
+                    { id: 'u3', username: 'abebe', pass: '123', role: 'user', name: 'Abebe K.', bio: 'Content Creator\n@ethiopiaortodox', pic: 'https://i.pravatar.cc/150?img=11', links: ['https://t.me/ethiopia'], followers: ['u4','u5','u6'], following: ['u4'], banned: false },
+                    { id: 'u4', username: 'sara', pass: '123', role: 'user', name: 'Sara', bio: 'Traveler', pic: 'https://i.pravatar.cc/150?img=5', links: [], followers: [], following: [], banned: false }
                 ];
-                this.state.posts = [
-                    { id: 'p1', authorId: 'u3', type: 'image', text: 'Beautiful day in Addis! #ethiopia', media: 'https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?w=600&q=80', likes: ['u4'], timestamp: Date.now() - 100000 },
-                    { id: 'p2', authorId: 'u4', type: 'text', text: 'Just joined the platform! excited to learn.', media: null, likes: ['u3'], timestamp: Date.now() - 50000 }
+                this.state.inbox = [
+                    { id: 1, type: 'follower', user: 'kkkkk8', msg: 'started following you', time: '1h', avatar: '' },
+                    { id: 2, type: 'activity', user: 'Activity', msg: 'Anide, adebaby and 6 others...', time: '2h', badge: 22, avatar: 'https://i.pravatar.cc/150?img=2' },
+                    { id: 3, type: 'share', user: 'Ayenalem Beleta', msg: 'shared a video', time: '15h', badge: 7, avatar: 'https://i.pravatar.cc/150?img=3' },
+                    { id: 4, type: 'system', user: 'System notifications', msg: 'Screen time: You spent 0h 2...', time: '1d', badge: 1, isSystem: true }
                 ];
                 this.saveDB();
             },
 
             saveDB() {
-                localStorage.setItem('soe_db', JSON.stringify({
+                localStorage.setItem('soe_db_v2', JSON.stringify({
                     users: this.state.users,
-                    posts: this.state.posts
+                    posts: this.state.posts,
+                    inbox: this.state.inbox,
+                    platform: this.state.platform
                 }));
             },
 
-            // --- AUTHENTICATION ---
+            // --- VIEW ROUTING ---
+            showVisitor() {
+                this.hideAll();
+                document.getElementById('visitor-view').classList.remove('hidden');
+                this.state.currentView = 'visitor';
+            },
+
+            showAuth() {
+                this.hideAll();
+                document.getElementById('auth-view').classList.remove('hidden');
+                document.getElementById('auth-view').classList.add('flex');
+            },
+
             toggleAuth() {
                 document.getElementById('login-form').classList.toggle('hidden');
                 document.getElementById('signup-form').classList.toggle('hidden');
             },
 
+            hideAll() {
+                document.getElementById('visitor-view').classList.add('hidden');
+                document.getElementById('auth-view').classList.add('hidden');
+                document.getElementById('auth-view').classList.remove('flex');
+                document.getElementById('main-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+            },
+
+            // --- AUTH ---
             login() {
                 const u = document.getElementById('login-user').value.trim();
                 const p = document.getElementById('login-pass').value.trim();
                 const user = this.state.users.find(x => x.username === u && x.pass === p);
                 
                 if (user) {
+                    if(user.banned) return alert('Your account has been banned.');
                     this.state.currentUser = user;
-                    this.routeUser();
+                    this.routeAuthenticated();
                 } else {
                     alert('Invalid credentials');
                 }
@@ -441,545 +488,373 @@
             signup() {
                 const u = document.getElementById('reg-user').value.trim();
                 const p = document.getElementById('reg-pass').value.trim();
-                
-                if(!u || !p) return alert("Fields required");
+                if(!u || !p) return alert("Required fields");
                 if(this.state.users.find(x => x.username === u)) return alert("Username taken");
 
                 const newUser = {
-                    id: 'u' + Date.now(),
-                    username: u,
-                    pass: p,
-                    role: 'user',
-                    name: u,
-                    bio: '',
-                    pic: '',
-                    followers: [],
-                    following: [],
-                    links: [],
-                    isPremium: false
+                    id: 'u' + Date.now(), username: u, pass: p, role: 'user', name: u, bio: '', pic: '', links: [], followers: [], following: [], banned: false
                 };
                 this.state.users.push(newUser);
                 this.saveDB();
                 this.state.currentUser = newUser;
-                this.routeUser();
+                this.routeAuthenticated();
             },
 
             logout() {
                 this.state.currentUser = null;
-                document.getElementById('main-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.add('hidden');
-                document.getElementById('auth-view').classList.remove('hidden');
-                
                 document.getElementById('login-user').value = '';
                 document.getElementById('login-pass').value = '';
+                this.showVisitor();
             },
 
-            routeUser() {
-                document.getElementById('auth-view').classList.add('hidden');
-                if (this.state.currentUser.role === 'super' || this.state.currentUser.role === 'standard') {
+            routeAuthenticated() {
+                this.hideAll();
+                const role = this.state.currentUser.role;
+                if (role === 'super' || role === 'standard') {
                     document.getElementById('admin-view').classList.remove('hidden');
-                    this.renderAdminPanel();
+                    
+                    // Hide Managers tab for standard admins
+                    if(role === 'standard') {
+                        document.getElementById('admin-tab-managers').classList.add('hidden');
+                    } else {
+                        document.getElementById('admin-tab-managers').classList.remove('hidden');
+                    }
+                    
+                    // Trigger first tab
+                    document.querySelector('#admin-view .px-4.cursor-pointer').click();
                 } else {
                     document.getElementById('main-view').classList.remove('hidden');
+                    document.getElementById('sidebar-username').innerText = '@' + this.state.currentUser.username;
                     this.navigate('feed');
                 }
             },
 
             // --- NAVIGATION ---
             navigate(view) {
-                this.state.currentView = view;
+                this.state.currentNav = view;
                 const content = document.getElementById('content-area');
                 
-                // Update Nav UI
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 if(view === 'feed') document.querySelectorAll('.nav-item')[0].classList.add('active');
+                if(view === 'inbox') document.querySelectorAll('.nav-item')[3].classList.add('active');
                 if(view === 'profile') document.querySelectorAll('.nav-item')[4].classList.add('active');
 
                 if (view === 'feed') {
-                    this.renderFeed();
+                    content.innerHTML = `<div class="h-[60vh] flex items-center justify-center text-gray-500 flex-col"><i class="fas fa-video text-4xl mb-4"></i><p>Video Feed Placeholder</p></div>`;
+                } else if (view === 'inbox') {
+                    this.renderInbox();
                 } else if (view === 'profile') {
                     this.renderProfile(this.state.currentUser.id);
                 } else {
-                    content.innerHTML = `<div class="flex h-64 items-center justify-center text-gray-500">Developing ${view} view...</div>`;
+                    content.innerHTML = `<div class="flex h-64 items-center justify-center text-gray-500">Coming soon...</div>`;
+                }
+                
+                this.applyLanguage(); // Re-translate after DOM update
+            },
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar-menu');
+                const overlay = document.getElementById('sidebar-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.style.display = 'none';
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.style.display = 'block';
                 }
             },
 
-            // --- CORE FEATURES: FEED ---
-            renderFeed() {
+            // --- INBOX (Image 7) ---
+            renderInbox() {
                 const content = document.getElementById('content-area');
-                content.innerHTML = '';
                 
-                // Sort by newest
-                const sortedPosts = [...this.state.posts].sort((a,b) => b.timestamp - a.timestamp);
+                let bubblesHTML = `
+                    <div class="flex flex-col items-center mr-4">
+                        <div class="story-bubble bg-[#222] flex items-center justify-center text-2xl"><i class="fas fa-plus"></i></div>
+                        <span class="text-[10px] mt-1 text-gray-400">Create</span>
+                    </div>
+                    <div class="flex flex-col items-center mr-4 relative">
+                        <div class="story-bubble active"><img src="https://i.pravatar.cc/150?img=12"></div>
+                        <span class="text-[10px] mt-1 text-gray-400">ልዑል ሰማያዊ...</span>
+                        <div class="absolute bottom-4 right-0 bg-pink-500 w-4 h-4 rounded-full flex items-center justify-center border border-black"><i class="fas fa-chart-bar text-[8px] text-white"></i></div>
+                    </div>
+                    <div class="flex flex-col items-center mr-4 relative">
+                        <div class="story-bubble active"><img src="https://i.pravatar.cc/150?img=13"></div>
+                        <span class="text-[10px] mt-1 text-gray-400">ዘማሪ የአብ...</span>
+                    </div>
+                `;
 
-                if (sortedPosts.length === 0) {
-                    content.innerHTML = '<div class="text-center mt-10 text-gray-500">No posts yet.</div>';
-                    return;
-                }
+                let listHTML = this.state.inbox.map(item => {
+                    let icon = '';
+                    if(item.type === 'follower') icon = `<div class="inbox-avatar bg-blue-500 text-white flex items-center justify-center text-xl"><i class="fas fa-user-friends"></i></div>`;
+                    else if(item.isSystem) icon = `<div class="inbox-avatar bg-gray-700 text-white flex items-center justify-center text-xl"><i class="fas fa-inbox"></i></div>`;
+                    else if(item.type === 'activity') icon = `<div class="inbox-avatar bg-pink-500 text-white flex items-center justify-center text-xl"><i class="fas fa-heart"></i></div>`;
+                    else icon = `<img src="${item.avatar}" class="inbox-avatar">`;
 
-                sortedPosts.forEach(post => {
-                    const author = this.getUser(post.authorId);
-                    if(!author) return;
-                    const isLiked = post.likes.includes(this.state.currentUser.id);
-                    const isFollowing = this.state.currentUser.following.includes(author.id);
-                    
-                    // Build Media Element
-                    let mediaHTML = '';
-                    if (post.type === 'image') {
-                        mediaHTML = `<div class="media-container"><img src="${post.media}" loading="lazy"></div>`;
-                    } else if (post.type === 'video') {
-                        mediaHTML = `<div class="media-container"><video src="${post.media}" controls loop muted playsinline></video></div>`;
-                    } else if (post.type === 'pdf') {
-                        mediaHTML = `
-                            <div class="pdf-frame cursor-pointer" onclick="window.open('${post.media}', '_blank')">
-                                <i class="fas fa-file-pdf"></i>
-                                <h3 class="font-bold">Educational PDF Document</h3>
-                                <p class="text-xs text-gray-400 mt-2">Tap to view / download</p>
-                            </div>`;
-                    }
-
-                    const avatarStr = author.pic ? `<img src="${author.pic}" class="w-full h-full object-cover">` : author.name.charAt(0).toUpperCase();
-                    
-                    // Follow button logic
-                    let followBtn = '';
-                    if(author.id !== this.state.currentUser.id) {
-                        if(isFollowing) {
-                            followBtn = `<button onclick="app.toggleFollow('${author.id}')" class="text-xs text-gray-400 border border-gray-600 px-2 py-1 rounded ml-auto">Following</button>`;
-                        } else {
-                            followBtn = `<button onclick="app.toggleFollow('${author.id}')" class="text-xs text-[#d4af37] border border-[#d4af37] px-2 py-1 rounded ml-auto font-bold">Follow</button>`;
-                        }
-                    }
-
-                    const postEl = document.createElement('div');
-                    postEl.className = 'post-card';
-                    postEl.innerHTML = `
-                        <div class="post-header cursor-pointer" onclick="app.renderProfile('${author.id}')">
-                            <div class="avatar mr-3">${avatarStr}</div>
-                            <div>
-                                <div class="font-bold text-sm">${author.name}</div>
-                                <div class="text-xs text-gray-400">@${author.username}</div>
+                    return `
+                        <div class="inbox-item border-b border-gray-900">
+                            ${icon}
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-white">${item.user}</div>
+                                <div class="text-xs text-gray-400">${item.msg} <span class="text-gray-600">· ${item.time}</span></div>
                             </div>
-                            ${followBtn}
-                        </div>
-                        <div class="px-4 text-sm mb-2 whitespace-pre-wrap">${post.text}</div>
-                        ${mediaHTML}
-                        <div class="post-actions mt-2">
-                            <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="app.toggleLike('${post.id}')">
-                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> <span id="like-count-${post.id}">${post.likes.length}</span>
-                            </button>
-                            <button class="action-btn" onclick="alert('Comments opening...')"><i class="far fa-comment"></i> 0</button>
-                            <button class="action-btn" onclick="alert('Sharing post...')"><i class="fas fa-share"></i> Share</button>
-                            <button class="action-btn text-gray-500"><i class="fas fa-ellipsis-v"></i></button>
+                            ${item.badge ? `<div class="inbox-badge">${item.badge}</div>` : ''}
                         </div>
                     `;
-                    content.appendChild(postEl);
-                });
-            },
-
-            // --- CORE FEATURES: PROFILE (TikTok Style) ---
-            renderProfile(userId) {
-                const user = this.getUser(userId);
-                if(!user) return;
-                
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                
-                const content = document.getElementById('content-area');
-                const isMe = this.state.currentUser.id === userId;
-                const avatarStr = user.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : user.name.charAt(0).toUpperCase();
-                
-                // Calculate total likes received
-                const userPosts = this.state.posts.filter(p => p.authorId === userId);
-                const totalLikes = userPosts.reduce((acc, curr) => acc + curr.likes.length, 0);
-
-                let actionButton = '';
-                if (isMe) {
-                    actionButton = `<button onclick="app.openEditProfile()" class="btn-secondary w-1/2">Edit profile</button>`;
-                } else {
-                    const isFollowing = this.state.currentUser.following.includes(userId);
-                    if (isFollowing) {
-                        actionButton = `<button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-secondary w-1/2">Following</button>`;
-                    } else {
-                        actionButton = `<button onclick="app.toggleFollow('${userId}'); app.renderProfile('${userId}')" class="btn-primary w-1/2 !py-2">Follow</button>`;
-                    }
-                }
-
-                let linksHTML = user.links.map(l => `<a href="${l}" target="_blank" class="social-link-tag"><i class="fas fa-link"></i> ${new URL(l).hostname}</a>`).join('');
-
-                let gridHTML = userPosts.map(p => {
-                    if(p.type === 'image') return `<div class="grid-item"><img src="${p.media}"></div>`;
-                    if(p.type === 'video') return `<div class="grid-item"><video src="${p.media}"></video><div class="absolute bottom-1 right-1 text-xs"><i class="fas fa-play"></i></div></div>`;
-                    if(p.type === 'pdf') return `<div class="grid-item flex-col text-center p-2"><i class="fas fa-file-pdf text-red-500 text-2xl mb-1"></i><span class="text-[10px] leading-tight overflow-hidden">${p.text.substring(0,20)}</span></div>`;
-                    return `<div class="grid-item bg-gray-800 p-2 text-xs overflow-hidden">${p.text}</div>`;
                 }).join('');
 
                 content.innerHTML = `
-                    <div class="profile-header">
-                        <div class="profile-avatar-lg">${avatarStr}</div>
-                        <h2 class="text-xl font-bold">@${user.username}</h2>
-                        <h3 class="text-sm text-gray-300 mb-4">${user.name}</h3>
+                    <div class="bg-gray-900 text-white text-xs p-3 m-3 rounded flex justify-between items-center">
+                        <div><i class="fas fa-envelope text-red-500 mr-2"></i> Get emails when people interact...</div>
+                        <button class="bg-red-500 px-3 py-1 rounded-full font-bold">Learn more</button>
+                    </div>
+
+                    <!-- Story Bubbles -->
+                    <div class="flex overflow-x-auto hide-scrollbar px-4 py-2 border-b border-gray-800">
+                        ${bubblesHTML}
+                    </div>
+
+                    <!-- List -->
+                    <div class="flex flex-col">
+                        ${listHTML}
+                    </div>
+                `;
+            },
+
+            // --- TIKTOK STYLE PROFILE (Image 1) ---
+            renderProfile(userId) {
+                const user = this.state.users.find(u => u.id === userId);
+                if(!user) return;
+                
+                const content = document.getElementById('content-area');
+                const avatarStr = user.pic ? `<img src="${user.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-gray-700 flex items-center justify-center font-bold">${user.name.charAt(0)}</div>`;
+                
+                let linksHTML = user.links.map(l => `<div class="text-xs mt-2 text-center text-gray-300 w-full truncate px-8"><a href="${l}" target="_blank"><i class="fas fa-link"></i> ${l}</a></div>`).join('');
+
+                content.innerHTML = `
+                    <div class="flex justify-between items-center p-4">
+                        <i class="fas fa-user-plus text-xl text-white"></i>
+                        <div class="font-bold text-lg">${user.name} <i class="fas fa-caret-down text-xs"></i></div>
+                        <i class="fas fa-bars text-xl text-white" onclick="app.toggleSidebar()"></i>
+                    </div>
+
+                    <div class="flex flex-col items-center mt-2">
+                        <div class="profile-avatar-lg relative">
+                            ${avatarStr}
+                            ${this.state.currentUser.id === userId ? `<div class="absolute bottom-0 right-0 bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center border-2 border-[#1a1a1a]"><i class="fas fa-plus text-xs text-white"></i></div>` : ''}
+                        </div>
+                        <div class="font-bold text-lg mt-2">@${user.username}</div>
                         
-                        <div class="profile-stats">
-                            <div class="stat-box">
-                                <span class="stat-val">${user.following.length}</span>
-                                <span class="stat-label">Following</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-val" id="profile-follower-count">${user.followers.length}</span>
-                                <span class="stat-label">Followers</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-val">${totalLikes}</span>
-                                <span class="stat-label">Likes</span>
-                            </div>
+                        <div class="flex gap-6 mt-4 mb-4">
+                            <div class="text-center"><div class="font-bold text-lg">${user.following.length}</div><div class="text-xs text-gray-400" data-i18n="following">Following</div></div>
+                            <div class="text-center"><div class="font-bold text-lg">${user.followers.length}</div><div class="text-xs text-gray-400" data-i18n="followers">Followers</div></div>
+                            <div class="text-center"><div class="font-bold text-lg">345</div><div class="text-xs text-gray-400" data-i18n="likes">Likes</div></div>
                         </div>
 
-                        <div class="flex justify-center gap-2 mb-4">
-                            ${actionButton}
-                        </div>
+                        ${this.state.currentUser.id === userId ? `<button class="bg-[#333] px-10 py-2 rounded font-semibold text-sm">Edit profile</button>` : `<button class="bg-red-500 px-10 py-2 rounded font-semibold text-sm text-white">Follow</button>`}
 
-                        <p class="text-sm whitespace-pre-wrap mb-3">${user.bio || 'No bio yet.'}</p>
-                        <div class="flex flex-wrap justify-center mb-4">
-                            ${linksHTML}
-                        </div>
+                        <p class="text-sm mt-4 whitespace-pre-wrap text-center px-6">${user.bio}</p>
+                        ${linksHTML}
+                        
+                        ${this.state.currentUser.id === userId ? `<div class="mt-4 text-red-500 font-bold text-sm flex items-center gap-2"><i class="fas fa-video"></i> SOE Studio</div>` : ''}
                     </div>
-                    
-                    <div class="border-b border-gray-800 flex">
-                        <div class="flex-1 text-center py-3 border-b-2 border-white font-bold cursor-pointer"><i class="fas fa-th text-xl"></i></div>
-                        <div class="flex-1 text-center py-3 text-gray-500 cursor-pointer"><i class="fas fa-heart text-xl"></i></div>
+
+                    <!-- Profile Tabs -->
+                    <div class="flex mt-6 border-b border-gray-800">
+                        <div class="flex-1 py-3 text-center border-b-2 border-white text-white cursor-pointer"><i class="fas fa-bars"></i></div>
+                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="fas fa-lock"></i></div>
+                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="fas fa-retweet"></i></div>
+                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="far fa-bookmark"></i></div>
+                        <div class="flex-1 py-3 text-center text-gray-500 cursor-pointer"><i class="far fa-heart"></i></div>
                     </div>
-                    
-                    <div class="post-grid">
-                        ${gridHTML}
+
+                    <div class="grid grid-cols-3 gap-[1px] bg-black">
+                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 1.2M</div></div>
+                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 500K</div></div>
+                        <div class="aspect-[3/4] bg-gray-800 relative"><div class="absolute bottom-1 left-1 text-xs"><i class="fas fa-play"></i> 200K</div></div>
                     </div>
-                    ${userPosts.length === 0 ? '<div class="text-center py-10 text-gray-500">No content yet</div>' : ''}
                 `;
             },
 
-            // --- INTERACTIONS ---
-            toggleLike(postId) {
-                const post = this.state.posts.find(p => p.id === postId);
-                const idx = post.likes.indexOf(this.state.currentUser.id);
-                
-                if (idx === -1) {
-                    post.likes.push(this.state.currentUser.id);
-                } else {
-                    post.likes.splice(idx, 1);
+            // --- ADMIN LOGIC ---
+            switchAdminTab(tab, el) {
+                // Update active tab styles
+                const tabs = el.parentElement.children;
+                for(let t of tabs) {
+                    t.classList.remove('text-[#d4af37]', 'border-b-2', 'border-[#d4af37]');
+                    t.classList.add('text-gray-400');
                 }
-                this.saveDB();
-                
-                // Realtime UI update
-                if(this.state.currentView === 'feed') this.renderFeed();
-            },
+                el.classList.remove('text-gray-400');
+                el.classList.add('text-[#d4af37]', 'border-b-2', 'border-[#d4af37]');
 
-            toggleFollow(targetUserId) {
-                const me = this.state.currentUser;
-                const target = this.getUser(targetUserId);
-                
-                const idxFollow = me.following.indexOf(targetUserId);
-                if (idxFollow === -1) {
-                    me.following.push(targetUserId);
-                    target.followers.push(me.id);
-                } else {
-                    me.following.splice(idxFollow, 1);
-                    const targetFollowerIdx = target.followers.indexOf(me.id);
-                    if(targetFollowerIdx > -1) target.followers.splice(targetFollowerIdx, 1);
-                }
-                this.saveDB();
-                
-                // Realtime UI update based on view
-                if(this.state.currentView === 'feed') this.renderFeed();
-                
-                // Specifically targeting the requirement: "follower count count up when clicking follow"
-                const followerCounter = document.getElementById('profile-follower-count');
-                if(followerCounter) followerCounter.innerText = target.followers.length;
-            },
+                const content = document.getElementById('admin-content');
+                const isSuper = this.state.currentUser.role === 'super';
 
-            // --- POSTING CONTENT ---
-            openPostModal() {
-                document.getElementById('post-text').value = '';
-                document.getElementById('post-media').value = '';
-                document.getElementById('media-preview').innerHTML = '';
-                document.getElementById('media-preview').classList.add('hidden');
-                this.state.uploadedFileData = null;
-                this.state.uploadedFileType = null;
-                this.openModal('post-modal');
-            },
-
-            handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                // Max 2MB check for memory efficiency
-                if(file.size > 2 * 1024 * 1024) {
-                    alert('File too large for local preview. Please use a file under 2MB.');
-                    event.target.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.state.uploadedFileData = e.target.result;
-                    const type = file.type;
-                    const previewContainer = document.getElementById('media-preview');
-                    previewContainer.classList.remove('hidden');
-
-                    if (type.startsWith('image/')) {
-                        this.state.uploadedFileType = 'image';
-                        previewContainer.innerHTML = `<img src="${e.target.result}" class="h-full object-contain">`;
-                    } else if (type.startsWith('video/')) {
-                        this.state.uploadedFileType = 'video';
-                        previewContainer.innerHTML = `<video src="${e.target.result}" class="h-full object-contain" controls></video>`;
-                    } else if (type === 'application/pdf') {
-                        this.state.uploadedFileType = 'pdf';
-                        previewContainer.innerHTML = `<div class="text-center text-red-500"><i class="fas fa-file-pdf text-3xl"></i><br>PDF Ready</div>`;
-                    }
-                };
-                reader.readAsDataURL(file);
-            },
-
-            submitPost() {
-                const text = document.getElementById('post-text').value.trim();
-                if (!text && !this.state.uploadedFileData) {
-                    return alert('Please write something or attach media.');
-                }
-
-                const newPost = {
-                    id: 'p' + Date.now(),
-                    authorId: this.state.currentUser.id,
-                    type: this.state.uploadedFileType || 'text',
-                    text: text,
-                    media: this.state.uploadedFileData,
-                    likes: [],
-                    timestamp: Date.now()
-                };
-
-                this.state.posts.push(newPost);
-                this.saveDB();
-                this.closeModal('post-modal');
-                this.navigate('feed');
-            },
-
-            // --- PROFILE EDITING ---
-            openEditProfile() {
-                const u = this.state.currentUser;
-                document.getElementById('edit-name').value = u.name;
-                document.getElementById('edit-bio').value = u.bio;
-                
-                const preview = document.getElementById('edit-avatar-preview');
-                if(u.pic) {
-                    preview.innerHTML = `<img src="${u.pic}" class="w-full h-full object-cover">`;
-                } else {
-                    preview.innerHTML = u.name.charAt(0).toUpperCase();
-                }
-
-                // Render links
-                const linkContainer = document.getElementById('social-links-inputs');
-                linkContainer.innerHTML = '';
-                
-                if (u.links.length === 0) {
-                    this.addLinkInput(); // default one empty
-                } else {
-                    u.links.forEach(l => {
-                        this.addLinkInput(l);
-                    });
-                }
-                
-                this.updateLinkCounter();
-                this.openModal('edit-profile-modal');
-            },
-
-            updateAvatarPreview(event) {
-                const file = event.target.files[0];
-                if(file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${e.target.result}" data-b64="${e.target.result}" class="w-full h-full object-cover">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            },
-
-            addLinkInput(val = '') {
-                const max = this.state.currentUser.isPremium ? 20 : 5;
-                const currentInputs = document.querySelectorAll('#social-links-inputs input').length;
-                
-                if(currentInputs >= max) {
-                    return alert(`You have reached the maximum of ${max} links for your account tier.`);
-                }
-
-                const div = document.createElement('div');
-                div.className = 'flex gap-2';
-                div.innerHTML = `
-                    <input type="url" class="flex-1 bg-[#222] text-sm p-2 rounded text-white border border-gray-700 outline-none" placeholder="https://..." value="${val}">
-                    <button onclick="this.parentElement.remove(); app.updateLinkCounter()" class="text-red-500 px-2"><i class="fas fa-trash"></i></button>
-                `;
-                document.getElementById('social-links-inputs').appendChild(div);
-                this.updateLinkCounter();
-            },
-
-            updateLinkCounter() {
-                const max = this.state.currentUser.isPremium ? 20 : 5;
-                const current = document.querySelectorAll('#social-links-inputs input').length;
-                document.getElementById('link-count').innerText = `(${current}/${max})`;
-                
-                if(this.state.currentUser.isPremium) {
-                    document.getElementById('premium-btn').classList.add('hidden');
-                } else {
-                    document.getElementById('premium-btn').classList.remove('hidden');
-                }
-            },
-
-            upgradePremium() {
-                if(confirm('Simulate Upgrade to Premium? (Unlocks 20 links)')) {
-                    this.state.currentUser.isPremium = true;
-                    this.saveDB();
-                    this.updateLinkCounter();
-                    alert('Upgraded to Pro!');
-                }
-            },
-
-            saveProfile() {
-                const u = this.state.currentUser;
-                u.name = document.getElementById('edit-name').value.trim();
-                u.bio = document.getElementById('edit-bio').value.trim();
-                
-                const imgEl = document.querySelector('#edit-avatar-preview img');
-                if(imgEl && imgEl.hasAttribute('data-b64')) {
-                    u.pic = imgEl.getAttribute('data-b64');
-                }
-
-                // Extract links
-                const linkInputs = document.querySelectorAll('#social-links-inputs input');
-                u.links = [];
-                linkInputs.forEach(inp => {
-                    if(inp.value.trim() !== '') {
-                        // Ensure it has http protocol to prevent broken links
-                        let url = inp.value.trim();
-                        if(!url.startsWith('http')) url = 'https://' + url;
-                        u.links.push(url);
-                    }
-                });
-
-                this.saveDB();
-                this.closeModal('edit-profile-modal');
-                this.renderProfile(u.id);
-            },
-
-            // --- ADMIN PANEL ---
-            renderAdminPanel() {
-                const userObj = this.state.currentUser;
-                
-                document.getElementById('admin-user-count').innerText = this.state.users.length;
-                document.getElementById('admin-post-count').innerText = this.state.posts.length;
-
-                const userList = document.getElementById('admin-user-list');
-                userList.innerHTML = '';
-                this.state.users.forEach(u => {
-                    const el = document.createElement('div');
-                    el.className = 'flex justify-between items-center bg-[#222] p-3 rounded';
-                    el.innerHTML = `
-                        <div>
-                            <span class="font-bold">${u.username}</span> 
-                            <span class="text-xs ml-2 px-2 py-1 rounded bg-gray-700">${u.role}</span>
+                if(tab === 'users') {
+                    let uHTML = this.state.users.filter(u => u.role === 'user').map(u => `
+                        <div class="bg-[#1a1a1a] p-3 rounded-lg mb-3 flex justify-between items-center border border-gray-800">
+                            <div>
+                                <div class="font-bold ${u.banned ? 'text-red-500 line-through' : 'text-white'}">@${u.username}</div>
+                                <div class="text-xs text-gray-400">Followers: ${u.followers.length}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="app.adminAction('warn', '${u.id}')" class="bg-yellow-600 px-3 py-1 rounded text-xs text-white font-bold">Warn</button>
+                                ${isSuper ? `
+                                    <button onclick="app.adminAction('${u.banned ? 'unban' : 'ban'}', '${u.id}')" class="${u.banned ? 'bg-green-600' : 'bg-red-600'} px-3 py-1 rounded text-xs text-white font-bold">
+                                        ${u.banned ? 'Unban' : 'Ban'}
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                        ${userObj.role === 'super' && u.id !== userObj.id ? `<button onclick="app.adminDeleteUser('${u.id}')" class="text-red-500"><i class="fas fa-trash"></i></button>` : ''}
-                    `;
-                    userList.appendChild(el);
-                });
-
-                const postList = document.getElementById('admin-post-list');
-                postList.innerHTML = '';
-                this.state.posts.forEach(p => {
-                    const author = this.getUser(p.authorId);
-                    const el = document.createElement('div');
-                    el.className = 'flex justify-between items-center bg-[#222] p-3 rounded';
-                    el.innerHTML = `
-                        <div class="text-sm truncate w-3/4">
-                            <span class="text-gray-400">@${author ? author.username : 'unk'}</span>: ${p.text || '[Media]'}
+                    `).join('');
+                    content.innerHTML = `<h2 class="text-lg font-bold text-white mb-4">User Management</h2>${uHTML || '<p class="text-gray-500">No users found.</p>'}`;
+                
+                } else if(tab === 'admins') {
+                    let aHTML = this.state.users.filter(u => u.role === 'super' || u.role === 'standard').map(u => `
+                        <div class="bg-[#1a1a1a] p-3 rounded-lg mb-3 flex justify-between items-center border border-gray-800">
+                            <div>
+                                <div class="font-bold text-white">@${u.username}</div>
+                                <div class="text-xs px-2 py-1 bg-gray-700 rounded inline-block mt-1 uppercase text-[#d4af37]">${u.role}</div>
+                            </div>
+                            ${(isSuper && u.id !== this.state.currentUser.id) ? `<button onclick="app.adminAction('remove_admin', '${u.id}')" class="text-red-500 text-sm"><i class="fas fa-trash"></i> Demote</button>` : ''}
                         </div>
-                        <button onclick="app.adminDeletePost('${p.id}')" class="text-red-500"><i class="fas fa-trash"></i></button>
+                    `).join('');
+                    
+                    content.innerHTML = `
+                        <h2 class="text-lg font-bold text-white mb-4">Admin Management</h2>
+                        ${aHTML}
+                        ${isSuper ? `
+                            <div class="mt-6 p-4 border border-gray-700 rounded-lg">
+                                <h3 class="font-bold mb-2">Promote User to Standard Admin</h3>
+                                <div class="flex gap-2">
+                                    <input type="text" id="promote-username" class="input-field mb-0 flex-1" placeholder="Enter exact username">
+                                    <button class="bg-[#d4af37] text-black px-4 font-bold rounded" onclick="app.promoteAdmin()">Promote</button>
+                                </div>
+                            </div>
+                        ` : ''}
                     `;
-                    postList.appendChild(el);
-                });
-            },
-
-            adminDeleteUser(id) {
-                if(confirm("Delete this user?")) {
-                    this.state.users = this.state.users.filter(u => u.id !== id);
-                    // cascade delete posts
-                    this.state.posts = this.state.posts.filter(p => p.authorId !== id);
-                    this.saveDB();
-                    this.renderAdminPanel();
+                
+                } else if(tab === 'info') {
+                    const p = this.state.platform;
+                    content.innerHTML = `
+                        <h2 class="text-lg font-bold text-white mb-4">Platform Information</h2>
+                        <div class="flex flex-col gap-3">
+                            <div><label class="text-xs text-gray-400">HQ Address</label><input type="text" id="pi-address" class="input-field" value="${p.address}"></div>
+                            <div><label class="text-xs text-gray-400">Google Map Link</label><input type="text" id="pi-map" class="input-field" value="${p.mapLink}"></div>
+                            <div><label class="text-xs text-gray-400">Public Phone</label><input type="text" id="pi-phone" class="input-field" value="${p.phone}"></div>
+                            <div><label class="text-xs text-gray-400">Public Email</label><input type="text" id="pi-email" class="input-field" value="${p.email}"></div>
+                            <div><label class="text-xs text-gray-400">Support / Creator Email</label><input type="text" id="pi-support" class="input-field" value="${p.supportEmail}"></div>
+                            <div><label class="text-xs text-gray-400">Pro Subscription Price</label><input type="text" id="pi-price" class="input-field" value="${p.subPrice}"></div>
+                            <button class="btn-primary mt-2" onclick="app.savePlatformInfo()">Save Changes</button>
+                        </div>
+                    `;
+                } else if (tab === 'qr') {
+                    content.innerHTML = `
+                        <div class="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-xl bg-[#111]">
+                            <i class="fas fa-qrcode text-5xl text-gray-500 mb-4"></i>
+                            <p class="text-gray-400 mb-4 text-center px-8 text-sm">Scan a user or admin QR code to manage their profile directly.</p>
+                            <button class="bg-[#d4af37] text-black font-bold px-6 py-2 rounded-full shadow-lg" onclick="app.openModal('qr-modal')">Open Scanner</button>
+                        </div>
+                    `;
                 }
             },
 
-            adminDeletePost(id) {
-                if(confirm("Delete this post?")) {
-                    this.state.posts = this.state.posts.filter(p => p.id !== id);
-                    this.saveDB();
-                    this.renderAdminPanel();
+            adminAction(action, userId) {
+                const u = this.state.users.find(x => x.id === userId);
+                if(!u) return;
+
+                if(action === 'warn') {
+                    alert(`Warning sent to @${u.username}`);
+                } else if (action === 'ban') {
+                    if(confirm(`Ban @${u.username}?`)) u.banned = true;
+                } else if (action === 'unban') {
+                    u.banned = false;
+                } else if (action === 'remove_admin') {
+                    if(confirm(`Demote @${u.username} to normal user?`)) u.role = 'user';
                 }
+                
+                this.saveDB();
+                // Refresh current tab
+                document.querySelector('#admin-view .text-\\[\\#d4af37\\]').click();
             },
 
-            // --- UTILS & MODALS ---
-            getUser(id) {
-                return this.state.users.find(u => u.id === id);
+            promoteAdmin() {
+                const un = document.getElementById('promote-username').value.trim();
+                const u = this.state.users.find(x => x.username === un);
+                if(!u) return alert("User not found");
+                if(u.role !== 'user') return alert("User is already an admin");
+                
+                u.role = 'standard';
+                this.saveDB();
+                document.querySelector('#admin-view .text-\\[\\#d4af37\\]').click();
             },
 
-            openModal(id) {
-                document.getElementById(id).style.display = 'flex';
-                if(id === 'language-modal') this.renderLanguages();
+            savePlatformInfo() {
+                this.state.platform = {
+                    address: document.getElementById('pi-address').value,
+                    mapLink: document.getElementById('pi-map').value,
+                    phone: document.getElementById('pi-phone').value,
+                    email: document.getElementById('pi-email').value,
+                    supportEmail: document.getElementById('pi-support').value,
+                    subPrice: document.getElementById('pi-price').value
+                };
+                this.saveDB();
+                alert("Platform information saved!");
             },
 
-            closeModal(id) {
-                document.getElementById(id).style.display = 'none';
+            simulateQRScan() {
+                this.closeModal('qr-modal');
+                alert("Simulated QR Scan: Found User @abebe");
+                // In real app, this would route to their profile or admin edit page
             },
 
-            showTutorial() {
-                this.openModal('tutorial-modal');
-            },
-
-            // Building language selector based on provided images
+            // --- I18N LANGUAGE SYSTEM ---
             renderLanguages() {
-                const langs = [
-                    { name: 'English (US)', current: true },
-                    { name: 'Dansk', sub: 'Danish (Denmark)' },
-                    { name: 'Deutsch (Deutschland)', sub: 'German (Germany)' },
-                    { name: 'Èdè Yorùbá', sub: 'Yoruba' },
-                    { name: 'Eesti (Eesti)', sub: 'Estonian (Estonia)' },
-                    { name: 'English (UK)' },
-                    { name: 'العربية (مصر)', sub: 'Arabic (Egypt)' },
-                    { name: 'پښتو', sub: 'Pashto' },
-                    { name: 'فارسی', sub: 'Persian (Iran)' },
-                    { name: 'ትግርኛ', sub: 'Tigrinya' },
-                    { name: 'አማርኛ', sub: 'Amharic (Ethiopia)' },
-                    { name: 'नेपाली', sub: 'Nepali' },
-                    { name: 'मराठी', sub: 'Marathi' },
-                    { name: 'हिन्दी (भारत)', sub: 'Hindi (India)' },
-                    { name: 'සිංහල', sub: 'Sinhala' },
-                    { name: 'ไทย', sub: 'Thai (Thailand)' },
-                    { name: '한국어', sub: 'Korean' },
-                    { name: '日本語', sub: 'Japanese' },
-                    { name: '中文', sub: 'Chinese' }
-                ];
-
                 const container = document.getElementById('language-list');
-                container.innerHTML = langs.map(l => `
-                    <div class="px-4 py-3 border-b border-gray-800 cursor-pointer ${l.current ? 'bg-blue-500 bg-opacity-20 text-blue-400' : 'hover:bg-gray-800'}" onclick="app.closeModal('language-modal')">
-                        <div class="font-bold">${l.name}</div>
-                        ${l.sub ? `<div class="text-xs text-gray-500">${l.sub}</div>` : ''}
+                container.innerHTML = this.availableLangs.map(l => `
+                    <div class="px-4 py-4 border-b border-gray-800 cursor-pointer flex justify-between items-center ${this.state.lang === l.code ? 'bg-gray-800 text-[#d4af37]' : 'text-white hover:bg-[#222]'}" onclick="app.setLanguage('${l.code}')">
+                        <div>
+                            <div class="font-bold text-sm">${l.name}</div>
+                            ${l.sub ? `<div class="text-[10px] text-gray-500">${l.sub}</div>` : ''}
+                        </div>
+                        ${this.state.lang === l.code ? '<i class="fas fa-check"></i>' : ''}
                     </div>
                 `).join('');
+            },
+
+            setLanguage(code) {
+                this.state.lang = code;
+                this.renderLanguages();
+                this.applyLanguage();
+                this.closeModal('language-modal');
+            },
+
+            applyLanguage() {
+                const langDict = this.dict[this.state.lang] || this.dict['en'];
+                
+                // Translate DOM elements with data-i18n attributes
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (langDict[key]) {
+                        el.innerText = langDict[key];
+                    }
+                });
+            },
+
+            // --- UTILS ---
+            openModal(id) {
+                document.getElementById(id).style.display = 'flex';
+            },
+            closeModal(id) {
+                document.getElementById(id).style.display = 'none';
             }
         };
 
-        // Initialize application on load
-        window.onload = () => {
-            app.init();
-        };
+        // Initialize on load
+        window.onload = () => app.init();
+
     </script>
 </body>
 </html>
 
 ```
-
