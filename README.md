@@ -1,4 +1,4 @@
-School of Ethiopian 🇪🇹
+school of Ethiopian 🇪🇹
 ​Welcome to the School of Ethiopian, a hybrid social and educational web platform built for seamless content sharing, learning, and community engagement.
 ​This project is a fully functional, self-contained frontend web application that uses local browser storage to simulate a real-time database.
 ​🚀 Features
